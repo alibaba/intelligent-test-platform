@@ -119,7 +119,7 @@ source markov/database.sql
 
 ## `6、体验智能化feature`
 
-点击查看详情..
+点击查看[Intelligent.md](https://github.com/alibaba/intelligent-test-platform/blob/master/Intelligent.md)
 
 # 2期开源计划
 
