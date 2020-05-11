@@ -49,15 +49,15 @@ IDE配置端口为8888
 
 `2、搭建本地mysql环境`
 
-启动完成后，进入mysql命令行：mysql -uroot -p  输入mysql密码:123
+在本地安装mysql后启动，设置用户名和密码
 
 `3、创建数据表`
 
 source markov/database.sql
 
 `4、修改项目的mysql配置`
+修改项目文件src/main/resources/application.properties，改为步骤2中设置的mysql用户名及密码
 
-src/main/resources/application.properties
 
 <img src="https://github.com/alibaba/intelligent-test-platform/raw/master/src/main/resources/static/img/read-4.png" ></img>
 
