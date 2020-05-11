@@ -71,6 +71,7 @@ public class EnvsProcessor {
             hostInfo.put(IP, ip);
             envUnit.put(HOST_INFO, hostInfo);
             list.add(envUnit);
+
         }
 
         if (list.size() == 0){
