@@ -1,5 +1,6 @@
 package com.alibaba.markovdemo.engine;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.markovdemo.entity.GotEnvs;
 import com.alibaba.markovdemo.service.EnvsService;
@@ -22,6 +23,8 @@ public class EnvsProcessor {
     private String MAX_ENV = "maxEnv";
     private String ENVS = "envs";
     private String HOST_INFO = "hostInfo";
+    private String HOST_List = "hostList";
+
     private String NEW_DEPLOY_STAGE = "new-deploy-stage";
     int maxEnv = 10;
 
@@ -36,7 +39,7 @@ public class EnvsProcessor {
         //获取ScenarioId绑定的pipeline配置
         JSONObject pipelineObj = JSONObject.parseObject(pipelineService.getPipeline(ScenarioId).getPipeline());
         JSONObject deployObj = pipelineObj.getJSONObject(NEW_DEPLOY_STAGE);
-        JSONObject hostObj = deployObj.getJSONObject(HOST_INFO);
+        JSONArray hostList = deployObj.getJSONArray(HOST_List);
 
         List<JSONObject> list = new ArrayList<>();
         JSONObject envUnit = new JSONObject();
@@ -71,14 +74,18 @@ public class EnvsProcessor {
         }
 
         if (list.size() == 0){
-            envUnit.put(MAX_ENV,maxEnv);
-            envUnit.put(REMAINS, maxEnv);
-            envUnit.put(IP, hostObj.getString("ip"));
-            envUnit.put(ENVS, new ArrayList<>());
-            JSONObject hostInfo = new JSONObject();
-            hostInfo.put(IP, hostObj.getString("ip"));
-            envUnit.put(HOST_INFO, hostInfo);
-            list.add(envUnit);
+            for (Object obj : hostList){
+                JSONObject hostObj = (JSONObject) obj;
+                envUnit.put(MAX_ENV,maxEnv);
+                envUnit.put(REMAINS, maxEnv);
+                envUnit.put(IP, hostObj.getString("ip"));
+                envUnit.put(ENVS, new ArrayList<>());
+                JSONObject hostInfo = new JSONObject();
+                hostInfo.put(IP, hostObj.getString("ip"));
+                envUnit.put(HOST_INFO, hostInfo);
+                list.add(envUnit);
+            }
+
         }
 
         return list;
