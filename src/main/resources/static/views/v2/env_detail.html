@@ -1,0 +1,363 @@
+<style>
+    .CodeMirror {border: 1px solid #e7ecee;}
+</style>
+<div class="bg-light lter b-b wrapper-md">
+    <h1 class="m-n font-thin h3">环境详情</h1>
+</div>
+<div ng-controller="mainController" ng-init="initEnvDetail()">
+    <toaster-container toaster-options="{'position-class': 'toast-top-right', 'time-out':60000, 'body-output-type':'trustedHtml', 'close-button':true}"></toaster-container>
+    <div class="container mainBlock">
+        <div>
+            <form class="form-horizontal">
+                <div class="form-group form-group-m-b">
+                    <label class="col-lg-3 control-label">环境名称</label>
+                    <div class="col-lg-8 form-group-m-t">
+                        {{currentEnv.name}}
+                    </div>
+                </div>
+                <div class="form-group form-group-m-b">
+                    <label class="col-lg-3 control-label">创建人</label>
+                    <div class="col-lg-8 form-group-m-t">
+                        {{currentEnv.userName}}
+                    </div>
+                </div>
+                <div class="form-group form-group-m-b">
+                    <label class="col-lg-3 control-label">锁定操作人</label>
+                    <div class="col-lg-8 form-group-m-t">
+                        {{currentEnv.lockUserName}}
+                    </div>
+                </div>
+                <div class="form-group form-group-m-b">
+                    <label class="col-lg-3 control-label">锁定人列表</label>
+                    <div class="col-lg-8 form-group-m-t">
+                        {{currentEnv.lockUsers}}
+                    </div>
+                </div>
+                <div class="form-group form-group-m-b">
+                    <label class="col-lg-3 control-label">创建时间</label>
+                    <div class="col-lg-8 form-group-m-t">
+                        {{currentEnv.gmtCreate}}
+                    </div>
+                </div>
+
+                <div class="form-group form-group-m-b" ng-show="currentEnv.isAccu">
+                    <label class="col-lg-3 control-label">是否部署精准</label>
+                    <div class="col-lg-8 form-group-m-t">
+                        {{currentEnv.isAccu}}
+                    </div>
+                </div>
+                <div class="form-group form-group-m-b" ng-show="currentEnv.isAccu">
+                    <label class="col-lg-3 control-label">精准分支</label>
+                    <div class="col-lg-8 form-group-m-t">
+                        {{currentEnv.accuBranch}}
+                    </div>
+                </div>
+                <div class="form-group form-group-m-b" ng-show="currentEnv.isAccu">
+                    <label class="col-lg-3 control-label">测试版本</label>
+                    <div class="col-lg-8 form-group-m-t">
+                        {{currentEnv.accuNewCommit}}
+                    </div>
+                </div>
+                <div class="form-group form-group-m-b" ng-show="currentEnv.isAccu">
+                    <label class="col-lg-3 control-label">对比版本</label>
+                    <div class="col-lg-8 form-group-m-t">
+                        {{currentEnv.accuOldCommit}}
+                    </div>
+                </div>
+
+            </form>
+
+
+            <form class="form-horizontal">
+                <div class="form-group form-group-m-b" ng-repeat="envObj in currentEnvModules track by $index">
+                    <hr>
+                    <div class="col-lg-3 form-group-m-t">
+                        <table>
+                        <tr>
+                            <td>
+                            <label class="control-label text-danger"><b>{{envObj.moduleName}}</b></label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                            <button type="submit" class="btn btn-sm btn-info" data-toggle="modal" data-target="#myEnvCheckModal" ng-click="getEnvCheckStatus(envObj)">环境问题诊断</button>
+                            </td>
+                        </tr>
+                        </table>
+                    </div>
+
+                    <div class="col-lg-8 form-group-m-t">
+                        <p class="text-muted" align="center">镜像信息</p>
+                        <form class="form-horizontal">
+                            <div class="form-group form-group-m-b">
+                                <label class="col-lg-3 control-label">镜像名称</label>
+                                <div class="col-lg-8 form-group-m-t">
+                                    {{envObj.dockerName}}
+                                </div>
+                            </div>
+                            <div class="form-group form-group-m-b">
+                                <label class="col-lg-3 control-label">镜像实例</label>
+                                <div class="col-lg-8 form-group-m-t">
+                                    {{envObj.dockerImg}}
+                                </div>
+                            </div>
+                            <div class="form-group form-group-m-b">
+                                <label class="col-lg-3 control-label">镜像地址</label>
+                                <div class="col-lg-8 form-group-m-t">
+                                    <a href="https://sa.alibaba-inc.com/ops/terminal.html?ip={{envObj.dockerIp}}" toolTip="点击登入机器" target="_blank">{{envObj.dockerIp}}:{{envObj.dockerPort}}</a>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-m-b">
+                                <label class="col-lg-3 control-label">登入镜像命令</label>
+                                <div class="col-lg-8 form-group-m-t">
+                                    ssh root@127.0.0.1 -p {{envObj.dockerPort}}  ，密码：123456
+                                </div>
+                            </div>
+                            <div class="form-group form-group-m-b">
+                                <label class="col-lg-3 control-label">镜像ID</label>
+                                <div class="col-lg-8 form-group-m-t">
+                                    {{envObj.dockerId}}
+                                </div>
+                            </div>
+                            <div class="form-group form-group-m-b">
+                                <label class="col-lg-3 control-label">镜像状态</label>
+                                <div class="col-lg-8 form-group-m-t">
+                                    <span ng-show="envObj.status" class='status-btn label w-sm bg-{{envObj.status=="SUCCESS"?"success":("FAIL,TIMEOUT,EXCEPTION,ERROR".indexOf(envObj.status)!=-1)?"danger":(envObj.status=="RUNNING"||envObj.status=="DEPLOYING"||envObj.status=="WAITING")?"warning":"dark"}}'>{{envObj.status}}</span>
+                                    <span   data-toggle="modal" data-target="#dockerPullLogBox" ng-click="getDockerPullLog(envObj.dockerImg,envObj.dockerIp)"><a>查看镜像日志 |</a></span>
+                                    <span  ng-click="dockerImagePull(envObj.dockerImg,envObj.dockerIp)"><a>强制拉取镜像</a></span>
+
+                                </div>
+                            </div>
+                            <div class="form-group form-group-m-b">
+                                <label class="col-lg-3 control-label">镜像部署命令</label>
+                                <div class="col-lg-8 form-group-m-t">
+                                    {{envObj.createCmd}}
+                                </div>
+                            </div>
+                            <div class="form-group form-group-m-b">
+                                <label class="col-lg-3 control-label">镜像部署说明</label>
+                                <div class="col-lg-8 form-group-m-t">
+                                    {{envObj.comment}}
+
+                                </div>
+
+                            </div>
+                            <div class="form-group form-group-m-b">
+                                <label class="col-lg-3 control-label">模块状态</label>
+                                <div class="col-lg-8 form-group-m-t">
+                                    <span ng-show="envObj.deployStatus" class='status-btn label w-sm bg-{{envObj.deployStatus=="SUCCESS"?"success":("FAIL,TIMEOUT,EXCEPTION,ERROR".indexOf(envObj.deployStatus)!=-1)?"danger":(envObj.deployStatus=="RUNNING"||envObj.deployStatus=="DEPLOYING"||envObj.deployStatus=="WAITING")?"warning":"dark"}}'>{{envObj.deployStatus}}</span>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-m-b">
+                                <label class="col-lg-3 control-label">模块部署命令</label>
+                                <div class="col-lg-8 form-group-m-t">
+                                    {{envObj.deployCmd}}
+                                </div>
+                                <!--<span  ng-click="getDeployLog(envObj)"><a>查看部署日志</a></span>-->
+                            </div>
+                            <div class="form-group form-group-m-b">
+                                <label class="col-lg-3 control-label">模块部署结果说明</label>
+                                <div class="col-lg-8 form-group-m-t">
+                                    {{envObj.deployComment}}
+                                </div>
+                            </div>
+                            <div class="form-group form-group-m-b">
+                                <label class="col-lg-3 control-label">镜像操作</label>
+                                <div class="col-lg-8 form-group-m-t">
+                                    <span ng-show="envObj.status!='RUNNING' && envObj.deployStatus!='DEPLOYING'" class="status-btn label bg-success" ng-click="reDeployDockerImg(envObj)"><a><i class="fa fa-refresh"></i> 重新部署</a></span>
+                                    <span ng-show="envObj.status!='RUNNING' && envObj.deployStatus!='DEPLOYING'" class="status-btn label bg-danger" ng-click="deleteDockerImg(envObj)"><a><i class="fa fa-trash-o"></i> 删除模块</a></span>
+                                </div>
+                            </div>
+                        </form>
+                        <p class="text-muted" align="center">参数信息</p>
+                        <ui-codemirror ng-model="envObj.deployConfig.dockerConfig.parameter" ui-codemirror-opts="expectMirrorConfig"></ui-codemirror>
+                        <p class="text-muted" align="center">部署信息</p>
+                        <ui-codemirror ng-model="envObj.deployConfig.dockerConfig.deploy" ui-codemirror-opts="expectMirrorConfig"></ui-codemirror>
+                    </div>
+                    <hr>
+                </div>
+            </form>
+            <!--
+            <hr>
+            <p style="margin-top: 10px;" align="center">
+                <button ng-click="saveForm()" type="button" style="margin-right: 10px" class="btn btn-sm btn-success text-uc m-t-n-xs">
+                    <Strong>保存</Strong>
+                </button>
+                <button type="button" class="btn btn-sm btn-danger text-uc m-t-n-xs">
+                    <Strong>取消</Strong>
+                </button>
+            </p>
+            -->
+        </div>
+    </div>
+
+    <div class="modal fade" id="dockerPullLogBox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+                    <h3 class="modal-title" id="dockerPullLogBox">镜像拉取日志</h3>
+                </div>
+                <div id="_modalDialog_body" class="modal-body">
+                    <!--  设置这个div的大小，超出部分显示滚动条 -->
+                    <!--<div  style="white-space:pre-line">-->
+                        <div id="selectTree" class="ztree" style="height:500px;overflow:auto; white-space:pre-line"> 
+
+                            {{dockerLog}}
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>&ensp;
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- envCheckBox Modal -->
+    <div class="modal fade" id="myEnvCheckModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document" style="width:800px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+                    <h3 class="modal-title" id="troubleShootTitle">环境检测与日志查看</h3>
+                </div>
+                <div id="_modalDialog_body" class="modal-body">
+                    <!--  设置这个div的大小，超出部分显示滚动条 -->
+                    <div id="selectTree" class="ztree" style="height:570px;overflow:auto; "> 
+                        <label ng-show="envCheckRes=='SUCCESS'" style="color: green; font-size: larger;" class="modal-title" >{{envCheckDesc}}</label>
+                        <label ng-show="envCheckRes=='ERROR'" style="color: red; font-size: larger;" class="modal-title" >{{envCheckDesc}}</label>
+                        <hr>
+                        <div class="panel panel-default">
+                            <!-- 镜像拉取状态检查-->
+                            <div class="panel-heading font-bold">
+                                <label >镜像拉取日志检测: <label style="color:green" ng-show="imageCheckStatus=='SUCCESS'">{{imageCheckStatus}}</label> <label style="color:red" ng-show="imageCheckStatus=='ERROR'">{{imageCheckStatus}}</label></label>
+                            </div>
+                            <div class="panel-body" ng-show="imageCheckStatus == 'ERROR'">
+                                <label style="color: midnightblue; white-space: pre-wrap; margin-left:10px;" class="modal-title" >{{dockerLog}}</label>
+                            </div>
+                        </div>
+                        <div class="panel panel-default">
+                            <!-- 部署脚本状态检查-->
+                            <div class="panel-heading font-bold">
+                                <label >部署脚本日志检测: <label style="color:green" ng-show="envCheck.deployCheckStatus=='SUCCESS'">{{envCheck.deployCheckStatus}}</label> <label style="color:red" ng-show="envCheck.deployCheckStatus=='ERROR'">{{envCheck.deployCheckStatus}}</label></label>
+
+                            </div>
+                            <div class="panel-body" >
+                                <label ng-show="envCheck.deployCheckStatus == 'ERROR'" style="color: red;white-space: pre-wrap; margin-left:10px;" style="color: midnightblue;white-space: pre-wrap; margin-left:5px;" class="modal-title" >{{envCheck.deployDesc}}</label>
+                                <label  ng-show="envCheck.deployCheckStatus == 'SUCCESS'" style="color: green;margin-left:10px;">部署脚本日志检测无异常</label>
+                                <table class="table table-striped" style="margin-top:5px;">
+                                    <tr ng-repeat="(index,fileName) in envCheck.deployCheckFiles track by index">
+                                        <td>{{fileName}}</td>
+                                        <td><button type="submit" class="btn btn-sm btn-info" data-toggle="modal" data-target="#logShowBox" ng-click="getDeployLog(fileName)">点击查看</button></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="panel panel-default">
+                            <!-- core检查-->
+                            <div class="panel-heading font-bold">
+                                <label >core检测: <label style="color:green" ng-show="envCheck.coreCheckStatus=='SUCCESS'">{{envCheck.coreCheckStatus}}</label> <label style="color:red" ng-show="envCheck.coreCheckStatus=='ERROR'">{{envCheck.coreCheckStatus}}</label></label>
+                            </div>
+                            <div class="panel-body" >
+                                <label ng-show="envCheck.coreCheckStatus == 'ERROR'" style="color: red;white-space: pre-wrap; margin-left:10px;" class="modal-title" >{{envCheck.coreDesc}}</label>
+                                <label ng-show="envCheck.coreCheckStatus == 'SUCCESS'" style="color: green;white-space: pre-wrap; margin-left:10px;" class="modal-title" >{{envCheck.coreDesc}}</label>
+                                <table class="table table-striped">
+                                    <tr ng-repeat="(index,fileName) in envCheck.coreFiles track by index">
+                                        <td>{{fileName}}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="panel panel-default">
+                            <!-- 应用启动日志检查-->
+                            <div class="panel-heading font-bold">
+                                <label >启动日志检测: <label style="color:green" ng-show="envCheck.serviceStatus=='SUCCESS'">{{envCheck.serviceStatus}}</label> <label style="color:red" ng-show="envCheck.serviceStatus=='ERROR'">{{envCheck.serviceStatus}}</label>  </label>
+                            </div>
+                            <div class="panel-body" >
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <label style="white-space: pre-wrap; margin-left:10px;">检测目录配置为：{{envCheck.serviceLogDir}}，将检测1小时内有改动的所有日志文件</label>
+                                        </td>
+                                    </tr>
+                                    <tr><td>
+                                <label ng-show="envCheck.serviceStatus == 'ERROR'" style="color: red;white-space: pre-wrap; margin-left:10px;" class="modal-title" >{{envCheck.serviceDesc}}</label>
+                                    </td></tr>
+                                    <tr><td>
+                                        <label  ng-show="envCheck.serviceStatus == 'SUCCESS' && envCheck.serviceLogFiles.length>0" style="color: green;margin-left:10px;">所有日志文件检测无异常</label>
+                                    </td></tr>
+
+                                </table>
+                                <table class="table table-striped">
+                                    <tr>
+                                        <td ng-show="envCheck.serviceLogFiles.length>0">检测日志文件列表：</td>
+                                        <td ng-show="envCheck.serviceLogFiles.length==0">检测路径中无有效日志文件！</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr ng-repeat="(index,fileName) in envCheck.serviceLogFiles track by index">
+                                        <td>{{fileName}}</td>
+                                        <td><button type="submit" class="btn btn-sm btn-info" data-toggle="modal" data-target="#logShowBox" ng-click="getDeployLog(fileName)">点击查看</button></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>&ensp;
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 日志查看 -->
+    <div class="modal fade" id="logShowBox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" >
+        <div class="modal-dialog" role="document" style="width:700px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+                    <h3 class="modal-title" id="dockerPullLogBox">查看日志</h3>
+                </div>
+                <div id="_modalDialog_body" class="modal-body">
+                    <!--  设置这个div的大小，超出部分显示滚动条 -->
+                    <!--<div  style="white-space:pre-line">-->
+                    <div id="selectTree" class="ztree" style="height:550px;overflow:auto; white-space:pre-line"> 
+                        <label  style="color: green; font-size: large;margin-top:-10px" class="modal-title" >{{currentLogFile}}</label>
+                        <table  style="margin-top:-10px; width:650px;">
+                            <tr>
+                                <td>
+                                    <label>当前行：{{startLine}}-{{endLine}} (总行数：{{totalNum}})</label>
+                                </td>
+
+                                <td>
+                                    <button type="submit" style="" popover-placement='top' popover-trigger="mouseenter" popover="向前翻页" class="btn btn-sm btn-default"  ng-click="getDeployLog(currentLogFile, startLine-500)">
+                                        <Strong><<</Strong>
+                                    </button>
+                                </td>
+
+                                <td>
+                                    <button type="submit" style=""  popover-placement='top' popover-trigger="mouseenter" popover="向后翻页" class="btn btn-sm btn-default"  ng-click="getDeployLog(currentLogFile, endLine+1)">
+                                        <Strong>>></Strong>
+                                    </button>
+                                </td>
+
+                            </tr>
+
+                        </table>
+                        <textarea style="width: 650px;min-height:430px; background-color: #282923;color:white;margin-top:-10px;">{{ currentLogText }}</textarea>
+
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>&ensp;
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

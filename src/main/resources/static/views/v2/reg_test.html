@@ -1,0 +1,313 @@
+<div ng-controller="RegController as reg" ng-init="initTopos()">
+    <script type="text/ng-template" id="smoke_modal.html">
+        <div ng-include="'views/modal/trace.html'"></div>
+    </script>
+    <div class="bg-light lter b-b wrapper-md" ng-show="pageRunType.code == 1">
+        <h1 class="m-n font-thin h3">{{pageRunType.name}}</h1>
+    </div>
+    <div>
+        <toaster-container toaster-options="{'position-class': 'toast-top-right', 'time-out':600000, 'body-output-type':'trustedHtml', 'close-button':true}"></toaster-container>
+        <div class="container mainBlock">
+            <div ng-if="selTab.tab == 'runTest'">
+
+                <div class="pull-right">
+
+                    <label class="i-switch m-t-xs m-r">
+                        <input type="checkbox" ng-click="selectSmartRreg(smartRreg)"  ng-model="smartRreg">
+                        <i></i>
+                    </label>
+                    <label class="pull-right" style="margin-top: 3px">智能回归已{{smartRreg?"开启":"关闭"}}</label>
+                    <br>
+                    <label class="i-switch m-t-xs m-r" ng-show="accuDefaultFlag">
+                        <input type="checkbox" ng-click="selectRegAccuracy(regAccuracy)"  ng-model="regAccuracy">
+                        <i></i>
+                    </label>
+                    <label ng-show="accuDefaultFlag" class="pull-right" style="margin-top: 3px">代码覆盖率{{regAccuracy?"开启":"关闭"}}</label>
+
+                </div>
+                <br>
+
+                <p class="text-muted" align="center">环境参数</p>
+                <br>
+                <form class="form-horizontal">
+                    <div class="form-group form-group-m-b">
+                        <label class="col-lg-3 control-label"></label>
+                        <div class="col-lg-8 form-group-m-t">
+                            <label class="i-checks" style="margin-right: 10px"><input type="radio" name="deployEnv" ng-model="formData.type" value="new"><i></i>新环境</label>
+                            <label class="i-checks"><input type="radio" name="deployEnv" ng-model="formData.type" value="old"><i></i>复用环境</label>
+                        </div>
+
+                        <div class="col-lg-1 form-group-m-t">
+                            <label class="i-checks" ng-show="formData.type == 'new'" style="display: none">
+                                <input type="checkbox" value="" ng-change="doSelectAllModule()" ng-model="selectAllModule">
+                                <i></i>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group form-group-m-b">
+                        <label class="col-lg-3 control-label">当前节点</label>
+                        <div class="col-lg-8 form-group-m-t">
+                            {{productInfo.productLine}} / {{productInfo.productModule}}
+                        </div>
+                    </div>
+                    <div class="form-group form-group-m-b">
+                        <label class="col-lg-3 control-label">任务名称</label>
+                        <div class="col-lg-8 form-group-m-t" style="max-width: 900px;">
+                            <input placeholder="请输入任务名" ng-model="formData.envName" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group form-group-m-b" ng-show="formData.type == 'new'">
+                        <label class="col-lg-3 control-label">系统内置变量</label>
+                        <div class="col-lg-8 form-group-m-t">
+                            <button toolTip="部署容器或模块时，动态替换为宿主机IP" class="btn btn-default btn-xs">${HOST_IP}</button>
+                        </div>
+                    </div>
+                </form>
+                <form class="form-horizontal" ng-if="formData.type == 'new'">
+                    <div class="form-group form-group-m-b" ng-repeat="tl in topolist">
+                        <label class="col-lg-3 control-label">{{tl.module}}</label>
+                        <div class="col-lg-8 form-group-m-t" style="max-width: 900px;">
+                            <div class="input-group m-b" ng-repeat="(k,v) in formData.params[tl.module] track by $index">
+                                <input placeholder="请输入key" ng-show = "v.key != branch && v.key != newcommit && v.key != oldcommit" ng-model="v.key" ng-disabled="$index == 0" type="text" class="form-control">
+
+                                <input ng-show="(($index != 0) || ($index == 0 && imageRelate==false)) && (v.key != branch && v.key != newcommit && v.key != oldcommit)" placeholder="{{v.desc}}" popover="{{v.data}}" popover-placement='bottom' popover-trigger="mouseenter" ng-model="v.data" type="text" class="form-control">
+
+
+                                <label ng-show="($index == 0 && imageRelate) && (v.key != branch && v.key != newcommit && v.key != oldcommit)" class="i-checks" ><input type="radio" name="imageInput" ng-model="imageInputType" ng-change="setImageInputType(imageInputType)" value="choose"><i></i>关联镜像选择</label>
+                                <label ng-show="($index == 0 && imageRelate) && (v.key != branch && v.key != newcommit && v.key != oldcommit)" style="margin-left:20px;margin-top:5px;" class="i-checks"><input type="radio"  name="imageInput" ng-change="setImageInputType(imageInputType)" ng-model="imageInputType" value="enter"><i></i>输入镜像地址</label>
+
+                                    <select ng-show="($index == 0 && imageInputType=='choose' && imageRelate) && (v.key != branch && v.key != newcommit && v.key != oldcommit)"  style ="margin-top:5px;" class="form-control" ng-model="currentImagePicked" ng-change="pickImage(currentImagePicked)" ng-options="opt for opt in imageList"></select>
+
+                                <input ng-show="($index == 0 && imageInputType=='enter' && imageRelate) && (v.key != branch && v.key != newcommit && v.key != oldcommit) " placeholder="{{v.desc}}" popover="{{v.data}}" popover-placement='bottom' popover-trigger="mouseenter" ng-model="v.data" type="text" class="form-control">
+
+                                <span class="input-group-addon" ng-show = "v.key != branch && v.key != newcommit && v.key != oldcommit" toolTip="首个参数为默认镜像名，不允许删除" ng-disabled="true" ng-show="$index == 0"> - </span>
+                                <a class="input-group-addon" ng-show = "v.key != branch && v.key != newcommit && v.key != oldcommit" ng-show="currentIdx[tl.module] == k" ng-click="addParams(tl,k)"> + </a>
+                            </div>
+                        </div>
+                        <div class="col-lg-1 form-group-m-t">
+                            <label class="i-checks" style="margin-top: 7px;display: none" >
+                                <input type="checkbox" value="{{tl.module}}" ng-model="formData.selectModels[tl.module]" ng-init="formData.selectModels[tl.module] = true">
+                                <i></i>
+                            </label>
+                        </div>
+                    </div>
+                </form>
+                <form class="form-horizontal" ng-if="pageRunType.code == 1">
+                    <div class="form-group form-group-m-b">
+                        <label class="col-lg-3 control-label">执行器脚本</label>
+                        <div class="col-lg-8 form-group-m-t">
+                            <ui-codemirror title="双击可在编辑器中编辑" ng-model="formData.script" ng-dblclick="openScriptModule(0)" ui-codemirror-opts="baseCodeMirrorConfig"></ui-codemirror>
+                        </div>
+                    </div>
+                </form>
+                <hr>
+
+                <p class="text-muted" align="center" ng-show="accuracyOpenFlag">精准智能测试
+                    <label class="i-checks" >
+                        <input type="checkbox"  ng-value="false"  ng-click="selectAccuracyRun(accuracyRunFlag)" ng-model="accuracyRunFlag">
+                        <i></i>
+                    </label>
+                </p>
+                <form class="form-horizontal" ng-show="accuracyRunFlag">
+                    <div class="form-group form-group-m-b">
+                        <label class="col-lg-3 control-label"></label>
+                        <div class="col-lg-8 form-group-m-t">
+                            <label class="i-checks"><input type="radio" name="accuracyCaseType" ng-model="accuracyFormData.caseType" value="accuracyCase"><i></i>精准用例</label>
+                            <label class="i-checks" style="margin-right: 10px"><input type="radio" name="accuracyCaseType" ng-model="accuracyFormData.caseType" value="userCase"><i></i>自选用例</label>
+                        </div>
+                    </div>
+                    <div class="form-group form-group-m-b" ng-show="canQueryReg">
+                        <label class="col-lg-3 control-label"></label>
+                        <div class="col-lg-8 form-group-m-t">
+                            <label class="i-switch m-t-xs m-r"><input type="checkbox" ng-click="selectQueryReg(queryRegFlag)"  ng-model="queryRegFlag"><i></i></label>
+                            <label style="margin-left: -8px; margin-top: -8px">流量回归{{queryRegFlag?"开启":"关闭"}}</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group form-group-m-b">
+                        <label class="col-lg-3 control-label">branch</label>
+                        <div class="col-lg-8 form-group-m-t">
+                            <input placeholder="请输入待测代码分支" ng-disabled="formData.type == 'old'" ng-model="accuracyFormData.testBranch" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group form-group-m-b">
+                        <label class="col-lg-3 control-label">test-commit</label>
+                        <div class="col-lg-8 form-group-m-t">
+                            <input placeholder="请输入待测commit版本" ng-disabled="formData.type == 'old'" ng-model="accuracyFormData.newCommit" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group form-group-m-b">
+                        <label class="col-lg-3 control-label">base-commit</label>
+                        <div class="col-lg-8 form-group-m-t">
+                            <input placeholder="请输入基准commit版本" ng-disabled="formData.type == 'old'" ng-model="accuracyFormData.oldCommit" class="form-control">
+                        </div>
+                    </div>
+
+
+                    <div class="form-group form-group-m-b" ng-show="">
+                        <label class="col-lg-3 control-label"></label>
+                        <div class="col-lg-8 form-group-m-t">
+                            <label class="i-switch m-t-xs m-r">
+                                <input type="checkbox" ng-click="selectRegBase(buildAccuBaseFlag)"  ng-model="buildAccuBaseFlag">
+                                <i></i>
+                            </label>
+                            <label  style="margin-left: -8px; margin-bottom: -8px">建立用例基线{{buildAccuBaseFlag?"开启":"关闭"}}</label>
+                        </div>
+                    </div>
+
+                </form>
+
+
+                <br>
+                <hr>
+                <p>
+                    <div class="text-muted" align="center">创建环境</div>
+                </p>
+                <br>
+                <form class="form-horizontal" ng-if="formData.type == 'old'">
+                    <div ng-if="existEnvs.length == 0" align="center">
+                        <span class="text-danger"><i class="fa fa-warning"></i> 无可用的环境，请先创建环境！</span>
+                    </div>
+                    <div ng-if="existEnvs.length > 0" class="form-group form-group-m-b" ng-repeat="evs in existEnvs track by $index">
+                        <label class="col-lg-3 control-label">
+                            <label class="i-checks">
+                                <input type="checkbox" value="evs.ip" ng-model="formData.existEnvSelect[evs.ip].select">
+                                <i></i>
+                            </label> {{evs.ip}}<code>{{evs.hostType|hostTypeName}}</code>
+                        </label>
+                        <div class="col-lg-8 form-group-m-t">
+                            <ui-select multiple ng-model="formData.existEnvSelect[evs.ip].envs" theme="bootstrap">
+                                <ui-select-match placeholder="选择已有环境...">{{$item.name}}</ui-select-match>
+                                <ui-select-choices repeat="ee in evs.envs | propsFilter: {name: $select.search}">
+                                    <div ng-bind-html="ee.name | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+                </form>
+                <table class="table" ng-if="formData.type == 'new'">
+                    <thead>
+                    <th>宿主机</th>
+                    <th>创建环境数</th>
+                    <th>自动删除老环境</th>
+                    <th>最大环境数</th>
+                    <th width="20%">剩余环境数</th>
+                    </thead>
+                    <tbody ng-if="hosts.length==0">
+                        <tr>
+                            <td colspan="5">
+                                <span class="text-danger"><i class="fa fa-warning"></i> Pipeline中未配置Hosts节点！</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-if="hosts.length>0">
+                        <tr ng-repeat="host in hosts track by $index">
+                            <td>
+                                <label class="i-checks">
+                                    <input type="checkbox" value="{{host.ip}}" ng-model="formData.selectHosts[host.ip].select">
+                                    <i></i>
+                                </label> {{host.ip}}<code>{{host.hostType|hostTypeName}}</code>
+                            </td>
+                            <!--
+                            <td ng-if="existEnvs.length > 0">
+                                <select ng-model="formData.selectHosts[host.ip].createEnvNum" ng-init="formData.selectHosts[host.ip].createEnvNum=1" class="form-control" ng-repeat="renvs in existEnvs" ng-if="renvs.ip == host.ip" ng-options="hg for hg in renvs.envNum"></select>
+                            </td>
+                            -->
+                            <td>
+                                <select ng-model="formData.selectHosts[host.ip].createEnvNum" ng-init="formData.selectHosts[host.ip].createEnvNum=1" class="form-control" ng-repeat="renvs in hostsBaseNumSelect" ng-if="renvs.ip == host.ip" ng-options="hg for hg in renvs.envNum"></select>
+                            </td>
+                            <td>
+                                <label class="i-checks">
+                                    <input type="checkbox" value="true" ng-model="formData.selectHosts[host.ip].removeOldEnv" ng-init="formData.selectHosts[host.ip].removeOldEnv=true">
+                                    <i></i>
+                                </label>
+                            </td>
+                            <td>{{host.maxEnvNum}}</td>
+                            <td ng-repeat="renvs in existEnvs" ng-if="existEnvs.length > 0 && renvs.ip == host.ip">
+                                {{renvs.remain}}<br>
+                                <span ng-show="formData.selectHosts[host.ip].createEnvNum > renvs.remain" class="text-danger">创建环境数已超过剩余环境数,{{formData.selectHosts[host.ip].removeOldEnv?'创建时将自动删除老环境':'部分将会创建失败'}}</span>
+                            </td>
+                            <td ng-if="existEnvs.length == 0">
+                                {{host.maxEnvNum}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <hr>
+
+                <div class="col-lg-12" ng-show="accuracyFormData.caseType=='userCase'">
+                    <div class="col-lg-5" style="margin-left: 30px">
+                        <p>{{formData.caseType==0?"用例":"场景"}}列表</p>
+                        <select ng-model="caselist.srcCase" multiple class="form-control" size="10" ng-options="hg for hg in cases_src">
+                        </select>
+                        <br>
+                    </div>
+                    <div class="col-lg-1">
+                        <button type="button" ng-click="addSelectCase()" toolTip="将用例列表中的用例移动到已选用例列表" class="btn btn-sm btn-default text-uc m-t-n-xs" style="margin-top: 50px">
+                            <Strong>>>></Strong>
+                        </button>
+                        <br>
+                        <button type="button" ng-click="removeSelectCase()" toolTip="将已选用例列表中的用例移动到用例列表" class="btn btn-sm btn-default text-uc m-t-n-xs" style="margin-top: 60px">
+                            <Strong><<<</Strong>
+                        </button>
+                    </div>
+                    <div class="col-lg-5">
+                        <p>已选{{formData.caseType==0?"用例":"场景"}}</p>
+                        <select ng-model="caselist.selectCase" multiple class="form-control" size="10" ng-options="hg for hg in formData.cases">
+                        </select>
+                        <br>
+                    </div>
+                </div>
+
+                <hr>
+                <p style="margin-top: 10px;" align="center">
+                    <button ng-click="saveForm()" ng-disabled="submitDisabled" type="button" style="margin-right: 10px" class="btn btn-sm btn-success text-uc m-t-n-xs">
+                        <Strong>开始执行</Strong>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-danger text-uc m-t-n-xs">
+                        <Strong>取消</Strong>
+                    </button>
+                </p>
+                <p>&nbsp;</p>
+            </div>
+            <!-- content -->
+            <div class="app-content">
+                <div ui-butterbar></div>
+                <a href class="off-screen-toggle show" ui-toggle-class="off-screen" data-target=".app-aside"></a>
+                <div class="app-content-body fade-in-up" style="padding-bottom: 0px" ui-view></div>
+            </div>
+            <!-- /content -->
+
+            <!-- aside right -->
+            <div class="app-aside-right pos-fix no-padder w-case-box w-auto-xs bg-white b-l animated fadeInRight hide">
+                <div class="vbox" id="recentTaskDetailBox">
+                    <div class="wrapper b-b b-t b-light m-b">
+                        <a href class="pull-right text-muted text-md" title="关闭" ui-toggle-class="show" target=".app-aside-right"><i class="fa fa-times"></i></a>
+                        <span><i class="fa fa-tasks"></i> 任务详情</span>
+                        <!-- <span class="text-primary font-bold" style="margin-left: 30px;"><i class="fa fa-info-circle"></i> 自动过滤重复的记录</span> -->
+                    </div>
+                    <div class="row-row">
+                        <div class="cell">
+                            <div class="cell-inner padder">
+                                <div ng-include="'views/blocks/env_detail.html'"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="wrapper m-t b-t b-light">
+                        <form class="m-b-none">
+                            <div align="center">
+                                <a ui-toggle-class="show" target=".app-aside-right" id="backToList">
+                                    <button type="button" class="btn btn-danger">关闭</button>
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- / aside right -->
+        </div>
+    </div>
+</div>
+<style>
+    .CodeMirror {border: 1px solid #e7ecee;}
+</style>

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/intelligent-test-platform.iml" filepath="$PROJECT_DIR$/intelligent-test-platform.iml" />
+      <module fileurl="file://$PROJECT_DIR$/markov-demo.iml" filepath="$PROJECT_DIR$/markov-demo.iml" />
     </modules>
   </component>
 </project>

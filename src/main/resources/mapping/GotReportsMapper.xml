@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- WARNING: This file is SQI exclusive, don't change! -->
+
+<mapper namespace="com.alibaba.markovdemo.mapper.GotReportsMapper">
+
+    <resultMap id="GotReports" type="gotReports">
+        <id column="id" property="id"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="app_id" property="appId"/>
+        <result column="scenario_id" property="scenarioId"/>
+        <result column="user" property="user"/>
+        <result column="report_name" property="reportName"/>
+        <result column="status" property="status"/>
+        <result column="message" property="message"/>
+        <result column="run_type" property="runType"/>
+        <result column="exec_id" property="execId"/>
+        <result column="analysis" property="analysis"/>
+        <result column="task_id" property="taskId"/>
+        <result column="zk_info" property="zkInfo"/>
+        <result column="accuracy_report_id" property="accuracyReportId"/>
+        <result column="case_num" property="caseNum"/>
+        <result column="image_name" property="imageName"/>
+        <result column="branch_name" property="branchName"/>
+        <result column="git_branch" property="gitBranch"/>
+        <result column="git_commit" property="gitCommit"/>
+        <result column="cc_cov_rate" property="ccCovRate"/>
+        <result column="is_visible" property="isVisible"/>
+    </resultMap>
+
+
+
+    <insert id="insert" parameterType="com.alibaba.markovdemo.entity.GotReports" useGeneratedKeys="true" keyProperty="id">
+        insert into `got_reports` (
+        `gmt_create`,
+        `gmt_modified`,
+        <trim suffixOverrides=",">
+            <if test="user != null">`user`,</if>
+            <if test="reportName != null">`report_name`,</if>
+            <if test="message != null">`message`,</if>
+            <if test="appId != null">`app_id`,</if>
+            <if test="scenarioId != null">`scenario_id`,</if>
+            <if test="runType != null">`run_type`,</if>
+            <if test="execId != null">`exec_id`,</if>
+            <if test="analysis != null">`analysis`,</if>
+            <if test="taskId != null">`task_id`,</if>
+            <if test="zkInfo != null">`zk_info`,</if>
+            <if test="accuracyReportId != null">`accuracy_report_id`,</if>
+            <if test="caseNum != null">`case_num`,</if>
+            <if test="status != null">`status`,</if>
+            <if test="imageName != null">`image_name`,</if>
+            <if test="branchName != null">`branch_name`,</if>
+            <if test="gitBranch != null">`git_branch`,</if>
+            <if test="gitCommit != null">`git_commit`,</if>
+            <if test="ccCovRate != null">`cc_cov_rate`,</if>
+            <if test="isVisible != null">`is_visible`</if>
+        </trim>
+        ) values(
+        now(),
+        now(),
+        <trim suffixOverrides=",">
+            <if test="user != null">#{user},</if>
+            <if test="reportName != null">#{reportName},</if>
+            <if test="message != null">#{message},</if>
+            <if test="appId != null">#{appId},</if>
+            <if test="scenarioId != null">#{scenarioId},</if>
+            <if test="runType != null">#{runType},</if>
+            <if test="execId != null">#{execId},</if>
+            <if test="analysis != null">#{analysis},</if>
+            <if test="taskId != null">#{taskId},</if>
+            <if test="zkInfo != null">#{zkInfo},</if>
+            <if test="accuracyReportId != null">#{accuracyReportId},</if>
+            <if test="caseNum != null">#{caseNum},</if>
+            <if test="status != null">#{status},</if>
+            <if test="imageName != null">#{imageName},</if>
+            <if test="branchName != null">#{branchName},</if>
+            <if test="gitBranch != null">#{gitBranch},</if>
+            <if test="gitCommit != null">#{gitCommit},</if>
+            <if test="ccCovRate != null">#{ccCovRate},</if>
+            <if test="isVisible != null">#{isVisible}</if>
+        </trim>
+        )
+    </insert>
+
+    <update id="update" parameterType="com.alibaba.markovdemo.entity.GotReports">
+        update `got_reports` set `id` = #{id}, `gmt_modified` = now()
+        <if test="user!=null">,`user` = #{user}</if>
+        <if test="reportName!=null">,`report_name` = #{reportName}</if>
+        <if test="message!=null">,`message` = #{message}</if>
+        <if test="appId!=null">,`app_id` = #{appId}</if>
+        <if test="scenarioId!=null">,`scenario_id` = #{scenarioId}</if>
+        <if test="runType!=null">,`run_type` = #{runType}</if>
+        <if test="analysis!=null">,`analysis` = #{analysis}</if>
+        <if test="execId!=null">,`exec_id` = #{execId}</if>
+        <if test="taskId!=null">,`task_id` = #{taskId}</if>
+        <if test="zkInfo!=null">,`zk_info` = #{zkInfo}</if>
+        <if test="accuracyReportId!=null">,`accuracy_report_id` = #{accuracyReportId}</if>
+        <if test="caseNum!=null">,`case_num` = #{caseNum}</if>
+        <if test="status!=null">,`status` = #{status}</if>
+        <if test="imageName!=null">,`image_name` = #{imageName}</if>
+        <if test="branchName!=null">,`branch_name` = #{branchName}</if>
+        <if test="gitBranch!=null">,`git_branch` = #{gitBranch}</if>
+        <if test="gitCommit!=null">,`git_commit` = #{gitCommit}</if>
+        <if test="ccCovRate!=null">,`cc_cov_rate` = #{ccCovRate}</if>
+        <if test="isVisible != null">,`is_visible`= #{isVisible}</if>
+        where id = #{id}
+    </update>
+
+    <select id="getIdsByScenarioId" parameterType="Long" resultType="Long">
+        select id from `got_reports` where scenario_id = #{scenarioId}
+    </select>
+
+    <select id="getByScenarioIdPage" parameterType="Map" resultMap="GotReports">
+        select * from `got_reports` where scenario_id =
+        #{scenarioId}
+        order by id desc
+        limit #{fromRow},#{pageSize}
+    </select>
+
+    <select id="getVisibleByScenarioIdPage" parameterType="Map" resultMap="GotReports">
+        select * from `got_reports` where scenario_id =
+        #{scenarioId} and is_visible=0
+        order by id desc
+        limit #{fromRow},#{pageSize}
+    </select>
+
+
+    <select id="findById" parameterType="Long" resultMap="GotReports">
+        select * from `got_reports` where id = #{id}
+    </select>
+
+</mapper>

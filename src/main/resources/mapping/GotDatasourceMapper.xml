@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- WARNING: This file is SQI exclusive, don't change! -->
+
+<mapper namespace="com.alibaba.markovdemo.mapper.GotDatasourceMapper">
+
+    <resultMap id="GotDatasource" type="gotDatasource">
+        <id column="id" property="id"/>
+        <result column="scenario_id" property="scenarioId"/>
+        <result column="content" property="content"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="gotDatasource" useGeneratedKeys="true" keyProperty="id">
+        replace into `got_datasource` (
+        <trim suffixOverrides=",">
+            <if test="id != null">`id`,</if>
+            <if test="scenarioId != null">`scenario_id`,</if>
+            <if test="content != null">`content`</if>
+        </trim>
+        ) values(
+        <trim suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="scenarioId != null">#{scenarioId},</if>
+            <if test="content != null">#{content}</if>
+        </trim>
+        )
+    </insert>
+
+
+
+    <select id="getDataSource" parameterType="Long" resultMap="GotDatasource">
+        select *
+        from `got_datasource`
+        where scenario_id = #{scenarioId}
+        order by id desc
+        limit 1
+    </select>
+
+
+
+
+</mapper>

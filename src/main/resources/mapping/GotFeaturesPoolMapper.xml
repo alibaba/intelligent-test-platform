@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- WARNING: This file is SQI exclusive, don't change! -->
+
+<mapper namespace="com.alibaba.markovdemo.mapper.GotFeaturesPoolMapper">
+
+    <resultMap id="gotFeaturesPool" type="com.alibaba.markovdemo.entity.GotFeaturesPool">
+        <id column="id" property="id"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="app_id" property="appId"/>
+        <result column="scenario_id" property="scenarioId"/>
+        <result column="features" property="features"/>
+    </resultMap>
+
+
+    <insert id="insert" parameterType="com.alibaba.markovdemo.entity.GotFeaturesPool" useGeneratedKeys="true" keyProperty="id">
+        replace into `got_features_pool` (
+        `gmt_create`,
+        `gmt_modified`,
+        <trim suffixOverrides=",">
+            <if test="id != null">`id`,</if>
+            <if test="scenarioId != null">`scenario_id`,</if>
+            <if test="appId != null">`app_id`,</if>
+            <if test="features != null">`features`</if>
+        </trim>
+        ) values(
+        now(),
+        now(),
+        <trim suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="scenarioId != null">#{scenarioId},</if>
+            <if test="appId != null">#{appId},</if>
+            <if test="features != null">#{features}</if>
+        </trim>
+        )
+    </insert>
+
+
+
+    <select id="findByScenarioId" parameterType="Long" resultMap="gotFeaturesPool">
+        select *
+        from `got_features_pool`
+        where id = #{scenarioId}
+    </select>
+
+
+</mapper>

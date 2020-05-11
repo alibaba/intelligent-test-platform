@@ -1,0 +1,105 @@
+<div ng-controller="pluginController">
+    <div class="container mainBlock">
+        <h3>插件库</h3>
+        <br>
+        <div ng-show="type == 'list'">
+            <button class="btn m-b-xs w-xs btn-info btn-rounded" ng-click="navigate('create')">添加插件</button>
+            <br>
+            <table class="table">
+                <tr>
+                    <th class="listTh">插件id</th>
+                    <th class="listTh">插件名</th>
+                    <th class="listTh">描述</th>
+                    <th class="listTh">类型</th>
+                    <th class="listTh">调用阶段</th>
+                    <th class="listTh">创建人</th>
+                    <th class="listTh">修改人</th>
+                    <th class="listTh">操作</th>
+                </tr>
+                <tr ng-repeat="(x,y) in pluginList">
+                    <td>{{ y.id }}</td>
+                    <td>{{ y.name }}</td>
+                    <td>{{ y.pluginDesc }}</td>
+                    <td>{{ y.pluginType }}</td>
+                    <td>{{ dict[y.pluginStage] }}</td>
+                    <td>{{ y.createBy }}</td>
+                    <td>{{ y.modifiedBy }}</td>
+                    <td  style="white-space:nowrap">     
+                        <a href="" ng-click="navigate('edit',y.id)">编辑</a> 
+                        <span style="color: lightgray;"> | </span>        
+                        <a href="" data-toggle="modal" data-target="#delModal" ng-click="setDelId(y.id)">删除</a>                     
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div ng-show="type == 'edit' || type == 'create'">
+            <div class="row">
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <label>插件名</label>
+                        <input style="width:100%" ng-model="plugin.name" type="text" class="form-control" aria-label="...">
+                    </div>
+                    <div class="col-sm-3">
+                        <label>描述</label>
+                        <input style="width:100%" ng-model="plugin.pluginDesc" type="text" class="form-control" aria-label="...">
+                    </div>
+                    <div class="col-sm-3">
+                        <label>类型</label>
+                        <select style="width:100%" class="form-control" ng-model="plugin.pluginType" ng-init="plugin.pluginType = 'system'">
+                            <option value="system">系统插件</option>
+                            <option value="groovy">自定义插件-groovy</option>
+                            <option value="java">自定义插件-java</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <label>调用阶段</label>
+                        <select style="width:100%" class="form-control" ng-model="plugin.pluginStage" ng-init="plugin.pluginStage = 'caseRun'">
+                            <option value="caseRun">用例执行</option>
+                            <option value="dataPrepare">数据准备</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group col-sm-12" style="margin-top:20px">
+                    插件内容 <a target="_blank" href="https://lark.alipay.com/uml7bi/sh75kr/hgdeaa"> 编辑指南</a>
+                    <textarea class="form-control" ng-model="plugin.pluginContent" style="height:250px">
+
+                    </textarea>
+                </div>
+
+                <div class="form-group col-sm-12" nstyle="margin-top:20px">
+                    插件参数
+                    <textarea class="form-control" ng-model="plugin.pluginParams"  style="height:250px">
+
+                    </textarea>
+                </div>
+                <div class="form-group col-sm-12"  style="margin-top:20px">
+                    <button class="btn m-b-xs w-xs btn-info btn-rounded" ng-click="addPlugin()" >保存</button>
+                    <button class="btn m-b-xs w-xs btn-info btn-rounded" ng-click="navigate('list')">取消</button>
+                    {{ operInfo }}
+                </div>
+
+            </div>
+        </div>
+    </div>  
+    <!-- Modal -->
+    <div class="modal fade" id="delModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">提示</h4>
+            </div>
+            <div class="modal-body">
+                是否确认删除
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-info" data-dismiss="modal" ng-click="deletePlugin()">确认</button>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

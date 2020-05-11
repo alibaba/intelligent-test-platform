@@ -1,0 +1,33 @@
+<!-- first -->
+<ul class="nav" ng-if="currentLeftMenu != null" ng-repeat="menu in currentLeftMenu">
+
+    <li ng-class="{active:menu.selected }" ng-if="menu.son == null" ng-click="changeLeftMenu(menu.name)">
+        <a ui-sref="{{menu.route}}">
+            <i class="glyphicon  glyphicon-chevron-right"></i>
+            <span class="font-bold" translate="{{menu.name}}"></span>
+        </a>
+    </li>
+
+    <li ng-class="{active:menu.selected}" ng-if="menu.son != null" >
+        <a href="{{menu.route}}" class="auto" ng-click="changeLeftMenu(menu.name)">
+          <span class="pull-right text-muted">
+            <i class="fa fa-fw fa-angle-right text"></i>
+            <i class="fa fa-fw fa-angle-down text-active"></i>
+          </span>
+            <i class="glyphicon glyphicon-chevron-down icon text-primary-dker"></i>
+            <span translate="{{menu.name}}"></span>
+        </a>
+        <ul class="nav nav-sub dk">
+            <li class="nav-sub-header">
+                <a href>
+                    <span translate="{{menu.name}}"></span>
+                </a>
+            </li>
+            <li ng-class="{active:sm.selected}" ng-click="changeLeftMenu(menu.name,sm.name)" ng-repeat = "sm in menu.son" ng-if = "sm.id != -1">
+                <a href="{{sm.route}}">
+                    <span translate="{{sm.name}}"></span>
+                </a>
+            </li>
+        </ul>
+    </li>
+</ul>

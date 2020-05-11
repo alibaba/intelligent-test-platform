@@ -1,0 +1,204 @@
+.ui-select-match-text { 
+    width: 280px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+.caseTd {
+    padding-left: 10px;
+    padding-bottom: 10px;
+}
+
+.reportSum {
+    font-size:16px;
+    padding-bottom: 15px;
+}
+
+.listTh {
+    padding:16px !important;
+    background-color: #fafafa;
+}
+
+.mainBlock {
+    background-color:white;
+    margin-top:10px;
+    padding:16px;
+}
+
+.titleFor404 {
+    color: rgba(0,0,0,.45);
+    font-size: 20px;
+    line-height: 28px;
+    margin-bottom: 16px;
+}
+
+.backImgFor404 {
+    height: 360px;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: contain;
+}
+
+.titleForDs {
+    background: #fff;
+    padding: 16px 32px 0;
+    border-bottom: 1px solid #e8e8e8;
+}
+
+.just-padding {
+    padding: 15px;
+  }
+  
+  .list-group.list-group-root {
+    padding: 0;
+    overflow: hidden;
+  }
+  
+  .list-group.list-group-root .list-group {
+    margin-bottom: 0;
+  }
+  
+  .list-group.list-group-root .list-group-item {
+    border-radius: 0;
+    border-width: 1px 0 0 0;
+  }
+  
+  .list-group.list-group-root > .list-group-item:first-child {
+    border-top-width: 0;
+  }
+  
+  .list-group.list-group-root > .list-group > .list-group-item {
+    padding-left: 30px;
+  }
+  
+  .list-group.list-group-root > .list-group > .list-group > .list-group-item {
+    padding-left: 45px;
+  }
+
+  .alwaysBottom {
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    /* right: 0; */
+    height: 56px;
+    line-height: 56px;
+    -webkit-box-shadow: 0 -1px 2px rgba(0,0,0,.03);
+    box-shadow: 0 -1px 2px rgba(0,0,0,.03);
+    background: #fff;
+    border-top: 1px solid #e8e8e8;
+    padding: 0 24px;
+    z-index: 12;
+    /* margin-left:  200px; */
+    padding-right:  15px;
+}
+
+.stageActive {
+    color:#1890ff
+}
+
+.form-item-zhizi {
+    width: 80%
+}
+
+li .stageList{list-style-type: square;font-size: 16px;line-height: 30px;}
+
+li:hover .stageList{color: #1890ff;cursor:pointer}
+
+.ui-select-choices-row>span
+{
+    white-space: normal !important;
+    word-wrap:break-word;
+}
+
+
+/* Some additional styling to demonstrate that append-to-body helps achieve the proper z-index layering. */
+.select-box {
+    background: #fff;
+    position: relative;
+    z-index: 1;
+}
+
+.myModal {
+    display: none;
+}
+
+.popover-title {
+    font-weight: bold;
+}
+
+.popover-element {
+    padding-right: 0;
+}
+
+.modal-large {
+    width: 1000px;
+}
+
+.pop-up {
+    transition:all .1s;box-shadow:0 .5rem 1rem rgba(0,0,0,.15)
+}
+
+.pop-up:hover {
+    transform:translatey(-3px) scale(1.01);box-shadow:0 .8rem 3rem rgba(0,0,0,.175)
+}
+
+.p-4 {
+    padding:0.25rem 1.25rem!important;
+}
+
+.mb-4,
+.my-4 {
+    margin-bottom: 1.5rem !important;
+}
+
+.mb-0,
+.my-0 {
+    margin-bottom: 0 !important;
+}
+
+.border-0 {
+    border:0!important;
+}
+
+.bg-light {
+    background-color:#f8f9fa!important;
+}
+
+a.bg-light:focus,a.bg-light:hover,button.bg-light:focus,button.bg-light:hover {
+    background-color:#dae0e5!important
+}
+
+.goc-container {
+    background-color:white;
+}
+
+.logotxt {
+    font-weight:700;
+    color:#fff;
+    font-size:64px;
+    background-color: transparent;
+}
+
+.loading-pane {
+    position: absolute;
+    background: url("../img/2pqsuc0.jpg");
+}
+
+.loading-pane .spinner-image{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: url("../img/2emfu9w.jpg") center center no-repeat;
+}
+
+.form-group-m-b {
+    margin-bottom: 3px;
+}
+
+.form-group-m-t {
+    margin-top: 7px;
+}
+.form-bg {
+    background-color: #e7ecee;
+    padding: 10px;
+}

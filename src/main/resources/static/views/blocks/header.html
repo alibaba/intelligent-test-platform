@@ -1,0 +1,27 @@
+
+<!-- navbar header -->
+<div class="navbar-header {{app.settings.navbarHeaderWhite}}" style="z-index: 3;">
+    <button class="pull-right visible-xs dk" ui-toggle-class="show" data-target=".navbar-collapse">
+        <i class="glyphicon glyphicon-cog"></i>
+    </button>
+    <button class="pull-right visible-xs" ui-toggle-class="off-screen" data-target=".app-aside" ui-scroll="app">
+        <i class="glyphicon glyphicon-align-justify"></i>
+    </button>
+    <!-- brand -->
+    <a href="/" style="margin-left: 10px">
+        <img class="navbar-brand-full" src="../img/markov-logo.png" width="auto" height="50" alt="Logo">
+    </a>
+</div>
+<div class="collapse navbar-collapse box-shadow {{app.settings.navbarCollapseColor}}" ng-init="getLoginUser()">
+
+    <ul class="nav navbar-nav hidden-sm">
+
+
+    </ul>
+
+
+</div>
+
+
+
+

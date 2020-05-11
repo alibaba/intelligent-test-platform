@@ -1,0 +1,97 @@
+<style>
+<!--
+.app-modal-window .modal-dialog {
+  width: 1000px;
+}
+-->
+</style>
+<div class="app-modal-window modal-body" style="overflow:auto" ng-init="init()">
+    <h3 class="m-t-none m-b font-thin">冒烟设置
+        <small class="pull-right">
+            <button type="button" class="btn btn-sm btn-danger text-uc m-t-n-xs" ng-click="close()"><strong>关闭</strong></button>
+            <button type="button" class="btn btn-sm btn-success text-uc m-t-n-xs" ng-click="completed()" toolTip="将所选择的`{{sk.env=='base'?'基准':'目标'}}环境结果`转化为功能测试用例"><strong>转化为功能用例</strong></button>
+        </small>
+    </h3>
+    <div class="row">
+        <div class="col-sm-12" style="margin-bottom: 5px">
+            <button class="btn btn-success btn-sm" ng-disabled="smokeStatus=='运行中'" ng-click="doSmoke()">重新对比</button>&nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#useUserTargetIpSmoke" ng-disabled="smokeStatus=='运行中'">自定义环境</button>&nbsp;&nbsp;&nbsp;&nbsp;
+            基准环境：{{smokeIp1}}&nbsp;&nbsp;&nbsp;&nbsp;
+            目标环境：{{smokeIp2}}&nbsp;&nbsp;&nbsp;&nbsp;
+            状态：{{smokeStatus}}
+        </div>
+        <div class="col-sm-12">
+            <form role="form">
+                <div class="form-group">
+                    <label>冒烟串：</label>
+                    <textarea rows="6" ng-show="!doubleparse" class="form-control" ng-model="smokequery"></textarea>
+                    <textarea rows="6" ng-show="doubleparse" class="form-control" ng-model="realJsonQuery"></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="col-sm-12">
+            <form role="form">
+                <div class="form-group col-sm-6">
+                    <label>
+                        <div class="radio">
+                            <label class="i-checks">
+                                <input type="radio" name="a" ng-model="sk.env" value="1">
+                                <i></i>
+                                基准环境结果：
+                            </label>
+                        </div>
+                        </label>
+                    <textarea rows="6" class="form-control" ng-model="sk.baseEnvResult"></textarea>
+                </div>
+                <div class="form-group col-sm-6">
+                    <label>
+                        <div class="radio">
+                            <label class="i-checks">
+                                <input type="radio" name="a" ng-model="sk.env" value="2">
+                                <i></i>
+                                目标环境结果：
+                            </label>
+                        </div>
+                        </label>
+                    <textarea rows="6" class="form-control" ng-model="sk.targetEnvResult"></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="col-sm-12">
+            <form role="form">
+                <div class="form-group">
+                    <label>对比结果：</label>
+                    <diff-smoke ng-if="viewDiffResult" config="diffConfig"/>
+                </div>
+            </form>
+        </div>
+        <div class="pull-right" style="margin-right:10px">
+            <button type="button" class="btn btn-sm btn-danger text-uc m-t-n-xs" ng-click="close()"><strong>关闭</strong></button>
+            <button type="button" class="btn btn-sm btn-success text-uc m-t-n-xs" ng-click="completed()" toolTip="将所选择的`{{sk.env=='base'?'基准':'目标'}}环境结果`转化为功能测试用例"><strong>转化为功能用例</strong></button>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="useUserTargetIpSmoke" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="userTargetIp">请输入目标对比IP：</h4>
+                    </div>
+                    <div class="modal-body">
+                        <textarea  rows="1" placeholder="请输入环境IP1" class="form-control" ng-model="smokeTargetIp1"></textarea>
+                    </div>
+                    <div class="modal-body">
+                        <textarea  rows="1" placeholder="请输入环境IP2" class="form-control" ng-model="smokeTargetIp2"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-info" data-dismiss="modal" ng-click="specifySmokeTargetIps(smokeTargetIp1, smokeTargetIp2)">确认</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    </div>
+</div>

@@ -1,0 +1,12 @@
+<style>
+    .CodeMirror {border: 1px solid #e7ecee;}
+</style>
+<div class="bg-light lter b-b wrapper-md">
+    <h1 class="m-n font-thin h3">环境详情</h1>
+</div>
+<div ng-controller="RegController" ng-init="initSnapshot()">
+    <toaster-container toaster-options="{'position-class': 'toast-top-right', 'time-out':60000, 'body-output-type':'trustedHtml', 'close-button':true}"></toaster-container>
+    <div class="container mainBlock">
+        <ui-codemirror ng-model="snapshotData" ui-codemirror-opts="baseCodeMirrorConfig"></ui-codemirror>
+    </div>
+</div>

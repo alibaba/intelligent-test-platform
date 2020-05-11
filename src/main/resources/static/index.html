@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-cn" ng-controller="RootCtrl" ng-init="init()">
+<head>
+  <meta charset="utf-8">
+  <title ng-bind-html="app.pageTitle"></title>
+  <meta name="description" content="{{app.name}}" />
+  <link rel="icon" type="image/x-icon" href="img/markov-logo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <link rel="stylesheet" href="css/sqi-cdn/bootstrap.css" type="text/css" />
+  <link rel="stylesheet" href="css/sqi-cdn/animate.css" type="text/css" />
+  <link rel="stylesheet" href="css/sqi-cdn/font-awesome.min.css" type="text/css" />
+  <link rel="stylesheet" href="css/sqi-cdn/simple-line-icons.css" type="text/css" />
+  <!--
+  <link rel="stylesheet" href="css/sqi-cdn/font.css" type="text/css" />
+  <link rel="stylesheet" href="css/sqi-cdn/robot.css" type="text/css"/>
+  -->
+
+  <script src="js/sqi-cdn/jquery.min.js" type="text/javascript"></script>
+  <script src="js/sqi-cdn/jquery-ui.min.js" type="text/javascript"></script>
+  <script src="js/sqi-cdn/angular.min.js" type="text/javascript"></script>
+  <!--<script src="js/sqi-cdn/sqiRobot.js" type="text/javascript"></script>-->
+  <!-- Basic -->
+  <!--<script src="js/sqi-cdn/moment.min.js" type="text/javascript"></script>-->
+  <!--<script src="js/sqi-cdn/numeral.min.js" type="text/javascript"></script>-->
+  <script src="js/sqi-cdn/require.min.js" type="text/javascript"></script>
+  <!--<script id="xwtongji" src="//xuanwu.alibaba-inc.com/xw/resources/home/tongji.js" data="markov" charset="utf-8"></script>-->
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+
+</head>
+<body>
+<script>
+    with(document)with(body)with(insertBefore(createElement("script"),firstChild))setAttribute("exparams","category=&userid=&aplus&yunid=&&trid=0bb3aec914969030706491889e&asid=AQAAAACe7ThZEX+EHQAAAAACck5qg9jHqQ==",id="tb-beacon-aplus",src=(location>"https"?"//g":"//g")+".alicdn.com/alilog/mlog/aplus_v2.js")
+</script>
+<div class="app" id="app" ng-class="{'app-header-fixed':app.settings.headerFixed, 'app-aside-fixed':app.settings.asideFixed, 'app-aside-folded':app.settings.asideFolded}" ui-view></div>
+</body>
+<script>
+    //$.getScript("//sqi.alicdn.com/sqi-pub/pro/assets/si/robot/js/sqiRobot.js");
+    var branch = "./";
+    document.body.setAttribute("origin", branch);
+    $.getScript(branch + "js/main.js");
+</script>
+
+</html>

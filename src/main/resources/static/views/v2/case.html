@@ -1,0 +1,1054 @@
+<style>
+    .popover {
+        max-width: 700px;
+    }
+    .CodeMirror {border: 1px solid #e7ecee;}
+</style>
+
+<div ng-controller="mainController" ng-init="initEnvTableMock()">
+
+    <script type="text/ng-template" id="trace.html">
+        <div ng-include="'views/modal/trace.html'"></div>
+    </script>
+
+    <br>
+    <div class="container" >
+        <toaster-container toaster-options="{'position-class': 'toast-top-right', 'time-out':180000, 'body-output-type':'trustedHtml', 'close-button':true}"></toaster-container>
+        <fieldset ng-disabled="replaceStatus">
+            <div class="panel panel-default">
+                <div class="panel-heading font-bold">
+                    基本信息区
+                    <div class="pull-right">设置当前环境：
+                        <ui-select ng-model="selectenv.current" theme="bootstrap" style="float:right;margin-top: -7px;min-width:350px;">
+                            <ui-select-match placeholder="选择并设置为当前环境，支持模糊查询">{{$select.selected.name||selfSetEnv.name}}</ui-select-match>
+                            <ui-select-choices group-by="'host'" repeat="eg in envGroups | propsFilter: {name: $select.search, id: $select.search}">
+                                <div ng-bind-html="eg.name | highlight: $select.search"></div>
+                                <small class="text-muted">
+                                    envId: <span ng-bind-html="''+eg.id | highlight: $select.search"></span>
+                                </small>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <span style="float: right;color:dodgerblue;margin-right:20px" ng-show="selectenv.current.id!=undefined" ng-click="showCurrentEnvDetail(selectenv.current)"  data-toggle="modal" data-target="#envModal" >点击查看环境详情</span>
+                        <span style="float: left;color:dodgerblue;margin-left: 20px;">所在分支：{{currentBranch}}</span>
+                        <div class="col-sm-12" style="margin-left:-12px;">
+                            <div class="col-sm-5" style="margin-top:10px;">
+                                <form class="">
+                                    <div class="form-group">
+                                        <label>用例名称</label>
+                                        <input style="width:100%" ng-model="case.caseDesc" type="text" class="form-control" aria-label="...">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-sm-3" style="margin-top:10px">
+                                <form class="">
+                                    <div class="form-group">
+                                        <label>业务场景</label>
+                                        <input style="width:100%" ng-model="case.caseGroup" type="text" class="form-control" aria-label="...">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-sm-2" style="margin-top:10px">
+                                <form class="">
+                                    <div class="form-group">
+                                        <label>标签</label>
+                                        <input style="width:100%" ng-model="case.tag" type="text" class="form-control" aria-label="...">
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="col-sm-12" >
+                            <form class="form-inline">
+                                <div class="form-group"  style="width:90%">
+                                    <label>
+                                        详细说明
+                                    </label>
+                                    <input  style="width:100%" ng-model="case.caseLongDesc"  placeholder="双击可在编辑器中编辑"  ng-dblclick="openModule(case.caseLongDesc,7,1,1,1,1)" type="text" class="form-control" aria-label="...">
+                                </div>
+                            </form>
+                        </div>
+
+
+
+                        <div class="modal fade" id="envModal" tabindex="-1" role="dialog" aria-labelledby="envModal">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="myModalLabel">当前环境详情</h4>
+                                    </div>
+                                    <div class="modal-body" style="white-space:pre-line">
+                                        <table class="table table-striped">
+                                            <tr>
+                                                <td style="border-right: solid 1px #dddddd">环境名称：</td>
+                                                <td> {{currentEnvName}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border-right: solid 1px #dddddd">环境地址：</td>
+                                                <td><a href="https://sa.alibaba-inc.com/ops/terminal.html?ip={{currentEnvIp}}" toolTip="点击登入机器" target="_blank">{{currentEnvIp}}</a></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border-right: solid 1px #dddddd">登入镜像命令：</td>
+                                                <td> ssh root@127.0.0.1 -p {{currentEnvPort}}  ，密码：123456</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border-right: solid 1px #dddddd;">镜像实例：</td>
+                                                <td style=""> {{currentEnvIamge}} </td>
+                                            </tr>
+                                        </table>
+
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-info" data-dismiss="modal">确认</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!--<div class="panel panel-default" ng-show="false">-->
+            <!--<div class="panel-heading font-bold">-->
+            <!--流程区-->
+            <!--</div>-->
+            <!--<div class="panel-body">-->
+
+            <!--</div>-->
+            <!--</div>-->
+
+            <div class="panel panel-default" ng-show = showDataGenStage >
+                <div class="panel-heading font-bold">
+                    场景业务描述区
+                </div>
+                <div class="panel-body">
+
+                    <!--业务场景:<select ng-model="selectedTitle" ng-options="x in titleList"></select>-->
+                    业务场景:
+                    <select id="dataGenId" ng-model="oneDataGenInfo"  ng-options ="dataInfo as dataInfo.title for dataInfo in dataGenStage">
+                    </select>
+                    <button type="submit" class="btn btn-sm btn-info" ng-disabled="replaceStatus" ng-click="prepareDataGen(oneDataGenInfo)"  data-toggle="modal" data-target="#msgModal" >数据生成</button>
+
+                    <div class="tab-pane"  class="col-sm-12">
+                        <div id="selectTree" class="ztree" style="overflow:auto;"> 
+                            <table  class="table ">
+                                <td  class="col-sm-2"  ng-repeat="(numId,numInfo) in oneDataGenInfo.num">
+                                    {{numInfo.showName}}: <input value={{numInfo.defaultValue}} type="number" name="num" ng-model="oneDataGenInfo.num[numId].defaultValue"  min="0" max="20" />
+                                </td>
+                            </table>
+
+                            <table  class="table">
+                                <td style="width:10%" ng-repeat="(switchId,switchInfo) in oneDataGenInfo.switch">
+                                    <label class="i-checks">
+                                        <input type="checkbox"  value=""  ng-checked="switchInfo.defaultValue=='on'" ng-model="oneDataGenInfo.switch[switchId].defaultValue">
+                                        <i></i>
+                                        {{ y.type }}
+                                    </label> {{switchInfo.showName}}
+                                </td>
+                            </table>
+                        </div>
+                    </div>
+
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="msgModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="myModalLabel">提示</h4>
+                                </div>
+                                <div class="modal-body" style="white-space:pre-line">
+                                    <label ng-model="pickList">{{dataGenMsg}}</label>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-info" data-dismiss="modal">确认</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div ng-show="showConfig" class="panel panel-default"  >
+                <div class="panel-heading font-bold">
+                    模块配置文件区
+                </div>
+                <div class="panel-body">
+                    <!--业务场景:<select ng-model="selectedTitle" ng-options="x in titleList"></select>-->
+
+
+                    <div class="tab-pane"  class="col-sm-12">
+
+                        <div id="selectTree" class="ztree" style="overflow:auto;"> 
+                            <table  class="table ">
+                                <td  class="col-sm-4"  ng-repeat="(index,oneConf) in confList">
+                                    <code>{{oneConf.dsName}}</code>
+                                    <!--{{oneConf.dsName}}-->
+                                    <button style="margin-left: -6px"  data-toggle="modal" data-target="#templateEditBox"  ng-model="confList[index].dsName" type="submit"  class="btn btn-sm btn-info" ng-click="selectDsId(confList[index].dsName)">查看</button>
+                                </td>
+                            </table>
+                        </div>
+
+
+                            <!--<div id="selectTree" class="ztree" style="overflow:auto; ">-->
+
+                                <!--<div ng-repeat="(index,oneConf) in confList">-->
+                                        <!--<code>{{oneConf.dsName}}</code>-->
+                                        <!--<button style="margin-top: -6px"  data-toggle="modal" data-target="#templateEditBox"  ng-model="confList[index].dsName" type="submit"  class="btn btn-sm btn-info" ng-click="selectDsId(confList[index].dsName)">查看</button>-->
+                                <!--</div>-->
+                            <!--<table  class="table ">-->
+                                <!--<td  class="col-sm-2"  ng-repeat="(index,oneConf) in confList">-->
+                                    <!--<code>{{oneConf.dsName}}</code>-->
+                                    <!--<button style="margin-top: -6px"  data-toggle="modal" data-target="#templateEditBox"  ng-model="confList[index].dsName" type="submit"  class="btn btn-sm btn-info" ng-click="selectDsId(confList[index].dsName)">查看</button>-->
+                                    <!--&lt;!&ndash;<button style="margin-top: -6px;margin-left: 14px;"  data-toggle="modal" data-target="#templateEditBox"  ng-model="confList[index].dsName" type="submit"  class="btn btn-sm btn-info" ng-click="selectDsId(confList[index].dsName)">查看</button>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<code  href="" data-toggle="modal" data-target="#templateEditBox"  ng-model="confList[index].dsName"  ng-click="selectDsId(confList[index].dsName)" >{{oneConf.dsName}}</code>&ndash;&gt;-->
+
+                                <!--</td>-->
+                            <!--</table>-->
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading font-bold">
+                    数据准备区  <input class="btn btn-default" ng-click="addPrepareData()" type="button" style="margin-left: 10px;margin-top: -4px" value="新增分组">
+                </div>
+                <div class="panel-body">
+
+                    <div class="col-xs-12" ng-repeat="(indexForDs,currentds) in ds">
+                        <div class="col-xs-2">
+                            <label style="color: green">数据集{{ indexForDs + 1 }}th</label>
+                            <a style="margin-left: 5px;margin-top: -4px" data-toggle="class" class="btn btn-default btn-xs" ng-click="rmPrepareData(indexForDs)">
+                                <i class="fa fa-minus text-muted text"></i>
+                                <i class="fa fa-star text-danger text-active"></i>
+                            </a>
+                            <div class="checkbox" ng-repeat="(x,y) in dataSource[indexForDs]">
+                                <label class="i-checks">
+                                    <input type="checkbox" id="{{ y.type + 'checkbox'}}" value="" ng-model="y.selected">
+                                    <i></i>
+                                    {{ y.type }}
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-10">
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+                                <div ng-repeat="(type,obj) in currentds" class="tab-pane" ng-class="{active:dataSource[indexForDs][type].selected}" id="{{type + 'tabpane' + indexForDs}}">
+                                    <table class="active">
+                                        <tr>
+                                            <th style="padding-bottom:10px">
+                                                <!--<input disabled class="btn btn-default m-l-xs" type="button" value="{{ type }}">-->
+                                                <code>{{ type }}</code>
+                                                <input class="btn btn-default m-l-xs" ng-click="addDsname(indexForDs,type)" type="button" value="数据源+">
+                                            </th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                        <tr ng-repeat="(index,val) in currentds[type]">
+
+                                            <td>
+                                                <!--注:以下数据变动后会重启服务-->
+                                                <!--<br>-->
+                                                <label ng-model="ds" ng-show="ds[indexForDs][type][index].restartFlag=='0'" style="color: darkgrey;"><br></label>
+                                                <label ng-model="ds" ng-show="ds[indexForDs][type][index].restartFlag=='1'" style="color: green;">注:以下数据变动后会重启服务</label>
+                                                <br>
+                                                <br>
+
+                                                <table>
+                                                    <tr>
+                                                        <td>
+                                                            <button style="margin-top: -11px" ng-show="isNewDataSource" data-toggle="modal" data-target="#templateEditBox"  ng-model="currentds[type][index].dsName" type="submit"  class="btn btn-sm btn-info" ng-click="selectDsId(currentds[type][index].dsName)">查看</button>
+                                                        </td>
+
+                                                        <td>
+                                                            <ui-select ng-model="currentds[type][index].dsName" popover-placement='top' popover-trigger="mouseenter" popover="{{currentds[type][index].dsName}}" ng-change="selectDsChoice(currentds[type][index],type,index,indexForDs)" theme="bootstrap" style="width:300px;height:44px">
+                                                                <ui-select-match placeholder="选择数据源，支持模糊搜索">{{ $select.selected || currentds[type][index].dsName }}</ui-select-match>.
+                                                                <ui-select-choices repeat="z in dsList[type] | filter: $select.search track by $index">
+                                                                    <div ng-bind-html="z | highlight: $select.search"></div>
+                                                                </ui-select-choices>
+                                                            </ui-select>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+
+                                                <!--<ui-select ng-model="currentds[type][index].dsName" popover-placement='top' popover-trigger="mouseenter" popover="{{currentds[type][index].dsName}}" ng-change="selectDsChoice(currentds[type][index],type,index,indexForDs)" theme="bootstrap" style="width:300px;height:44px">-->
+                                                <!--<ui-select-match placeholder="选择数据源，支持模糊搜索">{{ $select.selected || currentds[type][index].dsName }}</ui-select-match>.-->
+                                                <!--<ui-select-choices repeat="z in dsList[type] | filter: $select.search track by $index">-->
+                                                <!--<div ng-bind-html="z | highlight: $select.search"></div>-->
+                                                <!--</ui-select-choices>-->
+                                                <!--</ui-select>-->
+                                                <!--<code>详情</code>-->
+
+                                            </td>
+
+                                            <td style="white-space:nowrap; text-align:center" class="caseTd">
+                                                <br>
+                                                <br>
+                                                <a class="btn btn-default btn-xs" data-toggle="modal" data-target="#callDsContentModal" ng-click="findDsNameBycase(currentds[type][index].dsName,type)">
+                                                    <i class="fa fa-sitemap text-muted text"></i>
+                                                    <i class="fa fa-star text-danger text-active"></i>
+                                                </a>
+                                                <a data-toggle="class" class="btn btn-default btn-xs" ng-click="rmDsname(indexForDs,type,index)">
+                                                    <i class="fa fa-minus text-muted text"></i>
+                                                    <i class="fa fa-star text-danger text-active"></i>
+                                                </a>
+
+
+                                            </td>
+
+                                            <!--<td style="white-space:nowrap; text-align:center" class="caseTd">-->
+                                            <!---->
+                                            <!--<button ng-show="isNewDataSource" data-toggle="modal" data-target="#templateEditBox"  ng-model="currentds[type][index].dsName" type="submit" style="margin-left: -15px;margin-top: 30px;margin-right: 0px;" class="btn btn-sm btn-default" ng-click="selectDsId(currentds[type][index].dsName)">-->
+                                            <!--<Strong>查看</Strong>-->
+                                            <!--</button>-->
+
+                                            <!--</td>-->
+
+
+                                            <td style="width:100%">
+                                                <table style="width:100%">
+                                                    <tr ng-repeat="(indexy,valy) in currentds[type][index].data">
+                                                        <HR>
+                                                        <td style="width:20%" class="caseTd">
+                                                            <input type="text" class="form-control" placeholder="key" ng-mouseenter="displayDetailTip($event,currentds[type][index].data[indexy].key)" data-placement="left" ng-dblclick="openModule(currentds[type][index].data[indexy].key,3,index,indexy,type,currentds)" ng-model="currentds[type][index].data[indexy].key">
+                                                        </td>
+                                                        <td style="width:50%" class="caseTd" ng-click="setEditContent(currentds[type][index].data[indexy].value,indexForDs,type,index,indexy)">
+                                                            <input type="text" ng-mouseenter="displayDetailTip($event,currentds[type][index].data[indexy].value)" data-placement="left" class="form-control" placeholder="双击可在编辑器中编辑" ng-model="currentds[type][index].data[indexy].value" ng-dblclick="openModule(currentds[type][index].data[indexy].value,0)">
+                                                        </td>
+                                                        <td style="width:30%" class="caseTd">
+                                                            <input type="text" class="form-control" ng-mouseenter="displayDetailTip($event,currentds[type][index].data[indexy].property)" data-placement="left" placeholder="property" ng-dblclick="openModule(currentds[type][index].data[indexy].property,4,index,indexy,type,currentds)" ng-model="currentds[type][index].data[indexy].property">
+                                                        </td>
+                                                        <td style="white-space:nowrap" class="caseTd">
+                                                            <a data-toggle="class" class="btn btn-default btn-xs" ng-click="addCol(indexForDs,type,index)">
+                                                                <i class="fa fa-plus text-muted text"></i>
+                                                                <i class="fa fa-star text-danger text-active"></i>
+                                                            </a>
+                                                            <a data-toggle="class" class="btn btn-default btn-xs" ng-click="rmCol(indexForDs,type,index, indexy)">
+                                                                <i class="fa fa-minus text-muted text"></i>
+                                                                <i class="fa fa-star text-danger text-active"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+
+                                            <td>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <div class="line line-dashed b-b line-lg pull-in"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="line line-dashed b-b line-lg pull-in"></div>
+                    </div>
+                </div>
+            </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading font-bold">
+            运行区
+        </div>
+        <div class="panel-body">
+            <div class="row" ng-repeat="(i,y) in caseRunGroupList">
+                <div class="col-sm-12">
+
+                    <div>
+                        <div ng-repeat="(ii,cont) in caseRunStage[i].data">
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="pull-left" style="margin-left: 30px;margin-top: 15px;color: green">发送请求</label>
+                                    <div class="col-sm-5">
+                                        <div style="margin-top: 10px;margin-left: 10px" ng-repeat="(gm,vm) in queryTemplates track by $index" ng-if="gm == y.group_name">
+                                            <ui-select ng-model="qr.selected"  ng-change="caseRunStage[i].data[ii].input = qr.selected.val" theme="bootstrap" style="max-width: 350px;">
+                                                <ui-select-match placeholder="选择query模板">{{$select.selected.name}}</ui-select-match>
+                                                <ui-select-choices group-by="'name'" repeat="qr in vm | propsFilter: {name: $select.search}">
+                                                    <div ng-bind-html="qr.key | highlight: $select.search"></div>
+                                                    <small ng-mouseenter="displayDetailTip($event,qr.val)" data-placement="top">
+                                                        {{qr.val|longWordFormat:40}}
+                                                    </small>
+                                                </ui-select-choices>
+                                            </ui-select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="col-sm-12">
+                                <ui-codemirror title="双击可在编辑器中编辑" ng-model="caseRunStage[i].data[ii].input" ng-dblclick="openModule(caseRunStage[i].data[ii].input,1,i,ii)" ui-codemirror-opts="queryMirrorConfig"></ui-codemirror>
+                            </div>
+
+                            <div class="col-sm-12">
+                                <HR>
+                            </div>
+
+                            <div class="col-sm-4" style="overflow:auto;">
+                                <label class="pull-left" style="color: green">期望结果 </label>
+
+                                <div class="col-sm-5">
+                                    <div style="margin-top: -12px;width:300px" ng-repeat="(gm,vm) in expectTemplates track by $index" ng-if="gm == y.group_name">
+                                        <ui-select ng-model="qr.selected"  ng-change="caseRunStage[i].data[ii].expect = qr.selected.val" theme="bootstrap" style="max-width: 350px;">
+                                            <ui-select-match placeholder="选择期望模板">{{$select.selected.name}}</ui-select-match>
+                                            <ui-select-choices group-by="'name'" repeat="qr in vm | propsFilter: {name: $select.search}">
+                                                <div ng-bind-html="qr.key | highlight: $select.search"></div>
+                                                <small ng-mouseenter="displayDetailTip($event,qr.val)" data-placement="top">
+                                                    {{qr.val|longWordFormat:40}}
+                                                </small>
+                                            </ui-select-choices>
+                                        </ui-select>
+                                    </div>
+                                </div>
+                                <ui-codemirror title="双击可在编辑器中编辑" ng-model="caseRunStage[i].data[ii].expect" ng-dblclick="openModule(caseRunStage[i].data[ii].expect,2,i,ii)" ui-codemirror-opts="expectMirrorConfig"></ui-codemirror>
+
+                            </div>
+
+                            <div class="col-sm-5" style="overflow:auto;">
+
+                                <table class="col-sm-12"  >
+
+                                    <td style="width:1%">
+                                        <button type="submit" style="margin-left: -15px;margin-top: 30px;margin-right: 0px;" class="btn btn-sm btn-default" ng-show="!replaceStatus" ng-click="exchangeFromActualToExpect(i,ii)">
+                                            <Strong><<</Strong>
+                                        </button>
+                                    </td>
+                                    <td style="width:99%">
+                                        <div class="col-sm-11">
+                                            <label class="pull-left" style="color: green">实际返回</label>
+                                            <ui-codemirror title="双击可在编辑器中编辑" ng-model="caseRunStage[i].data[ii].actual" ng-dblclick="openModule(caseRunStage[i].data[ii].actual,5,i,ii)" ui-codemirror-opts="expectMirrorConfig"></ui-codemirror>
+                                        </div>
+                                    </td>
+
+                                </table>
+
+                            </div>
+                            <div class="col-sm-3" style="margin-left: -25px;margin-right: 0px;">
+                                <label class="pull-left" style="color: green">校验结果 </label>
+                                <textarea style="height:300px" ng-model="caseRunStage[i].data[ii].output" class="form-control"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+            <div class="panel panel-default">
+                <div class="panel-heading font-bold">
+                    日志区
+                </div>
+                <div class="panel-body">
+                    <div class="btn-group" role="group" aria-label="...">
+                        <button type="button" class="btn btn-default" ng-repeat="(i,y) in pipeline.logStage" ng-click="showLog(y.pluginType)">{{ y.displayName }}</button>
+                    </div>
+
+                    <!--<button   ng-dblclick="openTraceModule()"  ng-if="isSyncFlag == false" >实时运行日志</button>-->
+                    <br>
+                    <div>
+                        <br>
+                        <!--<button type="submit" class="btn btn-sm btn-default" >日志选择</button>-->
+                        <label style="color: green">日志选择:</label>
+                        <select class="" style="width:300px" ng-show="case.currentLog != ''" ng-model="logType" ng-options="x for x  in case.currentLogType"></select>
+                    </div>
+                    <div>
+                        <textarea style="width:100%;height:250px" ng-model="case.currentLog[logType]"></textarea>
+                    </div>
+                </div>
+            </div>
+
+        </fieldset>
+        <form class="form-horizontal alwaysBottom">
+            <div class="form-group" style="overflow: auto;">
+                <table class="col-sm-11">
+                    <tr>
+                        <td style="text-align:left;" class="col-sm-4">
+                            <button type="submit" class="btn btn-sm btn-info"  ng-if="isSyncFlag == true">调试环境</button>
+                            <!--<button type="submit" class="btn btn-sm btn-info" data-toggle="modal" data-target="#datasourceConf"  ng-click="getConfList()" ng-if="isNewDataSource">模块配置</button>-->
+                            <button type="submit" class="btn btn-sm btn-info" ng-show="!replaceStatus" ng-click="replacePlaceholder()">占位符替换</button>
+                            <button type="submit" class="btn btn-sm btn-default" ng-show="replaceStatus" ng-click="cancelReplace()">取消占位符替换</button>
+                            <!--<button type="submit" class="btn btn-sm btn-info" ng-click="toDiamond()">配置</button>-->
+                            <button type="submit" class="btn btn-sm btn-info" ng-click="runCase(false)" >运行</button>
+                            <button type="submit" class="btn btn-sm btn-info"  ng-click="runCase()">数据准备后运行</button>
+                            <!--<button type="submit" class="btn btn-sm btn-info"   ng-click="runTroubleShootZK()"  ng-if="isSyncFlag == false" >智能排查</button>-->
+                            <button type="submit" class="btn btn-sm btn-info" ng-disabled="replaceStatus" ng-click="addCase()" ng-if="typeForCase == 'create'">保存</button>
+                            <button type="submit" class="btn btn-sm btn-info" ng-disabled="replaceStatus" ng-click="editCase()" ng-if="typeForCase == 'edit' && !isTestReport || typeForCase == 'singleResult' || typeForCase == 'run'">保存</button>
+                            <button type="submit" class="btn btn-sm btn-info" ng-disabled="replaceStatus" ng-click="toEdit(caseid,appid,sceneid,'snapsToEdit','c++')" ng-if="typeForCase == 'edit' && isTestReport ">跳转至编辑页</button>
+                            <button type="submit" class="btn btn-sm btn-default" ng-click="toScene()" ng-if="typeForCase != 'singleResult'">返回</button>
+                            <button type="submit" class="btn btn-sm btn-default" ng-click="toResultDetail()" ng-if="typeForCase == 'singleResult'">返回</button>
+                            <!--<button type="submit" class="btn btn-primary btn-sm"   data-toggle="modal" data-target="#troubleShootConfirm"  >点击排查</button>-->
+
+                            <!--<button type="submit" class="btn btn-sm btn-default"  ng-if="formInfo != null">{{ formInfo }}</button>-->
+                            <label ng-show="showBottomLabel && dynamic<=0">{{formInfo}}</label>
+                        </td>
+
+                        <td style="text-align:left" ng-show="dynamic>0" class="col-sm-3">
+                            <uib-progressbar   style="width: 400px;margin-top:23px;"  class="progress-striped active" value="dynamic" type="{{progressType}}">{{ formInfo }} </uib-progressbar>
+                        </td>
+                        <td style="text-align:left" ng-show="dynamic>0" class="col-sm-4">
+                            <button  class="btn btn-primary btn-sm"  data-toggle="modal" data-target="#statusProgress" ng-if="isSyncFlag == false" >实时运行日志</button>
+                            <button  class="btn btn-primary btn-sm"   data-toggle="modal" data-target="#troubleShootBox" ng-if="isSyncFlag == false  && troubleShootFlag == true " >执行过程正常</button>
+                            <button  class="btn btn-danger btn-sm"   data-toggle="modal" data-target="#troubleShootBox" ng-if="isSyncFlag == false  && troubleShootFlag == false " >执行过程异常</button>
+                            <button type="submit" class="btn btn-primary btn-sm"   data-toggle="modal" data-target="#troubleShootConfirm"  ng-if="isSyncFlag == false  && troubleShootFlag == false ">重新排查</button>
+
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </form>
+
+
+        <div class="modal fade" id="templateEditBox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document" style="width:800px">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="statusProgressTitle" style="color: green">数据源配置</h3>
+                    </div>
+
+                    <div id="_modalDialog_body" class="modal-body">
+
+                        <div id="selectTree" class="ztree" style="height:500px;overflow:auto; ">
+
+                            <div class="panel panel-default">
+                                <span style="float: left;color:dodgerblue;margin-left: 20px;">最近同步状态：{{oneDataSource.recentSyncStatus}}</span>
+                                <span style="float: left;color:dodgerblue;margin-left: 20px;">最近同步时间：{{oneDataSource.recentSyncTime}}</span>
+                                <br>
+                                <div class="panel-heading font-bold">
+                                    基本信息区
+                                </div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-sm-12" style="margin-left:-12px;">
+                                            <div class="col-sm-7" style="margin-top:10px">
+                                                <form class="">
+                                                    <div class="form-group">
+                                                        <label>数据源名称</label>
+                                                        <input style="width:100%" ng-disabled="true" ng-model="oneDataSource.dsName" type="text" class="form-control" aria-label="...">
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="col-sm-3" style="margin-top:10px;">
+                                                <form class="">
+                                                    <div class="form-group">
+                                                        <label>数据类型</label>
+                                                        <select class="form-control" ng-disabled="true" ng-change="selectDataType(dataTypeSelect)" ng-click="selectDataType(dataTypeSelect)" ng-model="dataTypeSelect" ng-options="opt for opt in dataTypeList"></select>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="col-sm-2" style="margin-top:10px">
+                                                <form class="">
+                                                    <div class="form-group">
+                                                        <label>关联模块</label>
+                                                        <select class="form-control" ng-disabled="true" ng-change="selectModule(moduleSelect)" ng-click="selectModule(moduleSelect)" ng-model="moduleSelect" ng-options="opt for opt in moduleList"></select>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12" >
+                                            <form class="form-inline">
+                                                <div class="form-group"  style="width:100%">
+                                                    <label>
+                                                        描述
+                                                    </label>
+                                                    <input  style="width:100%" ng-model="oneDataSource.dsDesc" type="text" class="form-control" aria-label="...">
+                                                </div>
+                                            </form>
+                                        </div>
+
+                                        <div ng-show = "dataTypeSelect=='Tair'" class="col-sm-12" style="margin-left:-12px;">
+                                            <div class="col-sm-9" style="margin-top:10px;">
+                                                <form class="">
+                                                    <div class="form-group">
+                                                        <label>dataId</label>
+                                                        <input style="width:100%" ng-model="fixFeature.dataId" placeholder="请填入该Tair在通用存储层diamond中的dataId.."  type="text" class="form-control" aria-label="...">
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="col-sm-3" style="margin-top:10px">
+                                                <form class="">
+                                                    <div class="form-group">
+                                                        <label>areaId</label>
+                                                        <input style="width:100%" ng-model="fixFeature.tairarea"  placeholder="tairarea,比如521.." type="text" class="form-control" aria-label="...">
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+
+                                        <div ng-show = "dataTypeSelect=='IgraphDw'" class="col-sm-12" style="margin-left:-12px;">
+                                            <div class="col-sm-6" style="margin-top:10px;">
+                                                <form class="">
+                                                    <div class="form-group">
+                                                        <label>tableName</label>
+                                                        <input style="width:100%" ng-model="fixFeature.tableName" placeholder="请填入在通用dataWarehouse中的tableName.."  type="text" class="form-control" aria-label="...">
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="col-sm-6" style="margin-top:10px">
+                                                <form class="">
+                                                    <div class="form-group">
+                                                        <label>文件路径</label>
+                                                        <input style="width:100%" ng-model="oneDataSource.filePath" placeholder="请填入mockdata的路径.." value="/home/a/igraph_mock_data" type="text" class="form-control" aria-label="...">
+
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+
+                                        <div ng-show = "dataTypeSelect=='Tdbm' || dataTypeSelect=='Text'" class="col-sm-12" style="margin-left:-12px;">
+                                            <div class="col-sm-12" style="margin-top:10px">
+                                                <form class="">
+                                                    <div class="form-group">
+                                                        <label>文件路径</label>
+                                                        <input style="width:100%" ng-disabled="true"  ng-model="oneDataSource.filePath" placeholder="请填入该文件在容器中的绝对路径.." type="text" class="form-control" aria-label="...">
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+
+                                        <div ng-show = "dataTypeSelect=='KVfile'" class="col-sm-12" style="margin-left:-12px;">
+
+                                            <div class="col-sm-8" style="margin-top:10px">
+                                                <form class="">
+                                                    <div class="form-group"  >
+                                                        <label>文件路径</label>
+                                                        <input style="width:100%"  ng-disabled="true" ng-model="oneDataSource.filePath" placeholder="请填入该文件在容器中的绝对路径.." type="text" class="form-control" aria-label="...">
+                                                    </div>
+
+                                                </form>
+                                            </div>
+                                            <div class="col-sm-4" style="margin-top:10px">
+                                                <form class="">
+                                                    <div class="form-group" >
+                                                        <label>kv分割符</label>
+                                                        <input style="width:100%" ng-model="fixFeature.kv_separator" placeholder="=" type="text" class="form-control" aria-label="...">
+                                                    </div>
+                                                </form>
+                                            </div>
+
+                                        </div>
+
+
+
+                                        <div ng-show = "dataTypeSelect=='ArtisMsg'" class="col-sm-12" style="margin-left:-12px;">
+                                            <div class="col-sm-4" style="margin-top:10px">
+                                                <form class="">
+                                                    <div class="form-group">
+                                                        <label>input_topic</label>
+                                                        <input style="width:100%"  ng-disabled="true" ng-model="fixFeature.input_topic" type="text" placeholder="请填入input_topic.." class="form-control" aria-label="...">
+                                                    </div>
+
+                                                </form>
+                                            </div>
+                                            <div class="col-sm-4" style="margin-top:10px">
+                                                <form class="">
+                                                    <div class="form-group">
+                                                        <label>filterPrefix</label>
+                                                        <input style="width:100%"  ng-disabled="true" ng-model="fixFeature.filterPrefix" placeholder="请填入filterPrefix.."  type="text" class="form-control" aria-label="...">
+                                                    </div>
+
+                                                </form>
+                                            </div>
+                                            <div class="col-sm-4" style="margin-top:10px">
+                                                <form class="">
+                                                    <div class="form-group">
+                                                        <label>partitionId</label>
+                                                        <input style="width:100%"  ng-disabled="true" ng-model="fixFeature.partitionId"  placeholder="请填入partitionId.."  type="text" class="form-control" aria-label="...">
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+
+                                        <div ng-show = "dataTypeSelect=='Imock'" class="col-sm-12" style="margin-left:-12px;">
+                                            <form class="">
+                                                <div class="form-group">
+                                                    <label>dat.xml</label>
+                                                    <input style="width:100%"  ng-disabled="true" ng-model="fixFeature.dat" type="text"  placeholder="请找Markov管理员配置" class="form-control" aria-label="..." placeholder="双击可在编辑器中编辑"  ng-dblclick="openModuleEdit(fixFeature.dat,index,4)">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>fmt.xml</label>
+                                                    <input style="width:100%"  ng-disabled="true" ng-model="fixFeature.fmt" type="text" class="form-control" placeholder="请找Markov管理员配置"  aria-label="..." placeholder="双击可在编辑器中编辑"  ng-dblclick="openModuleEdit(fixFeature.fmt,index,5)">
+                                                </div>
+                                            </form>
+                                        </div>
+
+                                        <div ng-show = "dataTypeSelect=='Igraph'" class="col-sm-12" style="margin-left:-12px;">
+                                            <div class="col-sm-12" style="margin-top:10px">
+                                                <form class="">
+                                                    <div class="form-group">
+                                                        <label>文件路径</label>
+                                                        <input style="width:100%"  ng-disabled="true" ng-model="oneDataSource.filePath" placeholder="请填入mockdata的路径.." value="/home/a/igraph_mock_data" type="text" class="form-control" aria-label="...">
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>schema:</label>
+                                                <textarea  ng-disabled="true" style="width:100%;height:50px" ng-model="fixFeature.schema" type="text" class="form-control" placeholder="双击可在编辑器中编辑" ng-dblclick="openModuleEdit(fixFeature.schema,index,11)" aria-label="..."></textarea>
+                                            </div>
+                                        </div>
+
+                                        <div ng-show = "dataTypeSelect=='其他数据源'"  class="col-sm-12" style="margin-left:-12px;">
+
+                                            <div class="form-group">
+                                                <label>文件路径:</label>
+                                                <input style="width:100%"  ng-disabled="true" ng-model="fixFeature.filePath" placeholder="请填入该文件在容器中的绝对路径.." type="text" class="form-control" aria-label="...">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>初始数据:</label>
+                                                <!--<input style="width:100%" ng-model="fixFeature.initData" type="text" class="form-control" aria-label="..." placeholder="双击可在编辑器中编辑"  ng-dblclick="openModuleEdit(fixFeature.initData,index,6)">-->
+                                                <textarea style="width:100%;height:250px" ng-model="fixFeature.initData" type="text" class="form-control" placeholder="双击可在编辑器中编辑" ng-dblclick="openModuleEdit(fixFeature.initData,index,6)" aria-label="..."></textarea>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div ng-show = "dataTypeSelect!='其他数据源'">
+
+                                <div class="panel panel-default">
+
+                                    <div class="panel-heading font-bold">
+                                        <code>配置选择:  </code>
+                                        <label class="i-checks" style="margin-right: 10px"><input type="radio" name="option" ng-model="type" value="demo"><i></i>demo</label>
+                                        <label ng-show = "dataTypeSelect=='Tdbm'" class="i-checks" style="margin-right: 10px"><input type="radio" name="option" ng-model="type" value="initData"><i></i>初始数据</label>
+                                        <label ng-show="isUseProtoFlag" class="i-checks"><input type="radio" name="option" ng-model="type" value="proto"><i></i>proto配置</label>
+                                        <label ng-show="isUseTemplateFlag"  class="i-checks"><input type="radio" name="option" ng-model="type" value="template"><i></i>模板</label>
+                                        <label class="i-checks"><input type="radio" name="option" ng-model="type" value="config"><i></i>高级配置</label>
+                                    </div>
+
+                                    <div class="panel-body">
+                                        <div class="row">
+
+                                            <div ng-show="type == 'demo'"  class="col-sm-12" style="margin-left:-12px;">
+                                                <div  class="col-sm-12" style="margin-top:10px;">
+                                                    <form class="">
+                                                        <div class="form-group">
+                                                            <label>数据示例</label>
+                                                            <textarea style="width:100%;height:250px" ng-model="oneDataSource.demo" type="text" placeholder="双击可在编辑器中编辑" ng-dblclick="openModuleEdit(oneDataSource.demo,index,9)" class="form-control" aria-label="..."></textarea>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+
+                                            <div ng-show="type == 'initData'"  class="col-sm-12" style="margin-left:-12px;">
+                                                <div  class="col-sm-12" style="margin-top:10px;">
+                                                    <form class="">
+                                                        <div class="form-group">
+                                                            <label>初始数据</label>
+                                                            <textarea style="width:100%;height:250px" ng-model="fixFeature.initData" type="text" placeholder="支持简单的kv数据，多组数据换行区分，格式如下：key=value" ng-dblclick="openModuleEdit(fixFeature.initData,index,12)" class="form-control" aria-label="..."></textarea>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+
+                                            <div ng-show="type == 'proto'"  class="col-sm-12" style="margin-left:-12px;">
+                                                <div  class="col-sm-6" style="margin-top:10px;">
+                                                    <form class="">
+                                                        <div class="form-group">
+                                                            <label>pb文件名</label>
+                                                            <select  ng-disabled="true" class="form-control" ng-change="selectPb(currentPbUnit.pbFileName)" ng-click="selectPb(currentPbUnit.pbFileName)" ng-model="currentPbUnit.pbFileName" ng-options="pbFileName for pbFileName in protoList"></select>
+                                                        </div>
+                                                    </form>
+                                                </div>
+
+                                                <div  class="col-sm-3" style="margin-top:10px;">
+                                                    <form class="">
+                                                        <div class="form-group">
+                                                            <label>message</label>
+                                                            <input style="width:100%" ng-model="oneDataSource.protoMessage" type="text" class="form-control" aria-label="...">
+                                                        </div>
+                                                    </form>
+                                                </div>
+
+                                                <div  class="col-sm-12" style="margin-top:10px;">
+                                                    <form class="">
+                                                        <div class="form-group">
+                                                            <label>pb内容</label>
+                                                            <textarea style="width:100%;height:250px" ng-model="currentPbUnit.content" type="text" class="form-control" aria-label="..." placeholder="双击可在编辑器中编辑"  ng-dblclick="openModuleEdit(currentPbUnit.content,index,7)"></textarea>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+
+                                            <div ng-show="type == 'template'"  class="col-sm-12" style="margin-left:-12px;">
+                                                <div  class="col-sm-12" style="margin-top:10px;">
+                                                    <form class="">
+                                                        <div class="form-group">
+                                                            <label>模板内容</label>
+                                                            <textarea style="width:100%;height:250px" ng-model="oneDataSource.template" type="text" class="form-control" aria-label="..." placeholder="双击可在编辑器中编辑"  ng-dblclick="openModuleEdit(oneDataSource.template,index,8)"></textarea>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+
+                                            <div ng-show="type == 'config'"  class="col-sm-12" style="margin-left:-12px;">
+                                                <div  class="col-sm-12" style="margin-top:10px;">
+                                                    <form class="">
+                                                        <div ng-show="action == 'put'">
+                                                            <a ng-show = "isConfigDefaultFlag" href="" >默认配置</a>
+                                                            <HR>
+                                                            <table style="width:100%">
+                                                                <tr ng-repeat="(index,oneConfigInfo) in oneDataSource.configDefault">
+                                                                    <td style="width:20%" class="caseTd">
+                                                                        配置项{{index+1}}
+                                                                    </td>
+                                                                    <td style="width:20%" class="caseTd">
+                                                                        <input ng-disabled="true" type="text" class="form-control" placeholder="配置名"  data-placement="left"  ng-model="oneConfigInfo.configName">
+                                                                    </td>
+                                                                    <td style="width:50%" class="caseTd">
+                                                                        <input ng-disabled="true"  type="text"  data-placement="left" class="form-control" ng-model="oneConfigInfo.configValue">
+                                                                    </td>
+                                                                    <td style="white-space:nowrap" class="caseTd">
+                                                                        <a data-toggle="class" class="btn btn-default btn-xs"  placeholder="双击可查看" ng-model="oneConfigInfo.configValue" ng-click="openModuleEdit(oneConfigInfo.configValue,index,2)">
+                                                                            <i class="">查看</i>
+                                                                            <i class="fa fa-star text-danger text-active"></i>
+                                                                        </a>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                        <div>
+                                                            <HR>
+                                                            <a href="" >自定义配置</a>
+                                                            <a data-toggle="class" class="btn btn-default btn-xs" ng-click="addDsModuleConifgItem()">
+                                                                <i class="fa fa-plus text-muted text"></i>
+                                                                <i class="fa fa-star text-danger text-active"></i>
+                                                            </a>
+                                                            <HR>
+                                                            <table style="width:100%">
+                                                                <tr ng-repeat="(index,oneConfigInfo) in oneDataSource.configModule">
+
+                                                                    <td style="width:20%" class="caseTd">
+                                                                        配置项{{index+1}}
+                                                                    </td>
+                                                                    <td style="width:20%" class="caseTd">
+                                                                        <input type="text" class="form-control" placeholder="配置名"  data-placement="left"  ng-model="oneConfigInfo.configName">
+                                                                    </td>
+                                                                    <td style="width:50%" class="caseTd">
+                                                                        <input type="text"  data-placement="left" class="form-control" placeholder="双击可在编辑器中编辑" ng-model="oneConfigInfo.configValue" ng-dblclick="openModuleEdit(oneConfigInfo.configValue,index,3)">
+                                                                    </td>
+                                                                    <td style="white-space:nowrap" class="caseTd">
+                                                                        <a data-toggle="class" class="btn btn-default btn-xs" ng-click="rmDataConfigCol(index,'module')">
+                                                                            <i class="fa fa-minus text-muted text"></i>
+                                                                            <i class="fa fa-star text-danger text-active"></i>
+                                                                        </a>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-sm btn-default" data-dismiss="modal">返回</button>&ensp;
+                        <button type="submit" class="btn btn-sm btn-info" data-dismiss="modal" ng-click="saveDataSource(oneDataSource)">仅保存</button>&ensp;
+                        <button type="submit" class="btn btn-sm btn-info" data-dismiss="modal" ng-if="oneDataSource.dataType!='其他数据源'" ng-click="synAndSaveDatasource(oneDataSource)">保存并同步</button>
+                        <button type="submit" class="btn btn-sm btn-info" data-dismiss="modal" ng-if="oneDataSource.dataType=='其他数据源'" ng-click="synAndSaveDatasourceToContainner(oneDataSource)">同步至当前容器</button>&ensp;
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- troubleShootBox Modal -->
+        <div class="modal fade" id="troubleShootBox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+                        <h3 class="modal-title" id="troubleShootTitle">智能排查报告</h3>
+                    </div>
+                    <div id="_modalDialog_body" class="modal-body">
+                        <!--  设置这个div的大小，超出部分显示滚动条 -->
+                        <div id="selectTree" class="ztree" style="height:500px;overflow:auto; ">
+
+                            <div ng-repeat="(type,checkList) in troubleShootBox" class="tab-pane" >
+                                <table  class="table table-striped">
+                                    <div class="modal-header">
+                                        <h3 class="modal-title" >{{type}}</h3>
+                                    </div>
+                                    <tr>
+                                        <th class="listTh">序号</th>
+                                        <th class="listTh">检测项</th>
+                                        <th class="listTh">结论</th>
+                                        <th class="listTh">操作</th>
+                                    </tr>
+                                    <tr ng-repeat="(index,checkInfo) in checkList">
+                                        <td>{{ index+1 }}</td>
+                                        <td>{{ checkInfo.checkItem }}</td>
+                                        <td>
+                                            <label ng-if="checkInfo.status == 'SUCCESS' " style="color: green" class="col-md-6">{{checkInfo.status}}</label>
+                                            <label ng-if="checkInfo.status == 'ERROR'" style="color: red" class="col-md-6">{{checkInfo.status}}</label>
+                                            <label ng-if="checkInfo.status == 'WARN'" style="color: blue" class="col-md-6">{{checkInfo.status}}</label>
+                                        </td>
+                                        <td style="white-space:nowrap" ><a href="" ng-click="openTroubleShootBox(type, checkInfo.desc, checkInfo.detail)">查看详情</a></td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>&ensp;
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="modal fade" id="troubleShootConfirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true"
+             style="display: none;">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">×</span></button>
+                        <h4 class="modal-title" id="myModalLabel1">是否开启智能排查?</h4>
+                    </div>
+
+
+                    <div class="modal-body pull-left">
+                        <label class="i-checks pull-left" style="margin-top: -5px;margin-right: 1px"><input type="checkbox" name="checkb" ng-model="baseEnvSelected" value="" ><i></i>可选一个基准环境做日志对比:</label>
+                        <ui-select ng-disabled="!baseEnvSelected" ng-model="selectenv.base" theme="bootstrap" style="float:right;margin-top: -12px;min-width:350px;">
+                            <ui-select-match placeholder="选择并设置为当前环境，支持模糊查询">{{$select.selected.name||selfSetEnv.name}}</ui-select-match>
+                            <ui-select-choices group-by="'host'" repeat="eg in envGroups | propsFilter: {name: $select.search, id: $select.search}">
+                                <div ng-bind-html="eg.name | highlight: $select.search"></div>
+                                <small class="text-muted">
+                                    envId: <span ng-bind-html="''+eg.id | highlight: $select.search"></span>
+                                </small>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                    <br>
+                    <br>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-info" data-dismiss="modal" ng-click="">取消
+                        </button>
+                        <button type="button" class="btn btn-info" data-dismiss="modal" ng-click="runTroubleShootZK()">运行
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="callDsContentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true"
+         style="display: none;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                    <h4 class="modal-title" id="myModalLabel1">数据示例参考:来源Markov用例库</h4>
+                </div>
+                <div id="_modalDialog_body" class="modal-body">
+                    <!--  设置这个div的大小，超出部分显示滚动条 -->
+                    <div id="selectTree" class="ztree" style=" height:500px;overflow:auto; ">
+                        <h4 class="modal-title" id="modalLabel"><code>key</code></h4>
+                        <HR>
+                        <textarea style="width: 650px;min-height:100px; background-color: #282923;color:white;margin-top:-10px;">{{ curKvp.key }}</textarea>
+                        <HR>
+                        <h4 class="modal-title" id="modalLabel"><code>value</code></h4>
+                        <HR>
+                        <textarea style="width: 650px;min-height:430px; background-color: #282923;color:white;margin-top:-10px;">{{ curKvp.value }}</textarea>
+                        <HR>
+                        <h4 class="modal-title" id="modalLabel"><code>property</code></h4>
+                        <HR>
+                        <textarea style="width: 650px;min-height:60px; background-color: #282923;color:white;margin-top:-10px;">{{ curKvp.property }}</textarea>
+                        <HR>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal"
+                            data-spm-anchor-id="0.0.0.i0.5a1d5a55ziaHhl">返回
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- Modal -->
+    <div class="modal fade" id="statusProgress" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+                    <h3 class="modal-title" id="statusProgressTitle">实时信息查询</h3>
+                </div>
+                <div id="_modalDialog_body" class="modal-body">
+                    <!--  设置这个div的大小，超出部分显示滚动条 -->
+                    <div id="selectTree" class="ztree" style=" height:500px;overflow:auto; ">
+                        <h4 class="modal-title" id="modalLabel">运行进度:</h4>
+                        <HR>
+                        <!--<div style="white-space:pre-line">{{statusProgress}}</div>-->
+                        <textarea style="width: 650px;min-height:230px; background-color: #282923;color:white;margin-top:-10px;">{{ statusProgress }}</textarea>
+
+                        <HR>
+                        <h4 class="modal-title" id="modalLabel">运行日志:</h4>
+                        <HR>
+                        <!--<div style="white-space:pre-line">{{zkLog}}</div>-->
+                        <textarea style="width: 650px;min-height:430px; background-color: #282923;color:white;margin-top:-10px;">{{ zkLog }}</textarea>
+                        <HR>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>&ensp;
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="delModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true"
+             style="display: none;">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">×</span></button>
+                        <h4 class="modal-title" id="myModalLabel1">提示</h4>
+                    </div>
+                    <div class="modal-body">
+                        <label>是否要进行全量索引数据准备1?</label>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal"
+                                data-spm-anchor-id="0.0.0.i0.5a1d5a55ziaHhl">取消
+                        </button>
+                        <button type="button" class="btn btn-info" data-dismiss="modal" ng-click="runAgentCase('noRestartData')">跳过索引准备
+                        </button>
+                        <button type="button" class="btn btn-info" data-dismiss="modal" ng-click="runAgentCase('restartData')">执行索引准备
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

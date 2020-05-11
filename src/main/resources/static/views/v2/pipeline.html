@@ -1,0 +1,112 @@
+<style>
+    .CodeMirror {border: 1px solid #e7ecee;}
+</style>
+<div ng-controller="pipelineController">
+    <div class="container mainBlock">
+
+        <div ng-show="selTab.tab == 'pipeline'">
+            <div class="col-xs-12 basicBlock" >
+                <div >
+                    <h4>
+                        pipeline编辑
+                    </h4>
+                </div>
+                <ui-codemirror ng-model="pipeObj.pipeline" ui-codemirror-opts="pipelineCodeConfig"></ui-codemirror>
+                <br>
+                <div >
+                    <h4>
+                        数据源编辑
+                    </h4>
+
+                </div>
+                <textarea class="form-control" ng-model="pipeObj.dataSource" style="height:500px">
+
+                </textarea>
+                <!--<input class="btn btn-default m-l-xs"   data-toggle="modal" data-target="#warnModal"  ng-click="" type="button" value="用例刷新为新数据源">-->
+                <button ng-show="isNewDataSource" class="btn btn-sm btn-info"  data-toggle="modal" data-target="#warnModal"  ng-click="">用例刷新为新数据源</button>
+                <button class="btn btn-sm btn-info" ng-model="saveInfo" ng-click="savePipelineJson()">保存</button>
+                <button class="btn btn-sm btn-default"  ng-click="goBack()">返回</button>
+
+                {{ saveInfo}}
+            </div>
+
+        </div>
+        <div ng-show="selTab.tab == 'diamond'">
+
+            <div ng-repeat="(type,diamondList) in diamondInfo" class="tab-pane" >
+                <table  class="table table-striped">
+                    <div class="modal-header">
+                        <h3 class="modal-title" >{{type}}</h3>
+                    </div>
+                    <tr>
+                        <th class="listTh">序号</th>
+                        <th class="listTh">groupId</th>
+                        <th class="listTh">dataId</th>
+                        <th class="listTh">描述</th>
+                        <th class="listTh">操作</th>
+                    </tr>
+                    <tr ng-repeat="(index,unit) in diamondList">
+                        <td>{{ index+1 }}</td>
+                        <td>{{ unit.groupId }}</td>
+                        <td>{{ unit.dataId }}</td>
+                        <td>{{ unit.desc }}</td>
+                        <td style="white-space:nowrap" ><a href="" class="btn btn-sm btn-info"  data-toggle="modal" data-target="#diamondBox"  ng-click="openDiamondBox(type, unit.desc, unit.dataId,unit.groupId,unit.id)">编辑</a></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+
+    <div class="modal fade" id="warnModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">高危操作</h4>
+                </div>
+                <div class="modal-body">
+                    是否确认刷新用例? 所有用例数据源将替换为新数据源!不可逆!
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-info" data-dismiss="modal" ng-click="transferDataSourceForCase()">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="diamondBox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="statusProgressTitle">Diamond配置</h3>
+                </div>
+                <div id="_modalDialog_body" class="modal-body">
+                    <h4 class="modal-title" id="modalLabel">基本信息:</h4>
+                    <br>
+                    <span>groupId：<label style="color: blue">{{diamondContent.groupId}}</label></span>
+                    <br>
+                    <span>dataId：<label style="color: blue">{{diamondContent.dataId}}</label></span>
+                    <br>
+                    跳转至diamond：<a href="{{diamondUrl}}"  target="_blank" title="说明" >[链接]</a>
+                    <HR>
+
+                    <h4 class="modal-title" id="modalLabel">配置描述:</h4>
+                    <!--<br>-->
+                    <textarea  rows="1" placeholder="请输入配置描述" class="form-control" ng-model="diamondContent.desc" style="width: 550px;height:50px;margin-left:0px;margin-top:0px"></textarea>
+                     <div id="selectTree"> 
+                        <h4 class="modal-title" id="modalLabel">配置内容:</h4>
+                    <label style="color: green">保存后可自动同步到Diamond</label>
+                    <!--<br>-->
+                    <textarea  class="form-control" ng-model="diamondContent.content" style="white-space:pre-line;width:550px;height:300px;margin-left:0px;margin-top:0px"></textarea>
+                </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-sm btn-default" data-dismiss="modal">返回</button>&ensp;
+                        <button type="submit" class="btn btn-sm btn-info" data-dismiss="modal" ng-click="saveDiamond(diamondContent)">保存</button>&ensp;
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

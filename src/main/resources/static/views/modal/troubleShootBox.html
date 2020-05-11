@@ -1,0 +1,46 @@
+<style>
+<!--
+.app-modal-window .modal-dialog {
+  width: 1000px;
+}
+-->
+</style>
+<div class="app-modal-window modal-body" style="overflow:auto" ng-init="init()">
+    <h3 class="m-t-none m-b font-thin">检测说明
+        <small class="pull-right">
+            <button type="button" class="btn btn-sm btn-danger text-uc m-t-n-xs" ng-click="close()"><strong>关闭</strong></button>
+        </small>
+    </h3>
+    <div class="row">
+        <div class="col-sm-12">
+            <form role="form">
+                <div class="form-group">
+                    <label style="color: green" >结论说明：</label>
+                    <textarea rows="3" class="form-control" ng-model="checkInfoBox.desc"></textarea>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-12" ng-if="viewDiffResult==false">
+            <form role="form">
+                <div class="form-group">
+                    <label style="color: green" >详情说明：</label>
+                    <textarea rows="12" class="form-control" ng-model="checkInfoBox.detail"></textarea>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-12" ng-if="viewDiffResult==true">
+            <form role="form">
+                <div class="form-group">
+                    <label>对比结果：</label>
+                    <diff-smoke config="diffConfig"/>
+                </div>
+            </form>
+            <small class="pull-right">
+                <button type="button" class="btn btn-sm btn-danger text-uc m-t-n-xs" ng-click="close()"><strong>关闭</strong></button>
+            </small>
+        </div>
+    </div>
+
+</div>

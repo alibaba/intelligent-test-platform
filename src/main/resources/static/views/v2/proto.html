@@ -1,0 +1,143 @@
+<style>
+    .CodeMirror {border: 1px solid #e7ecee;}
+</style>
+<div ng-controller="datasourceController">
+    <script type="text/ng-template" id="trace.html">
+        <div ng-include="'views/modal/trace.html'"></div>
+    </script>
+
+    <div class="container mainBlock" ng-init="initProto()">
+
+        <div style="padding-bottom:10px">
+            <!--<input class="btn btn-default m-l-xs"   data-toggle="modal" data-target="#templateEditBox"  ng-click="addOneProto()" type="button" value="新增proto">-->
+            <button type="submit" class="btn btn-sm btn-info"  data-toggle="modal" data-target="#templateEditBox"  ng-click="addOneProto()" type="button" >新增proto</button>
+            <button type="submit" class="btn btn-sm btn-info"  data-toggle="modal" data-target="#syncProtoBox"  ng-click="pickCurId(0)" type="button" >同步proto</button>
+            <div class="panel-body">
+                <div class="row" >
+                    <span style="color: dodgerblue;float: left;margin-left: 20px;">*同步操作会将proto文件分发到markov公共中转机和当前场景宿主机上，以进行proto的封装和解析。</span>
+                </div>
+            </div>
+        </div>
+
+
+        <table  class="table table-striped">
+            <tr>
+                <th class="listTh">序号</th>
+                <th class="listTh">pb文件名</th>
+                <th class="listTh">描述</th>
+                <th class="listTh">最近修改人</th>
+                <th class="listTh">更新时间</th>
+                <th class="listTh">同步状态</th>
+                <th class="listTh">同步时间</th>
+                <th class="listTh">操作</th>
+            </tr>
+            <tr ng-repeat="(index,unit) in protoList">
+                <td>{{ index+1 }}</td>
+                <td>{{ unit.pbFileName }}</td>
+                <td>{{ unit.pbDesc }}</td>
+                <td>{{ unit.modifiedBy }}</td>
+                <td>{{ unit.modifieTime }}</td>
+                <td>
+                    <label ng-if="unit.recentSyncStatus == 'SUCCESS' " style="color: green" class="col-md-6">SUCCESS</label>
+                    <label ng-if="unit.recentSyncStatus == 'FAIL'" style="color: red" class="col-md-6">FAIL</label>
+                    <label ng-if="unit.recentSyncStatus == 'RUNNING'" style="color: blue" class="col-md-6">RUNNING</label>
+                </td>
+                <td>{{ unit.recentSyncTime }}</td>
+                <td  style="white-space:nowrap">
+                    <a href="" class="btn btn-sm btn-info"  data-toggle="modal" data-target="#templateEditBox"  ng-click="getOneProto(unit.id)">编辑</a>
+                    <span style="color: lightgray;"> | </span>
+                    <a href="" class="btn btn-sm btn-info"  data-toggle="modal" data-target="#syncProtoBox"  ng-click="pickCurId(unit.id)">同步</a>
+                    <span style="color: lightgray;"> | </span>
+                    <a href="" class="btn btn-sm btn-info"  data-toggle="modal" data-target="#deleteModal" ng-click="pickCurId(unit.id)">删除</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">提示</h4>
+                </div>
+                <div class="modal-body">
+                    是否确认删除?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-info" data-dismiss="modal" ng-click="deleteOneProto()">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="syncProtoBox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">提示</h4>
+                </div>
+                <div class="modal-body">
+                    是否开始同步更新pb文件?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-info" data-dismiss="modal" ng-click="syncProto()">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="templateEditBox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="statusProgressTitle" style="color: blue">PROTO配置</h3>
+                </div>
+                <div id="_modalDialog_body" class="modal-body">
+
+                    <div class="col-sm-12" style="margin-left:-12px;">
+                        <div class="col-sm-8" style="margin-top:10px">
+                            <form class="">
+                                <div class="form-group">
+                                    <label>proto文件名</label>
+                                    <input style="width:100%" placeholder="请填入pb文件名,如sn.proto" ng-model="oneProto.pbFileName" type="text" class="form-control" aria-label="...">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-sm-3" style="margin-top:10px;">
+                            <form class="">
+                                <div class="form-group">
+                                    <label>描述</label>
+                                    <input style="width:100%" ng-model="oneProto.pbDesc" type="text" class="form-control" aria-label="...">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-sm-12" style="margin-left:-12px;">
+
+                        <div class="col-sm-12" style="margin-top:10px;">
+                            <form class="">
+                                <div class="form-group">
+                                    <label>pb内容</label>
+                                    <textarea style="width:100%;height:250px" ng-model="oneProto.content" type="text" class="form-control" aria-label="..." placeholder="双击可在编辑器中编辑"  ng-dblclick="openModuleEdit(oneProto.content,0,10)"></textarea>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-sm btn-default" data-dismiss="modal">返回</button>&ensp;
+                        <button type="submit" class="btn btn-sm btn-info" data-dismiss="modal" ng-click="saveOneProto(oneProto)">保存</button>&ensp;
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

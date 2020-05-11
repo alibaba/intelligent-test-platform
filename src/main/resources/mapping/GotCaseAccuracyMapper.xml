@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- WARNING: This file is SQI exclusive, don't change! -->
+<mapper namespace="com.alibaba.markovdemo.mapper.GotCaseAccuracyMapper">
+
+    <resultMap id="GotCaseAccuracy" type="gotCaseAccuracy">
+        <id column="id" property="id"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="case_id" property="caseId"/>
+        <result column="exe_id" property="exeId"/>
+        <result column="cov_line" property="covLine"/>
+        <result column="collect_type" property="collectType"/>
+    </resultMap>
+
+
+    <insert id="insert" parameterType="gotCaseAccuracy" useGeneratedKeys="true" keyProperty="id">
+        replace into `got_case_accuracy` (
+        `gmt_create`,
+        `gmt_modified`,
+        <trim suffixOverrides=",">
+            <if test="caseId != null">`case_id`,</if>
+            <if test="exeId != null">`exe_id`,</if>
+            <if test="covLine != null">`cov_line`,</if>
+            <if test="collectType != null">`collect_type`</if>
+        </trim>
+        ) values(
+        now(),
+        now(),
+        <trim suffixOverrides=",">
+            <if test="caseId != null">#{caseId},</if>
+            <if test="exeId != null">#{exeId},</if>
+            <if test="covLine != null">#{covLine},</if>
+            <if test="collectType != null">#{collectType}</if>
+        </trim>
+        )
+    </insert>
+
+
+    <update id="update" parameterType="gotCaseAccuracy">
+        update `got_case_accuracy` set `gmt_modified` = now()
+        <if test="caseId!=null">,`case_id` = #{caseId}</if>
+        <if test="exeId!=null">,`exe_id` = #{exeId}</if>
+        <if test="covLine!=null">,`cov_line` = #{covLine}</if>
+        <if test="collectType!=null">,`collect_type` = #{collectType}</if>
+        where id = #{id}
+    </update>
+
+
+    <select id="getByExeId" parameterType="gotCaseAccuracy" resultMap="GotCaseAccuracy">
+        select *
+        from `got_case_accuracy`
+        where exe_id = #{exeId}
+    </select>
+
+
+    <select id="getByExeIdAndCaseId" parameterType="gotCaseAccuracy" resultMap="GotCaseAccuracy">
+        select *
+        from `got_case_accuracy`
+        where exe_id = #{exeId} and case_id = #{caseId}
+    </select>
+
+
+    <select id="getByKeyWords" parameterType="Map" resultMap="GotCaseAccuracy">
+        select * from `got_case_accuracy`
+        where case_id in
+        (select id from `got_testcase` where scenario_id = #{scenarioId} and is_deleted =0)
+        AND `cov_line` like CONCAT('%',#{keywords},'%')
+        GROUP BY case_id order by case_id desc
+    </select>
+
+
+    <select id="getLastedByCaseId" parameterType="gotCaseAccuracy" resultMap="GotCaseAccuracy">
+        select *
+        from `got_case_accuracy`
+        where case_id = #{caseId}
+        order by id desc limit 1
+    </select>
+</mapper>

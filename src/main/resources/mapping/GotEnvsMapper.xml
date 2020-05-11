@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.alibaba.markovdemo.mapper.GotEnvsMapper">
+
+    <resultMap id="gotEnvs" type="com.alibaba.markovdemo.entity.GotEnvs">
+        <id column="id" property="id"/>
+        <result column="scenario_id" property="scenarioId"/>
+        <result column="name" property="name"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="host_ip" property="hostIp"/>
+        <result column="status" property="status"/>
+        <result column="env_detail" property="envDetail"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.alibaba.markovdemo.entity.GotEnvs" useGeneratedKeys="true" keyProperty="id">
+        insert into `got_envs` (
+        `gmt_create`,
+        `gmt_modified`,
+        <trim suffixOverrides=",">
+            <if test="scenarioId != null">`scenario_id`,</if>
+            <if test="name != null">`name`,</if>
+            <if test="hostIp != null">`host_ip`,</if>
+            <if test="status != null">`status`,</if>
+            <if test="envDetail != null">`env_detail`</if>
+        </trim>
+        ) values(
+        now(),
+        now(),
+        <trim suffixOverrides=",">
+            <if test="scenarioId != null">#{scenarioId},</if>
+            <if test="name != null">#{name},</if>
+            <if test="hostIp != null">#{hostIp},</if>
+            <if test="status != null">#{status},</if>
+            <if test="envDetail != null">#{envDetail}</if>
+        </trim>
+        )
+    </insert>
+
+    <select id="findByScenarioId" parameterType="Map" resultMap="gotEnvs">
+        select *
+        from `got_envs`
+        where scenario_id = #{scenarioId}
+    </select>
+
+
+    <delete id="deleteById" parameterType="Long">
+        DELETE FROM  `got_envs`
+        where id = #{id}
+    </delete>
+
+    <select id="findById" parameterType="Long" resultMap="gotEnvs">
+        select *
+        from `got_envs`
+        where id = #{id}
+    </select>
+
+</mapper>

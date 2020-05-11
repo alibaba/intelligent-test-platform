@@ -1,0 +1,27 @@
+<style>
+<!--
+.app-modal-window .modal-dialog {
+  width: 800px;
+}
+-->
+</style>
+<div class="app-modal-window modal-body">
+    <h3 class="m-t-none m-b font-thin">编辑配置 <small>当前模式:{{trace.modeName}}<label class="pull-right i-checks m-b-none"><input ng-model="scriptOptions.lineWrapping" type="checkbox"><i></i>单行超过编辑区宽度自动换行</label></small>
+    </h3>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-group">
+                <ui-codemirror ng-model="trace.tcontent" ui-codemirror-opts="scriptOptions"></ui-codemirror>
+            </div>
+        </div>
+
+        <div class="pull-left" style="margin-left:10px">
+            <button type="button" toolTip="不做格式正确性校验" class="btn btn-sm btn-info text-uc m-t-n-xs" ng-click="changeMode('javascript')"><Strong>普通模式</Strong></button>
+            <button type="button" toolTip="会对JSON数据的正确性做校验" class="btn btn-sm btn-primary text-uc m-t-n-xs" ng-click="changeMode('application/json')"><Strong>JSON模式</Strong></button>
+        </div>
+        <div class="pull-right" style="margin-right:10px">
+            <button type="button" class="btn btn-sm btn-success text-uc m-t-n-xs" ng-click="completed()"><Strong>确定</Strong></button>
+            <button type="button" class="btn btn-sm btn-danger text-uc m-t-n-xs" ng-click="close()"><Strong>关闭</Strong></button>
+        </div>
+    </div>
+</div>

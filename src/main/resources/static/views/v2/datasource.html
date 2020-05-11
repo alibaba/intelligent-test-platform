@@ -1,0 +1,518 @@
+<style>
+    .CodeMirror {border: 1px solid #e7ecee;}
+</style>
+<div ng-controller="datasourceController">
+    <script type="text/ng-template" id="trace.html">
+        <div ng-include="'views/modal/trace.html'"></div>
+    </script>
+
+
+    <div class="container mainBlock" ng-init="initDataSource()">
+
+
+        <table class="col-sm-11">
+            <tr>
+                <td style="text-align:left;" class="col-sm-4">
+                    <button type="submit" class="btn btn-sm btn-info"  data-toggle="modal" data-target="#templateEditBox"  ng-click="addDataSource()" type="button" >新增数据源</button>
+                    <button type="submit" class="btn btn-sm btn-info"  data-toggle="modal" data-target="#syncModal"  ng-click="pickSyncInfo(0,0,'all')" type="button" >同步全部</button>
+                </td>
+            </tr>
+        </table>
+
+        <HR>
+        <div ng-repeat="(dataType,dataSourceList) in dataSourceListInfo" class="tab-pane" >
+
+            <HR>
+            <table class="col-sm-11">
+                <tr>
+                    <td style="text-align:left;" class="col-sm-4">
+                        <!--<code>{{dataType}}</code>-->
+                        <h3 class="modal-title"><code>{{dataType}}</code> <a href=""  data-toggle="modal" data-target="#syncModal"  ng-click="pickSyncInfo(0,dataType,'dataType')">[同步]</a></h3>
+                        <!--<button type="submit" class="btn btn-sm btn-info"  data-toggle="modal" data-target="#syncModal"  ng-click="pickSyncInfo(0,dataType,'dataType')" type="button" >批量同步</button>-->
+                        <!--<a href=""  data-toggle="modal" data-target="#syncModal"  ng-click="pickSyncInfo(0,dataType,'dataType')">批量同步</a>-->
+
+                    </td>
+                </tr>
+            </table>
+
+            <table  class="table table-striped">
+                <tr>
+                    <th class="listTh">序号</th>
+                    <th class="listTh">数据源名</th>
+                    <th class="listTh">描述</th>
+                    <th class="listTh">关联模块</th>
+                    <th class="listTh">关联模板</th>
+                    <th class="listTh">关联pb</th>
+                    <th class="listTh">同步状态</th>
+                    <th class="listTh">同步时间</th>
+                    <th class="listTh">操作</th>
+                </tr>
+                <tr ng-repeat="(index,unit) in dataSourceList">
+                    <td>{{ index+1 }}</td>
+                    <td>{{ unit.dsName }}</td>
+                    <td>{{ unit.dsDesc }}</td>
+                    <td>{{ unit.module }}</td>
+                    <td>{{ unit.isUseTemplate }}</td>
+                    <td>{{ unit.protoFileName }}</td>
+                    <td>
+                        <label ng-if="unit.recentSyncStatus == '同步成功' " style="color: green" class="col-md-6">SUCCESS</label>
+                        <label ng-if="unit.recentSyncStatus == '同步失败'" style="color: red" class="col-md-6">FAIL</label>
+                        <label ng-if="unit.recentSyncStatus == '同步进行中'" style="color: blue" class="col-md-6">RUNNING</label>
+                    </td>
+                    <td>{{ unit.recentSyncTime }}</td>
+
+                    <td  style="white-space:nowrap">
+                        <a href=""  data-toggle="modal" data-target="#templateEditBox"  ng-click="getDatasource(unit.id)">编辑</a>
+                        <span style="color: lightgray;"> | </span>
+                        <a href=""   data-toggle="modal" data-target="#syncModal" ng-click="pickSyncInfo(unit.id,unit.dataType,'id')">同步</a>
+                        <span style="color: lightgray;"> | </span>
+                        <a href=""   data-toggle="modal" data-target="#deleteModal" ng-click="pickCurId(unit.id)">删除</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">提示</h4>
+                </div>
+                <div class="modal-body">
+                    是否确认删除?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-info" data-dismiss="modal" ng-click="deleteDatasource()">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="syncModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">提示</h4>
+                </div>
+                <div class="modal-body">
+                    是否确认开始同步?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-info" data-dismiss="modal" ng-click="syncDatasource()">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="templateEditBox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document" style="width:800px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="statusProgressTitle" style="color: green">数据源配置</h3>
+                </div>
+
+                <div id="_modalDialog_body" class="modal-body">
+
+                    <div id="selectTree" class="ztree" style="height:500px;overflow:auto; "> 
+                        <span style="float: left;color:dodgerblue;margin-left: 20px;">最近同步状态：{{oneDataSource.recentSyncStatus}}</span>
+                        <span style="float: left;color:dodgerblue;margin-left: 20px;">最近同步时间：{{oneDataSource.recentSyncTime}}</span>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading font-bold">
+                                基本信息区
+                            </div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-12" style="margin-left:-12px;">
+                                        <div class="col-sm-7" style="margin-top:10px">
+                                            <form class="">
+                                                <div class="form-group">
+                                                    <label>数据源名称</label>
+                                                    <input style="width:100%" ng-model="oneDataSource.dsName" type="text" class="form-control" aria-label="...">
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="col-sm-3" style="margin-top:10px;">
+                                            <form class="">
+                                                <div class="form-group">
+                                                    <label>数据类型</label>
+                                                    <select class="form-control" ng-change="selectDataType(dataTypeSelect)" ng-click="selectDataType(dataTypeSelect)" ng-model="dataTypeSelect" ng-options="opt for opt in dataTypeList"></select>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="col-sm-2" style="margin-top:10px">
+                                            <form class="">
+                                                <div class="form-group">
+                                                    <label>关联模块</label>
+                                                    <select class="form-control" ng-change="selectModule(moduleSelect)" ng-click="selectModule(moduleSelect)" ng-model="moduleSelect" ng-options="opt for opt in moduleList"></select>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12" >
+                                        <form class="form-inline">
+                                            <div class="form-group"  style="width:100%">
+                                                <label>
+                                                    描述
+                                                </label>
+                                                <input  style="width:100%" ng-model="oneDataSource.dsDesc" type="text" class="form-control" aria-label="...">
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    <div ng-show = "dataTypeSelect=='Tair'" class="col-sm-12" style="margin-left:-12px;">
+                                        <div class="col-sm-9" style="margin-top:10px;">
+                                            <form class="">
+                                                <div class="form-group">
+                                                    <label>dataId</label>
+                                                    <input style="width:100%" ng-model="fixFeature.dataId" placeholder="请填入该Tair在通用存储层diamond中的dataId.."  type="text" class="form-control" aria-label="...">
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="col-sm-3" style="margin-top:10px">
+                                            <form class="">
+                                                <div class="form-group">
+                                                    <label>areaId</label>
+                                                    <input style="width:100%" ng-model="fixFeature.tairarea"  placeholder="tairarea,比如521.." type="text" class="form-control" aria-label="...">
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    <div ng-show = "dataTypeSelect=='IgraphDw'" class="col-sm-12" style="margin-left:-12px;">
+                                        <div class="col-sm-6" style="margin-top:10px;">
+                                            <form class="">
+                                                <div class="form-group">
+                                                    <label>tableName</label>
+                                                    <input style="width:100%" ng-model="fixFeature.tableName" placeholder="请填入在通用dataWarehouse中的tableName.."  type="text" class="form-control" aria-label="...">
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="col-sm-6" style="margin-top:10px">
+                                            <form class="">
+                                                <div class="form-group">
+                                                    <label>文件路径</label>
+                                                    <input style="width:100%" ng-model="oneDataSource.filePath" placeholder="请填入mockdata的路径.." value="/home/a/igraph_mock_data" type="text" class="form-control" aria-label="...">
+
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    <div ng-show = "dataTypeSelect=='Tdbm'" class="col-sm-12" style="margin-left:-12px;">
+                                        <div class="col-sm-12" style="margin-top:10px">
+                                            <form class="">
+                                                <div class="form-group">
+                                                    <label>文件路径</label>
+                                                    <input style="width:100%" ng-model="oneDataSource.filePath" placeholder="请填入该文件在容器中的绝对路径.." type="text" class="form-control" aria-label="...">
+                                                </div>
+                                            </form>
+                                        </div>
+
+                                    </div>
+
+                                    <div ng-show = "dataTypeSelect=='Text'" class="col-sm-12" style="margin-left:-12px;">
+                                        <div class="col-sm-12" style="margin-top:10px">
+                                            <form class="">
+                                                <div class="form-group">
+                                                    <label>文件路径</label>
+                                                    <input style="width:100%" ng-model="oneDataSource.filePath" placeholder="请填入该文件在容器中的绝对路径.." type="text" class="form-control" aria-label="...">
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <label class="i-checks">
+                                            <input type="checkbox"  ng-value="true"   ng-click="selectAllowSyncHostType(fixFeature.allowSyncHost)" ng-checked="fixFeature.allowSyncHost"  ng-model="fixFeature.allowSyncHost">
+                                            <i></i>
+                                            {{ y.type }}
+                                        </label> 允许同步到宿主机
+                                        <div class="form-group">
+                                            <label>初始数据:</label>
+                                            <!--<input style="width:100%" ng-model="fixFeature.initData" type="text" class="form-control" aria-label="..." placeholder="双击可在编辑器中编辑"  ng-dblclick="openModuleEdit(fixFeature.initData,index,6)">-->
+                                            <textarea style="width:100%;height:50px" ng-model="fixFeature.initData" type="text" class="form-control" placeholder="双击可在编辑器中编辑" ng-dblclick="openModuleEdit(fixFeature.initData,index,6)" aria-label="..."></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div ng-show = "dataTypeSelect=='Igraph'" class="col-sm-12" style="margin-left:-12px;">
+                                        <div class="col-sm-12" style="margin-top:10px">
+                                            <form class="">
+                                                <div class="form-group">
+                                                    <label>文件路径</label>
+                                                    <input style="width:100%" ng-model="oneDataSource.filePath" placeholder="请填入mockdata的路径.." value="/home/a/igraph_mock_data" type="text" class="form-control" aria-label="...">
+
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>schema:</label>
+                                            <textarea style="width:100%;height:50px" ng-model="fixFeature.schema" type="text" class="form-control" placeholder="双击可在编辑器中编辑" ng-dblclick="openModuleEdit(fixFeature.schema,index,11)" aria-label="..."></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div ng-show = "dataTypeSelect=='KVfile'" class="col-sm-12" style="margin-left:-12px;">
+
+                                        <div class="col-sm-8" style="margin-top:10px">
+                                            <form class="">
+                                                <div class="form-group"  >
+                                                    <label>文件路径</label>
+                                                    <input style="width:100%" ng-model="oneDataSource.filePath" placeholder="请填入该文件在容器中的绝对路径.." type="text" class="form-control" aria-label="...">
+                                                </div>
+
+                                            </form>
+                                        </div>
+                                        <div class="col-sm-4" style="margin-top:10px">
+                                            <form class="">
+                                                <div class="form-group" >
+                                                    <label>kv分割符</label>
+                                                    <input style="width:100%" ng-model="fixFeature.kv_separator" placeholder="=" type="text" class="form-control" aria-label="...">
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <label class="i-checks">
+                                            <input type="checkbox"  ng-value="true"   ng-click="selectAllowSyncHostType(fixFeature.allowSyncHost)" ng-checked="fixFeature.allowSyncHost"  ng-model="fixFeature.allowSyncHost">
+                                            <i></i>
+                                            {{ y.type }}
+                                        </label> 允许同步到宿主机
+                                        <div class="form-group">
+                                            <label>初始数据:</label>
+                                            <!--<input style="width:100%" ng-model="fixFeature.initData" type="text" class="form-control" aria-label="..." placeholder="双击可在编辑器中编辑"  ng-dblclick="openModuleEdit(fixFeature.initData,index,6)">-->
+                                            <textarea style="width:100%;height:50px" ng-model="fixFeature.initData" type="text" class="form-control" placeholder="双击可在编辑器中编辑" ng-dblclick="openModuleEdit(fixFeature.initData,index,6)" aria-label="..."></textarea>
+                                        </div>
+
+                                    </div>
+
+                                    <div ng-show = "dataTypeSelect=='ArtisMsg'" class="col-sm-12" style="margin-left:-12px;">
+                                        <div class="col-sm-4" style="margin-top:10px">
+                                            <form class="">
+                                                <div class="form-group">
+                                                    <label>input_topic</label>
+                                                    <input style="width:100%" ng-model="fixFeature.input_topic" type="text" placeholder="请填入input_topic.." class="form-control" aria-label="...">
+                                                </div>
+
+                                            </form>
+                                        </div>
+                                        <div class="col-sm-4" style="margin-top:10px">
+                                            <form class="">
+                                                <div class="form-group">
+                                                    <label>filterPrefix</label>
+                                                    <input style="width:100%" ng-model="fixFeature.filterPrefix" placeholder="请填入filterPrefix.."  type="text" class="form-control" aria-label="...">
+                                                </div>
+
+                                            </form>
+                                        </div>
+                                        <div class="col-sm-4" style="margin-top:10px">
+                                            <form class="">
+                                                <div class="form-group">
+                                                    <label>partitionId</label>
+                                                    <input style="width:100%" ng-model="fixFeature.partitionId"  placeholder="请填入partitionId.."  type="text" class="form-control" aria-label="...">
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    <div ng-show = "dataTypeSelect=='Imock'" class="col-sm-12" style="margin-left:-12px;">
+                                        <form class="">
+                                            <div class="form-group">
+                                                <label>dat.xml</label>
+                                                <input style="width:100%" ng-model="fixFeature.dat" type="text"  placeholder="请找Markov管理员配置" class="form-control" aria-label="..." placeholder="双击可在编辑器中编辑"  ng-dblclick="openModuleEdit(fixFeature.dat,index,4)">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>fmt.xml</label>
+                                                <input style="width:100%" ng-model="fixFeature.fmt" type="text" class="form-control" placeholder="请找Markov管理员配置"  aria-label="..." placeholder="双击可在编辑器中编辑"  ng-dblclick="openModuleEdit(fixFeature.fmt,index,5)">
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    <div ng-show = "dataTypeSelect=='其他数据源'"  class="col-sm-12" style="margin-left:-12px;">
+
+                                        <div class="form-group">
+                                            <label>文件路径:</label>
+                                            <input style="width:100%" ng-model="fixFeature.filePath" placeholder="请填入该文件在容器中的绝对路径.." type="text" class="form-control" aria-label="...">
+                                        </div>
+
+                                    <label class="i-checks">
+                                        <input type="checkbox"  ng-value="true"   ng-click="selectAllowSyncHostType(fixFeature.allowSyncHost)" ng-checked="fixFeature.allowSyncHost"  ng-model="fixFeature.allowSyncHost">
+                                        <i></i>
+                                        {{ y.type }}
+                                    </label> 允许同步到宿主机
+
+                                    <label class="i-checks">
+                                        <input type="checkbox"  ng-value="true" ng-click="selectAllowCaseShowType(fixFeature.allowCaseShow)"  ng-checked="fixFeature.allowCaseShow'" ng-model="fixFeature.allowCaseShow">
+                                        <i></i>
+                                        {{ y.type }}
+                                    </label> 可在用例页展示
+
+                                        <div class="form-group">
+                                            <label>初始数据:</label>
+                                            <!--<input style="width:100%" ng-model="fixFeature.initData" type="text" class="form-control" aria-label="..." placeholder="双击可在编辑器中编辑"  ng-dblclick="openModuleEdit(fixFeature.initData,index,6)">-->
+                                            <textarea style="width:100%;height:250px" ng-model="fixFeature.initData" type="text" class="form-control" placeholder="双击可在编辑器中编辑" ng-dblclick="openModuleEdit(fixFeature.initData,index,6)" aria-label="..."></textarea>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    <div ng-show = "dataTypeSelect!='其他数据源'">
+
+                        <div class="panel panel-default">
+
+                            <div class="panel-heading font-bold">
+                                <code>配置选择:  </code>
+                                <label class="i-checks" style="margin-right: 10px"><input type="radio" name="option" ng-model="type" value="demo"><i></i>demo</label>
+                                <label ng-show = "dataTypeSelect=='Tdbm'" class="i-checks" style="margin-right: 10px"><input type="radio" name="option" ng-model="type" value="initData"><i></i>初始数据</label>
+                                <label class="i-checks"><input type="radio" name="option" ng-model="type" value="proto"><i></i>proto配置</label>
+                                <label class="i-checks"><input type="radio" name="option" ng-model="type" value="template"><i></i>模板</label>
+                                <label class="i-checks"><input type="radio" name="option" ng-model="type" value="config"><i></i>高级配置</label>
+                            </div>
+
+                            <div class="panel-body">
+                                <div class="row">
+
+                                    <div ng-show="type == 'demo'"  class="col-sm-12" style="margin-left:-12px;">
+                                        <div  class="col-sm-12" style="margin-top:10px;">
+                                            <form class="">
+                                                <div class="form-group">
+                                                    <label>数据示例</label>
+                                                    <textarea style="width:100%;height:250px" ng-model="oneDataSource.demo" type="text" placeholder="双击可在编辑器中编辑" ng-dblclick="openModuleEdit(oneDataSource.demo,index,9)" class="form-control" aria-label="..."></textarea>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    <div ng-show="type == 'initData'"  class="col-sm-12" style="margin-left:-12px;">
+                                        <div  class="col-sm-12" style="margin-top:10px;">
+                                            <form class="">
+                                                <div class="form-group">
+                                                    <label>初始数据</label>
+                                                    <textarea style="width:100%;height:250px" ng-model="fixFeature.initData" type="text" placeholder="支持简单的kv数据，多组数据换行区分，格式如下：key=value" ng-dblclick="openModuleEdit(fixFeature.initData,index,12)" class="form-control" aria-label="..."></textarea>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    <div ng-show="type == 'proto'"  class="col-sm-12" style="margin-left:-12px;">
+                                        <div  class="col-sm-6" style="margin-top:10px;">
+                                            <form class="">
+                                                <div class="form-group">
+                                                    <label>pb文件名</label>
+                                                    <select class="form-control" ng-change="selectPb(currentPbUnit.pbFileName)" ng-click="selectPb(currentPbUnit.pbFileName)" ng-model="currentPbUnit.pbFileName" ng-options="pbFileName for pbFileName in protoList"></select>
+                                                </div>
+                                            </form>
+                                        </div>
+
+                                        <div  class="col-sm-3" style="margin-top:10px;">
+                                            <form class="">
+                                                <div class="form-group">
+                                                    <label>message</label>
+                                                    <input style="width:100%" ng-model="oneDataSource.protoMessage" type="text" class="form-control" aria-label="...">
+                                                </div>
+                                            </form>
+                                        </div>
+
+                                        <div  class="col-sm-12" style="margin-top:10px;">
+                                            <form class="">
+                                                <div class="form-group">
+                                                    <label>pb内容</label>
+                                                    <textarea style="width:100%;height:250px" ng-model="currentPbUnit.content" type="text" class="form-control" aria-label="..." placeholder="双击可在编辑器中编辑"  ng-dblclick="openModuleEdit(currentPbUnit.content,index,7)"></textarea>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    <div ng-show="type == 'template'"  class="col-sm-12" style="margin-left:-12px;">
+                                        <div  class="col-sm-12" style="margin-top:10px;">
+                                            <form class="">
+                                                <div class="form-group">
+                                                    <label>模板内容</label>
+                                                    <textarea style="width:100%;height:250px" ng-model="oneDataSource.template" type="text" class="form-control" aria-label="..." placeholder="双击可在编辑器中编辑"  ng-dblclick="openModuleEdit(oneDataSource.template,index,8)"></textarea>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    <div ng-show="type == 'config'"  class="col-sm-12" style="margin-left:-12px;">
+                                        <div  class="col-sm-12" style="margin-top:10px;">
+                                            <form class="">
+                                                <div ng-show="action == 'put'">
+                                                    <a href="" >默认配置</a>
+<!--                                                    <a href="https://markov.alibaba-inc.com/#!/app/dsTemplatePage" target="_blank">| 全局模板配置</a>-->
+                                                    <a href="/#!/app/dsTemplatePage" target="_blank">| 全局模板配置</a>
+                                                    <HR>
+                                                    <table style="width:100%">
+                                                        <tr ng-repeat="(index,oneConfigInfo) in oneDataSource.configDefault">
+                                                            <td style="width:20%" class="caseTd">
+                                                                配置项{{index+1}}
+                                                            </td>
+                                                            <td style="width:20%" class="caseTd">
+                                                                <input ng-disabled="true" type="text" class="form-control" placeholder="配置名"  data-placement="left"  ng-model="oneConfigInfo.configName">
+                                                            </td>
+                                                            <td style="width:50%" class="caseTd">
+                                                                <input  ng-disabled="true"  type="text"  data-placement="left" class="form-control" ng-model="oneConfigInfo.configValue">
+                                                            </td>
+                                                            <td style="white-space:nowrap" class="caseTd">
+                                                                <a data-toggle="class" class="btn btn-default btn-xs"  placeholder="双击可查看" ng-model="oneConfigInfo.configValue" ng-click="openModuleEdit(oneConfigInfo.configValue,index,2)">
+                                                                    <i class="">查看</i>
+                                                                    <i class="fa fa-star text-danger text-active"></i>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+
+                                                <div>
+                                                    <HR>
+                                                    <a href="" >自定义配置</a>
+                                                    <a data-toggle="class" class="btn btn-default btn-xs" ng-click="addDsModuleConifgItem()">
+                                                        <i class="fa fa-plus text-muted text"></i>
+                                                        <i class="fa fa-star text-danger text-active"></i>
+                                                    </a>
+                                                    <HR>
+                                                    <table style="width:100%">
+                                                        <tr ng-repeat="(index,oneConfigInfo) in oneDataSource.configModule">
+
+                                                            <td style="width:20%" class="caseTd">
+                                                                配置项{{index+1}}
+                                                            </td>
+                                                            <td style="width:20%" class="caseTd">
+                                                                <input type="text" class="form-control" placeholder="配置名"  data-placement="left"  ng-model="oneConfigInfo.configName">
+                                                            </td>
+                                                            <td style="width:50%" class="caseTd">
+                                                                <input type="text"  data-placement="left" class="form-control" placeholder="双击可在编辑器中编辑" ng-model="oneConfigInfo.configValue" ng-dblclick="openModuleEdit(oneConfigInfo.configValue,index,3)">
+                                                            </td>
+                                                            <td style="white-space:nowrap" class="caseTd">
+                                                                <a data-toggle="class" class="btn btn-default btn-xs" ng-click="rmDataConfigCol(index,'module')">
+                                                                    <i class="fa fa-minus text-muted text"></i>
+                                                                    <i class="fa fa-star text-danger text-active"></i>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-sm btn-default" data-dismiss="modal">返回</button>&ensp;
+                <button type="submit" class="btn btn-sm btn-info" data-dismiss="modal" ng-click="saveDataSource(oneDataSource)">仅保存</button>&ensp;
+                <button type="submit" class="btn btn-sm btn-info" data-dismiss="modal" ng-click="synAndSaveDatasource(oneDataSource)">保存并同步</button>&ensp;
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>

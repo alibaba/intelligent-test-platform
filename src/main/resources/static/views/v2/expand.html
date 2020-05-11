@@ -1,0 +1,157 @@
+<div ng-controller="expandController" class="ng-scope">
+
+    <div class="container mainBlock" data-spm-anchor-id="0.0.0.i2.5a1d5a55ziaHhl">
+        <h3>用例膨胀</h3>
+
+        <div class="line line-dashed b-b line-lg pull-in"></div>
+
+        <div ng-show="type =='expand' " class="" data-spm-anchor-id="0.0.0.i10.5a1d5a55ziaHhl">
+            <div>
+                <code>种子用例信息</code>
+                <HR>
+                <div class="col-xs-12 ng-pristine ng-untouched ng-valid ng-not-empty" ng-model="case" style="">
+
+                    <div class="col-xs-6 ng-binding">
+                        <div data-spm-anchor-id="0.0.0.i11.5a1d5a55ziaHhl" style="display:table-cell;font-weight: bold;">用例id:</div>
+                        <div ng-model = "case" data-spm-anchor-id="0.0.0.i12.5a1d5a55ziaHhl" style="display:table-cell;padding: 10px 15px;">{{case.id}}</div>
+                    </div>
+                    <div class="col-xs-6 ng-binding">
+                        <div data-spm-anchor-id="0.0.0.i11.5a1d5a55ziaHhl" style="display:table-cell;font-weight: bold;">用例名:</div>
+                        <div ng-model = "case" data-spm-anchor-id="0.0.0.i12.5a1d5a55ziaHhl" style="display:table-cell;padding: 10px 15px;">{{case.description}}</div>
+                    </div>
+
+                    <div class="col-xs-6 ng-binding">
+                        <div data-spm-anchor-id="0.0.0.i11.5a1d5a55ziaHhl" style="display:table-cell;font-weight: bold;">用例描述:</div>
+                        <div ng-model = "case" data-spm-anchor-id="0.0.0.i12.5a1d5a55ziaHhl" style="display:table-cell;padding: 10px 15px;">{{case.longDescription}}</div>
+                    </div>
+
+                    <div class="col-xs-6 ng-binding">
+                        <div data-spm-anchor-id="0.0.0.i11.5a1d5a55ziaHhl" style="display:table-cell;font-weight: bold;">标签:</div>
+                        <div ng-model = "case" data-spm-anchor-id="0.0.0.i12.5a1d5a55ziaHhl" style="display:table-cell;padding: 10px 15px;">-{{case.tag}} </div>
+                    </div>
+
+                </div>
+            </div>
+            <br>
+            <br>
+            <div class="line line-dashed b-b line-lg pull-in"></div>
+            <div>
+
+                <code>可膨胀特征列表</code>
+                <HR>
+                <br>
+                <table style="width:100%">
+                    <tbody>
+                    <tr>
+                        <td style="width:5%" class="caseTd">
+                            参数名
+                        </td>
+                        <td style="width:5%" class="caseTd">
+                            当前值
+                        </td>
+                        <td style="width:10%" class="caseTd">
+                            可膨胀组合
+                        </td>
+                        <td style="width:20%" class="caseTd">
+                            膨胀值
+                        </td>
+
+                    <tr ng-repeat="(index,val) in expandKvList" class="ng-scope" style="">
+                        <td style="width:10%" class="caseTd ng-binding" ng-model="expandKvList[index].key">
+                            {{expandKvList[index].key}}
+                        </td>
+                        <td style="width:15%" class="caseTd ng-binding" data-spm-anchor-id="0.0.0.i6.5a1d5a55ziaHhl" ng-model="expandKvList[index].value">
+                            {{expandKvList[index].value}}
+                        </td>
+                        <td>
+                            <select style="margin-top: -10px" ng-model="featureSelect[index]" class="form-control" ng-change="selectFeatureMap(index)" ng-options="hg as hg.key for hg in featureInitList" ></select>
+                        </td>
+                        <td style="width:30%" class="caseTd">
+                            <input style="margin-left: 5px" type="text" class="form-control" placeholder="请输入待膨胀组合,格式:<value1>,<value2>……" ng-attr-title="{{expandKvList[index].expandValue}}" ng-model="expandKvList[index].expandValue">
+                        </td>
+                        <td style="width:20%" class="caseTd">
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+
+            <div style="text-align:right;">
+                <button class="btn m-b-xs w-xs btn-info btn-rounded" ng-click="expandCase()"
+                        data-spm-anchor-id="0.0.0.i13.64ac5a55lpP37z">用例膨胀
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mainBlock" data-spm-anchor-id="0.0.0.i4.5a1d5a55ziaHhl">
+        <h3>用例膨胀列表</h3>
+        <br>
+
+        <div style="text-align:right;">
+            <label ng-model="expandcaseCnt">生成用例数:{{expandcaseCnt}}</label>
+            <label ng-model="dateDiff">耗时:{{dateDiff}}ms</label>
+        </div>
+
+        <div ng-show="type == 'expand'" class="">
+            <table class="table">
+                <tbody>
+                <tr>
+                    <th class="listTh">批量操作</th>
+                    <th class="listTh">序号</th>
+                    <th class="listTh">分组</th>
+                    <th class="listTh">用例名称</th>
+                    <th class="listTh">标签</th>
+                    <th class="listTh">操作</th>
+                </tr>
+                <!-- ngRepeat: (index,testcase) in expandcase -->
+                <tr ng-repeat="(index,testcase) in expandcase" class="ng-scope" style="">
+                    <th><input type="checkbox" ng-click="pickCase(index)" data-spm-anchor-id="0.0.0.i0.4c205a55nhEGmd">
+                    </th>
+                    <td class="ng-binding">{{index+1}}</td>
+                    <td class="ng-binding">{{testcase.caseGroup}}</td>
+                    <td class="ng-binding">{{testcase.description}}</td>
+                    <td class="ng-binding">{{testcase.tag}}</td>
+                    <td style="white-space:nowrap">
+                        <a href="" ng-click="toEdit(index,'expand')">查看</a>
+                    </td>
+                </tr><!-- end ngRepeat: (index,testcase) in expandcase -->
+                </tbody>
+            </table>
+        </div>
+        <div style="text-align:right;">
+            <button class="btn m-b-xs w-xs btn-info btn-rounded" href="" data-toggle="modal" data-target="#delModal"
+                    data-spm-anchor-id="0.0.0.i13.64ac5a55lpP37z">使用
+            </button>
+        </div>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="delModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+         style="display: none;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                    <h4 class="modal-title" id="myModalLabel">提示</h4>
+                </div>
+                <div class="modal-body">
+                    <label ng-model="pickList">选中用例数目:{{ pickList.length }}个, 点击确认保存用例</label>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal"
+                            data-spm-anchor-id="0.0.0.i0.5a1d5a55ziaHhl">取消
+                    </button>
+                    <button type="button" class="btn btn-info" data-dismiss="modal" ng-click="saveExpandCase()">确认
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>

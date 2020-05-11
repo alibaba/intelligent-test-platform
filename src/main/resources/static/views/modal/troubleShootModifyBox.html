@@ -1,0 +1,91 @@
+<style>
+    <!--
+    .app-modal-window .modal-dialog {
+        width: 1000px;
+    }
+    -->
+</style>
+<div data-dissmiss="modal" class="app-modal-window modal-body" role="dialog"  style="overflow:auto" ng-init="init()" >
+
+
+    <div ng-show="troubleShootType =='modify'" >
+
+        <div class="modal-header">
+            <h3 style="color: midnightblue"  class="text-muted" align="center" class="modal-title" id="troubleShootTitle">新增/修改排查经验</h3>
+        </div>
+
+        <div class="modal-body">
+            <fieldset ng-disabled="lockFlag">
+
+            <div class="col-sm-12">
+                <form class="">
+                    <div class="form-group">
+                        <label style="color: green">失败原因</label>
+                        <input style="width:100%" ng-model="selectTroubleShootBox.failAttribute" type="text" class="form-control" aria-label="...">
+                    </div>
+
+
+                </form>
+            </div>
+            <div class="col-sm-12">
+                <form class="">
+                    <div class="form-group">
+                        <label  style="color: green">排查经验</label>
+                        <!--<input style="width:100%;height:150px" ng-model="selectTroubleShootBox.content" type="text" class="form-control" aria-label="...">-->
+                        <ui-codemirror title="双击可在编辑器中编辑" ng-model="selectTroubleShootBox.content" ui-codemirror-opts="textCodeConfig"></ui-codemirror>
+
+                    </div>
+
+                </form>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button style="margin: 2px;" class="btn m-b-xs w-xs btn-danger btn-rounded"  ng-click="close()">关闭</button>
+            <!--<button class="btn m-b-xs w-xs btn-info btn-rounded" data-toggle="modal" data-target="#troubleShootConfirm" ng-click="unlock()">编辑</button>-->
+            <button class="btn m-b-xs w-xs btn-info btn-rounded"  ng-click="modifyManualFailAttribute(selectTroubleShootBox)">提交</button>
+
+        </div>
+
+    </div>
+
+    <div ng-show="troubleShootType=='delete'">
+
+        <div class="modal-header">
+            <h3 style="color: midnightblue"  class="text-muted" align="center" class="modal-title" id="troubleShootTitle">删除排查经验?</h3>
+        </div>
+
+        <div id="_modalDialog_body" class="modal-body">
+            <fieldset ng-disabled=1>
+
+            <div class="col-sm-12">
+                <form class="">
+                    <div class="form-group">
+                        <label style="color: green">失败原因</label>
+                        <input style="width:100%"  ng-model="selectTroubleShootBox.failAttribute" type="text" class="form-control" aria-label="...">
+                    </div>
+                </form>
+            </div>
+            <div class="col-sm-12">
+                <form class="">
+                    <div class="form-group">
+                        <label  style="color: green">排查经验</label>
+                        <!--<input style="width:100%;height:150px" ng-model="selectTroubleShootBox.content" type="text" class="form-control" aria-label="...">-->
+                        <ui-codemirror title="双击可在编辑器中编辑" ng-model="selectTroubleShootBox.content" ui-codemirror-opts="textCodeConfig"></ui-codemirror>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <!--<button style="width:70px" class="btn m-b-xs w-xs btn-info btn-rounded"  ng-click="deleteManualFailAttribute(selectTroubleShootBox)" data-spm-anchor-id="0.0.0.i3.4c205a55SMVeoJ">确定删除</button>-->
+            <button style="margin: 2px;" class="btn m-b-xs w-xs  btn-info btn-rounded"  ng-click="close()">关闭</button>
+            <button class="btn m-b-xs w-xs btn-info btn-danger"  ng-click="deleteManualFailAttribute(selectTroubleShootBox)">确定删除</button>
+
+        </div>
+    </div>
+    <div class="modal fade" id="troubleShootConfirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true" ng-show="troubleShootType=='11'"
+         style="display: none;">
+    </div>
+
+
+</div>

@@ -1,0 +1,117 @@
+<div ng-controller="recommendController" ng-init="initRecommend()">
+
+    <div class="container mainBlock">
+        <h3>用例智能推荐</h3>
+        <div class="line line-dashed b-b line-lg pull-in"></div>
+
+        <div ng-show="type =='recommend' ">
+
+            <code>业务描述将做进行特征抽取,更详细的描述有助于用例推荐</code>
+
+            <br>
+            <br>
+
+            <table style="width:90%">
+                <tr>
+                    <td class="font-bold" style="width:3%" class="caseTd"><span style="vertical-align:middle;color:red">* </span>业务描述:</td>
+                    <td style="width:40%" class="caseTd">
+                        <input ng-model="caseDesc" class="form-control ng-pristine ng-untouched ng-valid ng-empty" value="" placeholder="更详细的描述有助于精准推荐用例">
+                    </td>
+                </tr>
+            </table>
+
+            <HR>
+
+            <code>特征池是历史用例集中抽取的全量特征集合,用户可选取一个或多个</code>
+            <br>
+            <br>
+            <div class="col-lg-12">
+                <div class="col-lg-5" style="margin-left: 30px">
+                    <p>特征池</p>
+                    <select ng-model="featureList.src" multiple class="form-control" size="10" ng-options="hg for hg in features_src">
+                    </select>
+                    <br>
+                </div>
+                <div class="col-lg-1">
+                    <button type="button" ng-click="addSelectFeatures()" toolTip="将特征列表中的特征移动到已选特征列表" class="btn btn-sm btn-default text-uc m-t-n-xs" style="margin-top: 50px">
+                        <Strong>>>></Strong>
+                    </button>
+                    <br>
+                    <button type="button" ng-click="removeSelectFeatures()" toolTip="将已选特征列表中的特征移动到特征列表" class="btn btn-sm btn-default text-uc m-t-n-xs" style="margin-top: 60px">
+                        <Strong><<<</Strong>
+                    </button>
+                </div>
+                <div class="col-lg-5">
+                    <p>已选特征</p>
+                    <select ng-model="featureList.select" multiple class="form-control" size="12" ng-options="hg for hg in formData.featureList">
+                    </select>
+                    <br>
+                </div>
+            </div>
+
+            <div style = "text-align:right;">
+                <button class="btn m-b-xs w-xs btn-info btn-rounded" ng-click="recommend()" data-spm-anchor-id="0.0.0.i13.64ac5a55lpP37z">推荐用例</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mainBlock">
+        <h3>推荐用例TOP3</h3>
+        <br>
+        <div style = "text-align:right;">
+            <label ng-model="caseCount">用例库:{{caseCount}}</label>
+            <label ng-model="recommenderName">推荐策略:{{recommenderName}}</label>
+            <label ng-model="interval">推荐耗时:{{interval}}ms</label>
+        </div>
+
+        <div ng-show="type == 'recommend'">
+            <table class="table">
+                <tr>
+                    <th class="listTh">批量操作</th>
+                    <th class="listTh">分组</th>
+                    <th class="listTh">用例id</th>
+                    <th class="listTh">用例名称</th>
+                    <th class="listTh">标签</th>
+                    <th class="listTh">操作</th>
+                </tr>
+                <tr ng-repeat="(index,testcase) in caseList">
+                    <th><input type="checkbox" ng-click="pickCase(testcase.id)" data-spm-anchor-id="0.0.0.i0.4c205a55nhEGmd"></th>
+                    <td>{{ testcase.caseGroup }}</td>
+                    <td>{{ testcase.id }}</td>
+                    <td>{{ testcase.description }}</td>
+                    <td>{{ testcase.tag }}</td>
+                    <td  style="white-space:nowrap">
+                        <a href="" ng-click="navigate('edit',testcase.id)">查看</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div style = "text-align:right;">
+            <button class="btn m-b-xs w-xs btn-info btn-rounded"  href="" data-toggle="modal" data-target="#delModal" data-spm-anchor-id="0.0.0.i13.64ac5a55lpP37z">使用</button>
+        </div>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="delModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">提示</h4>
+                </div>
+                <div class="modal-body">
+                    <label ng-model="pickList">选中用例数目:{{ pickList.length }}个, 点击确认保存用例</label>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-info" data-dismiss="modal" ng-click="saveRecommendCase()">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+

@@ -1,0 +1,92 @@
+<div ng-controller="AICaseGeneratorController" ng-init="initTask()">
+
+    <div class="container mainBlock">
+        <toaster-container toaster-options="{'position-class': 'toast-top-right', 'time-out':180000, 'body-output-type':'trustedHtml', 'close-button':true}"></toaster-container>
+
+        <div class="row" >
+            <div class="col-sm-12" >
+                <div class="panel panel-default" ng-show="taskStatus != 'init'">
+                    <div class="panel-heading font-bold">
+                         智能生成任务详情
+                    </div>
+
+                    <div class="panel-body">
+                        <div class="col-sm-12">
+                            <div class="col-sm-4" style="margin-top:20px">
+                                <label style="margin-top:12px;">任务状态:</label>
+                                <label style="color:green;font-size: xx-large;margin-left:20px;">{{taskStatus}}</label>
+                                <label style="color: grey" ng-show="taskStatus == 'executing'">任务执行中，请刷新</label>
+                            </div>
+                            <div class="col-sm-4" style="margin-top:20px">
+                                <label style="margin-top:12px;">有效新用例数:</label>
+                                <label  style="color:green;font-size: xx-large;margin-left:20px;">{{validCases.length}}</label>
+                                <i popover-placement='top' popover-trigger="mouseenter" popover="有效用例：仅保留有新增覆盖代码的用例，覆盖已覆盖代码的用例将被去重" class="fa fa-question-circle-o text-md text-muted wrapper-sm"></i>
+                            </div>
+                            <div class="col-sm-4" style="margin-top:20px">
+                                <label style="margin-top:12px;">增量覆盖率:</label>
+                                <label  style="color:green;font-size: xx-large;margin-left:20px;">{{covRate}}%</label>
+                            </div>
+                            <div class="col-sm-4" style="margin-top:20px" ng-show="taskStatus=='success'">
+                                <label style="margin-top:12px;">任务培育用例总数（包含重复）:</label>
+                                <label  style="margin-left:20px;">{{allCaseNum}}</label>
+                            </div>
+
+
+                        </div>
+
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-sm-12">
+                            <table class="table" >
+                                <tr ng-repeat="x in caseInfo">
+                                    <td>{{ x.caseName }}</td>
+                                    <td  style="white-space:nowrap">
+                                        <a href="#!/app/case?appid=1&sceneid=1&type=edit&caseid={{x.caseid}}" >查看用例详情</a>
+                                    </td>
+                                    <td  style="white-space:nowrap">
+                                        <a href="" data-toggle="modal" data-target="#myModal" ng-click="setShowCode(x.accuracy)">查看代码覆盖</a>
+                                    </td>
+                                    <td  style="white-space:nowrap">
+                                        <a href="" ng-click="changeVisible(x.caseid)">加入模块用例列表</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModal">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+                                <h3 class="modal-title" id="statusProgressTitle">当前用例覆盖被测代码列表</h3>
+                            </div>
+                            <div id="_modalDialog_body" class="modal-body">
+                                <!--  设置这个div的大小，超出部分显示滚动条 -->
+                                <div id="selectTree" class="ztree" style="height:500px;overflow:auto; "> 
+                                     <span style="color: grey">注：种子用例已覆盖的代码已进行过滤，当前页面仅展示生成用例覆盖的新增代码</span>
+
+                                    <table class="table" >
+                                        <tr>{{ currentCovCode }}</tr>
+                                        <tr ng-repeat="line in currentCovCode">
+                                            <td>{{ line }}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>&ensp;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+
+</div>
+<style>
+    .popover {
+        max-width: 600px;
+    }
+</style>

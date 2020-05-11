@@ -1,0 +1,280 @@
+
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
+  .puge-main-menu.minified {
+      background-color: #28292e;
+      padding: 20px 0 0;
+      position: fixed;
+  }
+
+  .navbar-header {
+      float: none;
+      text-align: center;
+  }
+
+  .navbar-brand {
+      float: none;
+      font-size: 18px;
+      line-height: 20px;
+      padding: 15px;
+  }
+
+  .navbar-collapse {
+  	  text-align: center;
+  }
+
+  .puge-main-menu .navbar-nav {
+      display: inline-block;
+      float: none;
+  }
+
+  .navbar-nav > li {
+      display: inline-block;
+      float: none;
+      margin-bottom: 5px;
+  }
+
+  .puge-team-slides .puge-member-img-wrapper{
+      width: 35%;
+      margin-right: 5%;
+  }
+
+  .puge-member-details {
+      display: inline-block;
+      float: left;
+      width: 60%;
+  }
+
+}
+
+
+
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+  .puge-main-menu.minified {
+      padding: 20px 0 0;
+      position: fixed;
+  }
+
+  .navbar-header {
+      float: none;
+      text-align: center;
+  }
+
+  .navbar-brand {
+      float: none;
+      font-size: 18px;
+      line-height: 20px;
+      padding: 15px;
+  }
+
+  .navbar-collapse {
+  	  text-align: center;
+  }
+
+  .puge-main-menu .navbar-nav {
+      display: inline-block;
+      float: none;
+  }
+
+  .navbar-nav > li {
+      display: inline-block;
+      float: none;
+      margin-bottom: 5px;
+  }
+
+  .puge-icones .puge-icon {
+      height: 50px;
+      width: 50px;
+      margin-right: 20px;
+  }
+
+  .puge-icones .puge-blurb-text {
+      float: left;
+      width: 140px;
+  }
+
+  .puge-icones .puge-icon i {
+      font-size: 24px;
+      line-height: 50px;
+  }
+
+  .puge-team-slides .puge-member-img-wrapper{
+      width: 35%;
+      margin-right: 5%;
+  }
+
+  .puge-member-details {
+      display: inline-block;
+      float: left;
+      width: 60%;
+  }
+
+  .puge-portfolio-items .puge-portfolio-item {
+      height: 280px;
+      overflow: hidden;
+      position: relative;
+      width: 33.33331%;
+  }
+
+}
+
+
+
+@media only screen and (max-width: 767px) {
+  .puge-section-header {
+      margin-bottom: 60px;
+      text-align: center;
+  }
+
+  .navbar-toggle {
+      border: 1px solid #fff;
+      background-color: #818181;
+      margin-top: 20px;
+      margin-bottom: 20px;
+  }
+
+  .navbar-toggle .icon-bar {
+      border-radius: 1px;
+      display: block;
+      height: 2px;
+      width: 22px;
+      background-color: #fff;
+  }
+
+  .navbar-collapse {
+      border-top: 0px solid transparent;
+      box-shadow: 0 0px 0 rgba(255, 255, 255, 0) inset;
+      max-height: auto;
+  }
+
+  .puge-main-menu .navbar-nav {
+      float: none;
+      padding: 10px 0;
+  }
+
+  .puge-main-menu .navbar-nav li {
+      margin-bottom: 10px;
+  }
+
+  .puge-main-menu .navbar-nav li:last-child{
+  	 margin-bottom: 0;
+  }
+
+  .puge-blurb-icon-only {
+      margin-bottom: 50px;
+  }
+
+  .puge-blurb-icon-only:last-child{
+  	 margin-bottom: 0;
+  }
+
+  .puge-icones .puge-blurb-text {
+      float: left;
+      width: 61%;
+  }
+
+  .puge-blurb-round-icon {
+      margin-bottom: 50px;
+  }
+
+  .puge-blurb-round-icon:last-child{
+      margin-bottom: 0;
+  }
+
+  .puge-process-item {
+      text-align: center;
+      margin-bottom: 50px;
+  }
+
+  .puge-process-item:last-child{
+  	  margin-bottom: 0;
+  }
+
+  .puge-cta-1 h2 {
+      text-align: center;
+      margin-bottom: 30px;
+  }
+
+  .puge-cta-1 p{
+    	text-align: center;
+    	margin-bottom: 20px;
+  }
+
+  .puge-cta-1 .puge-cta-btn{
+  	  text-align: center;
+  }
+
+  .puge-cta-1 .puge-cta-btn a{
+  	  float: none;
+  }
+
+  .puge-main-slides h1.puge-slider-text-big {
+      color: #ffffff;
+      font-size: 24px;
+      margin-bottom: 25px;
+      margin-top: 0;
+      text-transform: uppercase;
+      white-space: normal !important;
+      text-align: center;
+      width: 100% !important;
+  }
+
+  .puge-main-slides p {
+      color: #ffffff;
+      font-family: "Raleway",sans-serif;
+      font-size: 18px !important;
+      font-weight: 400;
+      margin-bottom: 0;
+      white-space: normal !important;
+      text-align: center;
+      margin-top: 20px;
+      width: 100% !important;
+  }
+
+  .puge-team-slides .puge-member-img-wrapper {
+      float: none;
+      height: auto;
+      width: 100%;
+  }
+
+  .puge-member-details {
+      float: none;
+      width: 100%;
+      text-align: center;
+  }
+
+  .puge-member-details ul {
+  	  display: inline-block; 
+  }
+
+  .puge-counter-item {
+      margin-bottom: 50px;
+  }
+
+  .puge-counter-item:last-child{
+  	  margin-bottom: 0;
+  }
+
+  .puge-portfolio-items .puge-portfolio-item {
+      height: 280px;
+      overflow: hidden;
+      position: relative;
+      width: 100%;
+  }
+
+  .puge-section-wrapper .puge-custom-sec-img{
+      margin-bottom: 20px;
+  }
+
+  .puge-contact-section .puge-contact-address {
+      margin-bottom: 50px;
+  }
+
+}
+
+
+@media only screen and (min-width: 480px) and (max-width: 767px) {
+    .puge-portfolio-items .puge-portfolio-item {
+       width: 50%;
+    }
+
+}

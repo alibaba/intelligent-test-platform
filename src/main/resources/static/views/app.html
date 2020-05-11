@@ -1,0 +1,22 @@
+  <!-- navbar -->
+  <div data-ng-include=" 'views/blocks/header.html' " class="app-header navbar">
+  </div>
+  <!-- / navbar -->
+
+  <!-- menu -->
+  <div data-ng-include=" 'views/blocks/aside.html' " class="app-aside hidden-xs {{app.settings.asideColor}}">
+  </div>
+  <!-- / menu -->
+  <div id="robotContainer"></div>
+  <!-- content -->
+  <div class="app-content">
+    <div class="app-content-body fade-in-up" ui-view></div>
+  </div>
+  <!-- /content -->
+
+  <!-- footer -->
+  <div class="app-footer wrapper b-t bg-light" style="text-align:center">
+    <span class="pull-right">{{app.version}} <a href ui-scroll="app" class="m-l-sm text-muted"><i class="fa fa-long-arrow-up"></i></a></span>
+    &copy; 2017 ALIMAMA技术质量 Copyright.
+  </div>
+  <!-- / footer -->

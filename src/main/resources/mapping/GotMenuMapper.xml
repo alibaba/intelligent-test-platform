@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- WARNING: This file is SQI exclusive, don't change! -->
+
+<mapper namespace="com.alibaba.markovdemo.mapper.GotMenuMapper">
+
+    <resultMap id="GotMenu" type="gotMenu">
+        <id column="id" property="id"/>
+        <result column="content" property="content"/>
+    </resultMap>
+
+
+
+
+    <select id="getMenu" parameterType="Long" resultMap="GotMenu">
+        select *
+        from `got_menu`
+        order by id desc
+        limit 1
+    </select>
+
+
+
+</mapper>

@@ -1,0 +1,59 @@
+<div class="bg-light lter b-b wrapper-md">
+    <h1 class="m-n font-thin h3">回归测试</h1>
+</div>
+<div ng-controller="subController" ng-init="selTab='recent'">
+    <div class="container mainBlock">
+        <ul class="nav nav-tabs">
+            <li role="presentation" ng-class="{active: selTab == 'recent'}"  ng-click="selTab='recent'" ><a href="">最近运行</a></li>
+            <li role="presentation" ng-class="{active: selTab == 'history'}" ng-click="selTab='history'"><a href="">历史运行</a></li>
+            <li role="presentation" ng-class="{active: selTab == 'runTest'}" ng-click="selTab='runTest'"><a href="">执行回归</a></li>
+        </ul>
+        <br>
+        <div ng-show="selTab == 'recent'">
+
+
+        </div>
+        <div ng-show="selTab == 'history'">
+            <table class="table table-striped">
+                <tr>
+                    <th class="listTh">当前环境</th>
+                    <th class="listTh">环境名称</th>
+                    <th class="listTh">创建人</th>
+                    <th class="listTh">锁定人</th>
+                    <th class="listTh">创建时间</th>
+                    <th class="listTh">操作</th>
+                </tr>
+                <tr ng-repeat="x in ev.envs track by $index">
+                    <td>
+                        <label class="i-checks"><input type="radio" name="deployEnv" ng-checked="x.current_env" value="true"><i></i></label>
+                    </td>
+                    <td>{{x.name}}</td>
+                    <td>{{x.creator}}</td>
+                    <td>{{x.lock_nickname}}</td>
+                    <td>{{x.create_time}}</td>
+                    <td>
+                        <a href="" ng-click="runPerfTask(x.id)">详情</a>
+                        <span style="color: lightgray;"> | </span>
+                        <a href="" ng-click="runPerfTask(x.id)">锁定</a>
+                        <span style="color: lightgray;"> | </span>
+                        <a href="" ng-click="runPerfTask(x.id)">删除</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div ng-show="selTab == 'runTest'">
+            <p class="text-muted">环境参数</p>
+            环境参数
+            <hr>
+
+            <p class="text-muted">用例选择</p>
+            用例选择
+            <hr>
+
+            <p class="text-muted">创建环境</p>
+            创建环境
+
+
+        </div>
+    </div>
+</div>

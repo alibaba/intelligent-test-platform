@@ -1,0 +1,93 @@
+<style>
+<!--
+.app-modal-window .modal-dialog {
+  width: 800px;
+}
+-->
+</style>
+<div class="app-modal-window modal-body">
+    <h3 class="m-t-none m-b font-thin">环境参数</h3>
+    <div class="row">
+        <form class="form-horizontal">
+            <div class="form-group form-group-m-b">
+                <label class="col-lg-3 control-label">当前节点</label>
+                <div class="col-lg-8 form-group-m-t">
+                    测试场景/测试节点
+                </div>
+            </div>
+            <div class="form-group form-group-m-b">
+                <label class="col-lg-3 control-label">环境名称</label>
+                <div class="col-lg-8 form-group-m-t">
+                    <input placeholder="请输入环境名" ng-model="formData.envName" ng-disabled="envObj.name" class="form-control">
+                </div>
+            </div>
+            <div class="form-group form-group-m-b">
+                <label class="col-lg-3 control-label">自动删除旧环境</label>
+                <div class="col-lg-8 form-group-m-t">
+                    <label class="i-checks">
+                        <input type="checkbox" value="true" ng-model="formData.hostInfo.removeOldEnv">
+                        <i></i>{{remain<=0?"环境部署数量已不足"+(formData.hostInfo.removeOldEnv?"，部署时将自动删除旧环境":"，若不勾选此选项，部署时将会失败"):"目前剩余部署数量充足，可正常部署"}}
+                    </label>
+                </div>
+            </div>
+            <div class="form-group form-group-m-b" ng-show="envObj.name">
+                <label class="col-lg-3 control-label">是否重新创建模块</label>
+                <div class="col-lg-8 form-group-m-t">
+                    <label class="i-checks">
+                        <input type="checkbox" value="true" ng-model="formData.hostInfo.newCreateModule">
+                        <i></i>若勾选此选项，则部署模块时，若模块存在则会自动删除后全新部署
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group form-group-m-b">
+                <label class="col-lg-3 control-label">待部署镜像号/RPM包</label>
+                <div class="col-lg-8 form-group-m-t">
+                    <input placeholder="请输入待部署镜像号/RPM包" ng-model="formData.deployGiven" ng-disabled="envObj.deployGiven" class="form-control">
+                </div>
+            </div>
+
+            <div class="form-group form-group-m-b" ng-repeat="tl in topolist">
+                <label class="col-lg-3 control-label">
+                    {{tl.module}}<br>
+                    <span class="text-danger font-bold" ng-show="envObj.moduleNames">
+                        <h6>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{envObj.moduleNames.indexOf(tl.module)!=-1?("模块已存在,部署时将"+(formData.hostInfo.newCreateModule?"删除模块后重新部署":"被过滤")):""}}
+                            <br>
+                            <span ng-show="envObj.moduleNames.indexOf(tl.module)!=-1">手动删除请移步：<a ui-sref="app.envdetail({envId:envObj.id})" target="_blank"><u>删除</u></a></span>
+                        </h6>
+                    </span>
+                </label>
+                <div class="col-lg-8 form-group-m-t">
+                    <div class="input-group m-b" ng-repeat="(k,v) in formData.params[tl.module] track by $index">
+                        <input placeholder="请输入key" ng-model="v.key" ng-disabled="$index == 0" type="text" class="form-control">
+                        <input ng-show="($index != 0) || ($index == 0 && imageRelate==false)" placeholder="{{v.desc}}" popover="{{v.data}}" popover-placement='bottom' popover-trigger="mouseenter" ng-model="v.data" type="text" class="form-control">
+
+
+                        <label ng-show="$index == 0 && imageRelate" class="i-checks" ><input type="radio" name="imageInput" ng-model="imageInputType" ng-change="setImageInputType(imageInputType)" value="choose"><i></i>关联镜像选择</label>
+                        <label ng-show="$index == 0 && imageRelate" style="margin-left:20px;" class="i-checks"><input type="radio"  name="imageInput" ng-change="setImageInputType(imageInputType)" ng-model="imageInputType" value="enter"><i></i>输入镜像地址</label>
+                        <label  ng-show="$index == 0 && imageInputType=='choose' && imageRelate" >
+                            <select style ="width:455px;" class="form-control" ng-model="currentImagePicked" ng-change="pickImage(currentImagePicked)" ng-options="opt for opt in imageList"></select>
+                        </label>
+                        <input ng-show="$index == 0 && imageInputType=='enter' && imageRelate" placeholder="{{v.desc}}" popover="{{v.data}}" popover-placement='bottom' popover-trigger="mouseenter" ng-model="v.data" type="text" class="form-control">
+
+
+                        <a class="input-group-addon" ng-show="$index != 0" ng-click="delParams(tl,k)"> - </a>
+                        <span class="input-group-addon" toolTip="首个参数为默认镜像名，不允许删除" ng-disabled="true" ng-show="$index == 0"> - </span>
+                        <a class="input-group-addon" ng-show="currentIdx[tl.module] == k" ng-click="addParams(tl,k)"> + </a>
+                    </div>
+                </div>
+                <div class="col-lg-1 form-group-m-t" style="display: none">
+                    <label class="i-checks">
+                        <input type="checkbox" value="{{tl.module}}" ng-model="formData.selectModels[tl.module]" ng-init="formData.selectModels[tl.module] = true">
+                        <i></i>
+                    </label>
+                </div>
+            </div>
+        </form>
+        <div class="pull-right" style="margin-right:10px;margin-top: 15px">
+            <button type="button" class="btn btn-sm btn-danger text-uc m-t-n-xs" ng-click="close()"><strong>关闭</strong></button>
+            <button type="button" class="btn btn-sm btn-success text-uc m-t-n-xs" ng-click="completed()"><strong>创建</strong></button>
+        </div>
+    </div>
+</div>

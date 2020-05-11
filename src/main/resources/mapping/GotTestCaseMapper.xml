@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.alibaba.markovdemo.mapper.GotTestcaseMapper">
+
+    <resultMap id="gotTestcaseResult" type="com.alibaba.markovdemo.entity.GotTestCase">
+        <id column="id" property="id"/>
+        <result column="scenario_id" property="scenarioId"/>
+        <result column="name" property="name"/>
+        <result column="description" property="description"/>
+        <result column="long_description" property="longDescription"/>
+        <result column="content" property="content"/>
+        <result column="case_group" property="caseGroup"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="case_template" property="caseTemplate"/>
+        <result column="features" property="features"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="is_visible" property="isVisible"/>
+    </resultMap>
+
+
+
+    <insert id="insert" parameterType="com.alibaba.markovdemo.entity.GotTestCase" useGeneratedKeys="true" keyProperty="id">
+        replace into `got_testcase` (
+        <trim suffixOverrides=",">
+            <if test="id != null">`id`,</if>
+            <if test="scenarioId != null">`scenario_id`,</if>
+            <if test="name != null">`name`,</if>
+            <if test="description != null">`description`,</if>
+            <if test="longDescription != null">`long_description`,</if>
+            <if test="content != null">`content`,</if>
+            <if test="caseGroup != null">`case_group`,</if>
+            <if test="isDeleted != null">`is_deleted`,</if>
+            <if test="gmtCreate != null">`gmt_create`,</if>
+            <if test="gmtModified != null">`gmt_modified`,</if>
+            <if test="caseTemplate != null">`case_template`,</if>
+            <if test="isVisible != null">`is_visible`</if>
+        </trim>
+        ) values(
+        <trim suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="scenarioId != null">#{scenarioId},</if>
+            <if test="name != null">#{name},</if>
+            <if test="description != null">#{description},</if>
+            <if test="longDescription != null">#{longDescription},</if>
+            <if test="content != null">#{content},</if>
+            <if test="caseGroup != null">#{caseGroup},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+            <if test="gmtCreate != null">#{gmtCreate},</if>
+            <if test="gmtModified != null">#{gmtModified},</if>
+            <if test="caseTemplate != null">#{caseTemplate},</if>
+            <if test="isVisible != null">#{isVisible}</if>
+        </trim>
+        )
+    </insert>
+
+
+    <update id="update" parameterType="com.alibaba.markovdemo.entity.GotTestCase">
+        update `got_testcase` set `id` = #{id}, `gmt_modified` = now()
+        <if test="scenarioId!=null">,`scenario_id` = #{scenarioId}</if>
+        <if test="name!=null">,`name` = #{name}</if>
+        <if test="description!=null">,`description` = #{description}</if>
+        <if test="longDescription != null">,`long_description` = #{longDescription}</if>
+        <if test="content!=null">,`content` = #{content}</if>
+        <if test="caseGroup!=null">,`case_group` = #{caseGroup}</if>
+        <if test="isDeleted!=null">,`is_deleted` = #{isDeleted}</if>
+        <if test="caseTemplate != null">,`case_template`= #{caseTemplate}</if>
+        <if test="features != null">,`features`= #{features}</if>
+        <if test="isVisible != null">,`is_visible`= #{isVisible}</if>
+        where id = #{id}
+    </update>
+
+
+    <select id="getCaseByScenarioId" parameterType="Map" resultMap="gotTestcaseResult">
+        select *
+        from `got_testcase`
+        where scenario_id = #{scenarioId}  AND is_deleted=0 order by id desc limit #{fromRow},#{pageSize}
+    </select>
+
+
+    <select id="getVisibleTestcaseByScenario" parameterType="Map" resultMap="gotTestcaseResult">
+        select *
+        from `got_testcase`
+        where scenario_id = #{scenarioId}  AND is_deleted=0 AND is_visible=0 order by id desc limit #{fromRow},#{pageSize}
+    </select>
+
+    <select id="getAllCaseByScenarioId" parameterType="Map" resultMap="gotTestcaseResult">
+        select *
+        from `got_testcase`
+        where scenario_id = #{scenarioId}  AND is_deleted=0 AND is_visible=0
+    </select>
+
+    <select id="getTestCaseById" parameterType="Long" resultMap="gotTestcaseResult">
+        select *
+        from `got_testcase`
+        where id = #{id}  AND is_deleted=0
+    </select>
+
+    <select id="getCaseGroupByScenarioId" parameterType="Long" resultMap="gotTestcaseResult">
+        select case_group
+        from `got_testcase`
+        where scenario_id = #{scenarioId}  AND is_deleted=0 AND is_visible=0 GROUP BY case_group
+    </select>
+
+
+
+
+    <select id="getAllCaseNum" parameterType="Long" resultType="Integer">
+        select count(*)
+        from `got_testcase`
+        where scenario_id = #{scenarioId}  AND is_deleted=0 AND is_visible=0
+    </select>
+
+    <update id="delete" parameterType="Long" >
+        update `got_testcase`
+        set is_deleted=1
+        where id = #{id}
+    </update>
+
+
+</mapper>

@@ -1,0 +1,286 @@
+<style>
+    .CodeMirror {border: 1px solid #e7ecee;}
+</style>
+<div class="bg-light lter b-b wrapper-md">
+    <h1 class="m-n font-thin h3">测试报告详情</h1>
+</div>
+<div ng-controller="ReportController as rep" ng-init="initReportData()">
+    <toaster-container toaster-options="{'position-class': 'toast-top-right', 'time-out':60000, 'body-output-type':'trustedHtml', 'close-button':true}"></toaster-container>
+    <div class="container mainBlock">
+        <div class="well m-t bg-light lt" style="font-size: 14px">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading font-bold">
+                            基本信息
+                        </div>
+
+                        <div class="panel-body" >
+
+                            <table  class="table table-bordered" width="100%"  border="1"  bordercolor="black" style="border:1px #000 solid; border-top: 1px;">
+                                <tr align="center">
+                                    <td class="listTh">用例总数</td>
+                                    <td class="listTh">环境数量</td>
+                                    <td class="listTh">回归方式</td>
+                                    <td class="listTh">用例通过数</td>
+                                    <td class="listTh">用例失败数</td>
+                                    <td class="listTh">回归时长</td>
+                                </tr>
+                                <tr  align="center">
+                                    <td>{{reportData.basicReport.caseNum}}</td>
+                                    <td>{{reportData.basicReport.envNum}}</td>
+                                    <td>{{reportData.basicReport.regressionType}}</td>
+                                    <td style="color: green">{{reportData.basicReport.sucessCaseNum}}</td>
+                                    <td style="color: red">{{reportData.basicReport.failCaseNum}}</td>
+                                    <td>{{reportData.basicReport.runTime}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading font-bold">
+                        分环境执行信息
+                    </div>
+
+                    <div class="panel-body" ng-repeat="rt in reportData.envReportList">
+                        <div class="panel-heading font-bold">
+                        环境名:{{rt.envName}}/用例数:{{rt.caseNum}}/成功用例数:{{rt.sucessCaseNum}}/失败用例数:{{rt.failCaseNum}}/总耗时:{{rt.runTime}}
+                        </div>
+
+                        <table ng-if="reportData.basicReport.regressionType=='智能回归'" class="table table-bordered" width="100%"  border="1"  bordercolor="black" style="border:1px #000 solid; border-top: 1px;">
+                            <tr>
+                                <td class="listTh" colspan="2" align="center" style="color: green">全量数据准备队列</td>
+                                <td class="listTh" colspan="6" align="center" style="color: blue">数据准备快速队列</td>
+                                <td class="listTh" colspan="6" align="center" style="color: red">用例执行快速队列</td>
+                                <td class="listTh" colspan="5" align="center" style="color: sienna">失败用例重跑队列</td>
+                            </tr>
+                            <tr align="center">
+                                <td class="listTh">全量准备数据量</td>
+                                <td class="listTh">阶段耗时</td>
+
+                                <td class="listTh">总数据量</td>
+                                <td class="listTh">实际数据准备量</td>
+                                <td class="listTh">数据冗余度</td>
+                                <td class="listTh">智能加速</td>
+                                <td class="listTh">节省时间</td>
+                                <td class="listTh">阶段耗时</td>
+
+                                <td class="listTh">总串行线程数</td>
+                                <td class="listTh">实际串行线程数</td>
+                                <td class="listTh">实际并行线程数</td>
+                                <td class="listTh">智能加速</td>
+                                <td class="listTh">节省时间</td>
+                                <td class="listTh">阶段耗时</td>
+
+                                <td class="listTh">失败总数</td>
+                                <td class="listTh">实际执行数</td>
+                                <td class="listTh">阶段耗时</td>
+                                <td class="listTh">节省时间</td>
+                                <td class="listTh">智能加速</td>
+
+                            </tr>
+                            <tr  align="center">
+                                <td>{{rt.dumpAllrecordNum}}</td>
+                                <td>{{rt.dumpAllTime}}</td>
+
+                                <td>{{rt.dumpTreeRecordNum}}</td>
+                                <td>{{rt.dumpTreeActualRecordNum}}</td>
+                                <td style="color: green">{{rt.redundency}}</td>
+                                <td style="color: green">{{rt.dumpTreeSpeedUpEfficiency}}</td>
+                                <td style="color: blue" >{{rt.dumpTreeSaveCost}}</td>
+                                <td>{{rt.dumpTreeTime}}</td>
+
+                                <td>{{rt.runSerialNum}}</td>
+                                <td>{{rt.runSerialActualNum}}</td>
+                                <td>{{rt.runParallelNum}}</td>
+                                <td style="color: green">{{rt.runSpeedUpEfficiency}}</td>
+                                <td style="color: blue" >{{rt.runSaveCost}}</td>
+                                <td>{{rt.runTreeTime}}</td>
+
+                                <td>{{rt.runFailNum}}</td>
+                                <td style="color: red" >{{rt.runActualFailNum}}</td>
+                                <td>{{rt.runFailTime}}</td>
+                                <td style="color: blue">{{rt.runFailSavetime}}</td>
+                                <td style="color: green">{{rt.runFailSpeedUpEfficiency}}</td>
+                            </tr>
+                        </table>
+                        <table ng-if="reportData.basicReport.regressionType=='普通回归'" class="table table-bordered" width="100%"  border="1"  bordercolor="black" style="border:1px #000 solid; border-top: 1px;">
+                            <!--<table  class="table table-bordered" width="100%"  border="1"  >-->
+                            <tr align="center">
+                                <td class="listTh" colspan="5" align="center" style="color: blue">用例串行队列</td>
+                                <td class="listTh" colspan="5" align="center" style="color: sienna">失败用例重跑队列</td>
+                            </tr>
+                            <tr align="center">
+                                <td class="listTh">总数据量</td>
+                                <td class="listTh">实际数据准备量</td>
+                                <td class="listTh">总串行线程数</td>
+                                <td class="listTh">实际串行线程数</td>
+                                <td class="listTh">阶段耗时</td>
+
+                                <td class="listTh">失败总数</td>
+                                <td class="listTh">实际执行数</td>
+                                <td class="listTh">阶段耗时</td>
+                                <td class="listTh">节省时间</td>
+                                <td class="listTh">智能加速</td>
+                            </tr>
+                            <tr  align="center">
+                                <td>{{rt.dumpTreeRecordNum}}</td>
+                                <td>{{rt.dumpTreeActualRecordNum}}</td>
+                                <td>{{rt.runSerialNum}}</td>
+                                <td>{{rt.runSerialActualNum}}</td>
+                                <td>{{rt.runTreeTime}}</td>
+
+                                <td>{{rt.runFailNum}}</td>
+                                <td style="color: red" >{{rt.runActualFailNum}}</td>
+                                <td>{{rt.runFailTime}}</td>
+                                <td style="color: blue">{{rt.runFailSavetime}}</td>
+                                <td style="color: green">{{rt.runFailSpeedUpEfficiency}}</td>
+                            </tr>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            <div id="treeDsChart" style="min-width:400px;height:400px"></div>
+
+            <div id="dumpDsChart" style="min-width:400px;height:400px"></div>
+
+
+
+
+
+            <!--<div class="row">-->
+                <!--<div class="col-sm-12">-->
+                    <!--<div class="panel panel-default">-->
+                        <!--<div class="panel-heading font-bold">-->
+                            <!--优化建议-->
+                        <!--</div>-->
+                        <!--<div class="panel-body">-->
+                            <!--<div ng-repeat="aa in reportData.caseAnalysisList track by $index">-->
+                                <!--{{$index+1}}. <span ng-bind-html="aa.desc|formatBr"></span>&nbsp;&nbsp;<span ng-show="aa.link"><a href="" ui-toggle-class="show" target=".app-aside-right" ng-click="loadCaseHistory(aa.link)">详情...</a></span>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+
+        <div class="row" ng-repeat="item in caseHistoryChart">
+            <div class="col-sm-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading font-bold">
+                        {{tableNameMap[item.name]||item.name}}
+                        <!--
+                        <div class="btn-group pull-right">
+                            <button type="button" ng-click="item.showType = 0" class="btn m-b-sm w-xs btn-default btn-sm"><i class="fa fa-table"></i> 表格</button>
+                            <button type="button" ng-click="item.showType = 1" class="btn m-b-sm w-xs btn-default btn-sm"><i class="fa fa-bar-chart-o"></i> 折线图</button>
+                            <button type="button" ng-click="item.showType = 2" class="btn m-b-sm w-xs btn-default btn-sm"><i class="fa fa-bar-chart-o"></i> 柱状图</button>
+                        </div>
+                        -->
+                    </div>
+                    <div class="panel-body">
+                        <!--<div ng-if="item.showType == 1">aaaa</div>-->
+                        <!--<div ng-if="item.showType == 2">bbbb</div>-->
+                        <table class="table table-striped" width="100%" ng-if="item.showType == 0">
+                            <tr>
+                                <th width="40%" class="listTh">desc</th>
+                                <th width="30%" class="listTh">num</th>
+                                <th width="30%" class="listTh">操作</th>
+                            </tr>
+                            <tr ng-repeat="x in item.data track by $index">
+                                <td>{{x.desc}}</td>
+                                <td>{{x.num}}</td>
+                                <td>
+                                    <a href="" ui-toggle-class="show" target=".app-aside-right" ng-click="loadCaseHistory(x.link)"><span class="label bg-info"><i class="fa fa-laptop"></i> 详情</span></a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- content -->
+    <div class="app-content">
+        <div ui-butterbar></div>
+        <a href class="off-screen-toggle show" ui-toggle-class="off-screen" data-target=".app-aside"></a>
+        <div class="app-content-body fade-in-up" style="padding-bottom: 0px" ui-view></div>
+    </div>
+    <!-- /content -->
+
+    <!-- aside right -->
+    <div class="app-aside-right pos-fix no-padder w-case-box w-auto-xs bg-white b-l animated fadeInRight hide">
+        <div class="vbox case-history-box">
+            <div class="wrapper b-b b-t b-light m-b">
+                <a href class="pull-right text-muted text-md" title="关闭" ui-toggle-class="show" target=".app-aside-right"><i class="fa fa-times"></i></a>
+                <span><i class="fa fa-tasks"></i> 用例详情</span>
+                <ul class="pull-right" style="list-style-type:none">
+                    <li class="dropdown" dropdown>
+                        <a href class="dropdown-toggle" dropdown-toggle>
+                            <i class="fa fa-fw fa-plus visible-xs-inline-block"></i>
+                            <span class="btn btn-xs btn-primary"><span>显示隐藏列</span>&nbsp;<span class="caret"></span></span> &nbsp;&nbsp;
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li ng-repeat="col in rep.cols">&nbsp;&nbsp;<label class="i-checks m-b-none"><input ng-model-options="{ getterSetter: true }" ng-model="col.show" type="checkbox"><i></i></label><span>{{col.title()}}</span></li>
+                        </ul>
+                    </li>
+                </ul>
+                <!-- <span class="text-primary font-bold" style="margin-left: 30px;"><i class="fa fa-info-circle"></i> 自动过滤重复的记录</span> -->
+            </div>
+            <div class="row-row">
+                <div class="cell">
+                    <div class="cell-inner padder">
+                        <table ng-table="rep.caseHistory" ng-table-columns-binding="rep.cols" class="table table-condensed table-bordered table-striped table-hover" width="100%" show-filter="true">
+                            <tr ng-repeat="cs in $data">
+                                <td ng-if="true" width="8%" title="'id'" filter="{testcaseId: 'text'}" sortable="'testcaseId'">
+                                    {{cs.testcaseId}}
+                                </td>
+                                <td ng-if="true" title="'用例名称'" filter="{description: 'text'}">
+                                    {{cs.description}}
+                                </td>
+                                <td ng-if="true" title="'执行结果'" filter="{status: 'text'}" sortable="'status'">
+                                    <a ui-sref="app.case({appid:appid,sceneid:sceneid,type:'edit',caseid:cs.testcaseId,testReportId:testReportId})" toolTip="点击查看用例详情" target="_blank"><span ng-show="cs.status" class='status-btn label w-sm bg-{{cs.status=="SUCCESS"?"success":("FAIL,TIMEOUT,EXCEPTION,ERROR".indexOf(cs.status)!=-1)?"danger":(cs.status=="RUNNING"||cs.status=="DEPLOYING")?"warning":"dark"}}'>{{cs.status}}</span></a>
+                                </td>
+                                <td ng-if="true" title="'分组'" filter="{caseGroup: 'text'}" sortable="'caseGroup'">
+                                    {{cs.caseGroup}}
+                                </td>
+                                <td ng-if="false" title="'标签'" filter="{tag: 'text'}">
+                                    {{cs.tag}}
+                                </td>
+                                <td ng-if="true" title="'环境名'" filter="{envName: 'text'}">
+                                    {{cs.envName}}
+                                </td>
+                                <td ng-if="false" title="'冲突数据源'" filter="{conflictDesc: 'text'}">
+                                    {{cs.conflictDesc}}
+                                </td>
+                                <td ng-if="false" title="'是否并行'" filter="{parallel: 'text'}" sortable="'parallel'">
+                                    {{cs.parallel}}
+                                </td>
+                                <td ng-if="true" width="8%" title="'执行时间'">{{cs.runTimeStr}}</td>
+                                <td ng-if="false" title="'重试次数'" sortable="'retryNum'">{{cs.retryNum}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="wrapper m-t b-t b-light">
+                <form class="m-b-none">
+                    <div align="center">
+                        <a ui-toggle-class="show" target=".app-aside-right" id="backToList">
+                            <button type="button" class="btn btn-danger">关闭</button>
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- / aside right -->
+
+
+</div>

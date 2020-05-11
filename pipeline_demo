@@ -1,0 +1,120 @@
+
+{
+    "new-deploy-stage": {
+        "name": "DEMO测试机部署信息",
+        "hostList": [
+            {
+                "hostname": "",
+                "ip": "11.167.254.210"
+            }
+        ],
+        "topo": [
+            {
+                "module": "demo-module",
+                "buildDesc": [
+                    {
+                        "desc": "请填入镜像号",
+                        "defaultValue": "defaultValue"
+                    }
+                ],
+                "buildImagesCmd": "docker run -dit  --name ${dockerName} ...此处可填写新建容器的docker run命令",
+                "inDockerDeployCmd": "在容器创建成功后,进入容器执行测试脚本"
+            }
+        ]
+    },
+    "run-stage": [
+        {
+            "stageName": "prepareData-stage",
+            "exec": {
+                "pluginList": [
+                    {
+                        "plugin_type": "java",
+                        "plugin_name": "数据准备通用插件",
+                        "display_name": "数据准备通用插件",
+                        "class": "com.alibaba.markovdemo.engine.plugins.inputdata.DataPreparePlugin"
+                    }
+                ]
+            }
+        },
+        {
+            "stageName": "caseRun-stage",
+            "before_exec": {},
+            "params": {
+                "retryNum": 0
+            },
+            "after_exec": {},
+            "exec": [
+                {
+                    "group_name": "ERPC校验（第一组）",
+                    "exec": [
+                        {
+                            "stageName": "check-stage",
+                            "exec": {
+                                "pluginList": [
+                                    {
+                                        "plugin_type": "java",
+                                        "plugin_name": "erpc发送和校验插件",
+                                        "display_name": "erpc发送和校验插件",
+                                        "class": "com.alibaba.markovdemo.engine.plugins.pluginSet.SendAndCheckDemoPlugin"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "layoutConf": {
+        "dataPrepareStageNew": {
+            "dataPrepareLayoutList": [
+                {
+                    "type": "Tair",
+                    "dsNameList": [
+                        "table.markovtair.test"
+                    ],
+                    "templates": {}
+                },
+                {
+                    "type": "Imock",
+                    "dsNameList": [
+                        "erpc_merger_inner"
+                    ],
+                    "templates": {}
+                },
+                {
+                    "type": "Tdbm",
+                    "dsNameList": [
+                        "table.markovtdbm.test"
+                    ],
+                    "templates": {}
+                }
+            ],
+            "mapId": {
+                "232": 795,
+                "4112": 794,
+                "table.markovtair.test": 796,
+                "erpc_merger_inner": 798,
+                "table.markovtdbm.test": 797
+            }
+        },
+        "componentStage": [],
+        "logStage": [
+            {
+                "pluginName": null,
+                "displayName": "执行日志",
+                "pluginType": "caseRunStage"
+            },
+            {
+                "pluginName": null,
+                "displayName": "数据准备阶段",
+                "pluginType": "prepareData"
+            },
+            {
+                "pluginName": null,
+                "displayName": "运行阶段",
+                "pluginType": "checkStage"
+            }
+        ]
+    }
+}

@@ -1,0 +1,58 @@
+<!--
+<div class="bg-light lter b-b wrapper-md">
+    <h1 class="m-n font-thin h3">环境管理</h1>
+</div>
+-->
+<div class="wrapper-md" ng-controller="mainController" ng-init="initEnvTableMock()">
+    <toaster-container toaster-options="{'position-class': 'toast-top-right', 'time-out':180000, 'body-output-type':'trustedHtml', 'close-button':true}"></toaster-container>
+    <script type="text/ng-template" id="env_create.html">
+        <div ng-include="'views/modal/env_create.html'"></div>
+    </script>
+    <script type="text/ng-template" id="env_share.html">
+        <div ng-include="'views/modal/share_env.html'"></div>
+    </script>
+
+
+    <div class="row" ng-if="scenarioEnvList.length>0">
+        <div class="col-sm-12">
+            <div class="panel panel-default" ng-repeat="ev in scenarioEnvList track by $index">
+                <div class="panel-heading font-bold">
+                    {{ev.ip}}<code>{{ev.hostType|hostTypeName}}</code>
+                    <span style="margin-left: 10px">最大环境数：{{ev.maxEnv}}</span>
+                    <span style="margin-left: 10px">剩余环境数：{{ev.remain<0?0:ev.remain}}</span>
+                    <button class="btn btn-success btn-xs pull-right" ng-click="openCreateEnvModule('new',ev.hostInfo,ev.remain)">构建环境</button>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-striped">
+                        <tr>
+                            <th class="listTh">当前环境</th>
+                            <th class="listTh">环境id</th>
+                            <th class="listTh">环境名称</th>
+                            <th class="listTh">部署状态</th>
+                            <th class="listTh">创建人</th>
+                            <th class="listTh">创建时间</th>
+                            <th class="listTh">操作</th>
+                        </tr>
+                        <tr ng-repeat="x in ev.envs | orderBy:'-id'">
+                            <td>
+                                <label class="i-checks" ng-click="setCurrentEnv(x)"><input type="radio" name="deployEnv" ng-checked="x.currentEnv && x.currentEnv == 1"><i></i></label>
+                            </td>
+                            <td>{{x.id}}</td>
+                            <td>{{x.name}}</td>
+                            <td>
+                                <span ng-show="x.status" class='status-btn label w-sm bg-{{x.status=="SUCCESS"?"success":("FAIL,TIMEOUT,EXCEPTION,ERROR".indexOf(x.status)!=-1)?"danger":(x.status=="RUNNING"||x.status=="DEPLOYING")?"warning":"dark"}}'>{{x.status}}</span>
+                            </td>
+                            <td>{{x.userName}}</td>
+                            <td>{{x.gmtCreate}}</td>
+                            <td>
+                                <a>详情</a>
+                                <span style="color: lightgray;"> | </span>
+                                <a  href="" ng-click="deleteDeployEnv(x.id)" toolTip="时删除关联的容器">删除</a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

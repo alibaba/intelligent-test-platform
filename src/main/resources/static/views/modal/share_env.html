@@ -1,0 +1,41 @@
+<style>
+    <!--
+    .app-modal-window .modal-dialog {
+        width: 800px;
+    }
+    -->
+</style>
+<div class="app-modal-window modal-body">
+    <h3 class="m-t-none m-b font-thin">锁定环境 <small>{{env.name}}</small></h3>
+    <hr>
+    <div class="row" ng-init="initUser()">
+        <div class="col-sm-12">
+            <form name="formValidate" class="form-horizontal form-validation">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">设置锁定人</label>
+                        <div class="col-sm-8">
+                            <ui-select multiple ng-model="share.selectUsers" theme="bootstrap">
+                                <ui-select-match placeholder="请输入花名/用户名/工号查询...">{{$item.userNick}}({{$item.userId}})</ui-select-match>
+                                <ui-select-choices repeat="person as person in share.shareUsers track by $index" refresh="loadSelectUser($select.search)" refresh-delay="30">
+                                    <div class="media">
+                                        <span class="pull-left thumb-sm"><img ng-src="https://work.alibaba-inc.com/photo/{{person.userId}}.80x80.jpg"></span>
+                                        <div class="media-body">
+                                            <span class="h5" ng-bind-html="person.userNick +'('+person.realName+')'"></span>
+                                            <small class="block text-muted">{{person.depDesc}}</small>
+                                        </div>
+                                    </div>
+                                </ui-select-choices>
+                            </ui-select>
+                            <span class="text-danger"><i class="fa fa-warning"></i> 锁定人拥有环境的使用、删除、解锁权限。请谨慎设置！</span>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="pull-right">
+                <button type="button" class="btn btn-sm btn-danger text-uc m-t-n-xs" ng-click="close()"><Strong>关闭</Strong></button>
+                <button type="button" class="btn btn-sm btn-success text-uc m-t-n-xs" ng-click="saveUser()"><Strong>保存</Strong></button>
+            </div>
+        </div>
+    </div>
+</div>

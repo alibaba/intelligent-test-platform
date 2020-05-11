@@ -1,0 +1,38 @@
+
+<div class="hbox hbox-auto-xs hbox-auto-sm">
+  <!-- main -->
+  <div class="col">
+    <!-- main header -->
+    <div class="bg-light lter b-b wrapper-md">
+      <div class="row">
+        <div class="col-sm-6 col-xs-12">
+          <h1 class="m-n font-thin h3 text-black">Dashboard</h1>
+          <small class="text-muted">ALIMAMA精准定向</small>
+        </div>
+      </div>
+    </div>
+    <!-- / main header -->
+    <div class="wrapper-md">
+      <div class="row">
+          <div class="col-sm-6 col-xs-12">
+              
+                  <div class="form-group">
+        <label class="col-sm-3 control-label">Default</label>
+        <div class="col-sm-6">
+
+          <ui-select ng-model="person.selected" theme="bootstrap">
+            <ui-select-match placeholder="Select or search a person in the list...">{{$select.selected.name}}</ui-select-match>
+            <ui-select-choices repeat="item in people | filter: $select.search">
+              <div ng-bind-html="item.name | highlight: $select.search"></div>
+              <small ng-bind-html="item.email | highlight: $select.search"></small>
+            </ui-select-choices>
+          </ui-select>
+
+        </div>
+      </div>
+          </div>
+      </div>
+    </div>
+  </div>
+  <!-- / main -->
+</div>

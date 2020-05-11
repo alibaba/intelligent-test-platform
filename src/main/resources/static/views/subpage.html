@@ -1,0 +1,863 @@
+<div ng-controller="subController" ng-init="initEnvTable()">
+
+    <div class="container mainBlock">
+        <ul class="breadcrumb" style="background-color:white">
+            <span style="font-size:15px;margin-left:20px;margin-top:-2px;color:lightgrey"><b>用例总数:{{allCasesNum}}</b></span>
+
+        </ul>
+
+
+        <ul class="nav nav-tabs" style="margin-top:30px;">
+            <li role="presentation" ng-class="{active: type == 'scene'}" ng-click="toScene()"><a href="">功能测试</a></li>
+            <li role="presentation" ng-class="{active: type == 'moduleConf'}" ng-click="toModuleConf()"><a href="">配置管理</a></li>
+        </ul>
+
+        <tabset class="nav-tabs-alt" ng-show="type == 'scene'">
+            <tab ng-click="toScene()" active="sceneTab == 'caseList'">
+                <tab-heading>
+                    <i class="fa fa-sitemap text-md text-muted wrapper-sm"></i> 用例列表
+                </tab-heading>
+            </tab>
+            <tab ng-click="toMulRun()" active="sceneTab == 'mulrun'">
+                <tab-heading>
+                    <i class="fa fa-clock-o text-md text-muted wrapper-sm"></i> 回归构建
+                </tab-heading>
+            </tab>
+            <tab ng-click="toDeploy()" active="sceneTab == 'deploy'">
+                <tab-heading>
+                    <i class="fa fa-camera text-md text-muted wrapper-sm"></i> 部署环境
+                </tab-heading>
+            </tab>
+            <tab ng-click="toResult()" active="sceneTab == 'result'">
+                <tab-heading>
+                    <i class="fa fa-history text-md text-muted wrapper-sm"></i> 执行历史
+                </tab-heading>
+            </tab>
+
+        </tabset>
+
+
+        <tabset class="nav-tabs-alt" ng-show="type == 'moduleConf'">
+            <tab ng-click="toPipe()" active="confTab == 'pipeline'">
+                <tab-heading>
+                    <i class="fa fa-sitemap text-md text-muted wrapper-sm"></i> 接入管理
+                </tab-heading>
+            </tab>
+            <tab ng-show="isNewDataSource" ng-click="toDataSource()" active="confTab == 'datasource'">
+                <tab-heading>
+                    <i class="fa fa-camera text-md text-muted wrapper-sm"></i> 数据源管理
+                </tab-heading>
+            </tab>
+            <tab ng-show="isNewDataSource" ng-click="toProto()" active="confTab == 'proto'">
+                <tab-heading>
+                    <i class="fa fa-history text-md text-muted wrapper-sm"></i> proto管理
+                </tab-heading>
+            </tab>
+        </tabset>
+
+        <br>
+        <div ng-show="type=='scene' && sceneTab == 'caseList'">
+            <button class="btn m-b-xs w-xs btn-info btn-rounded" ng-click="toCreate()" ng-show=" scenarioId !='' ">新建</button>
+            <button style="width:120px;" class="btn m-b-xs w-xs btn-info btn-rounded" ng-click="toRecommend()"  data-spm-anchor-id="0.0.0.i3.4c205a55SMVeoJ">智能用例推荐</button>
+            <button class="btn m-b-xs w-auto btn-info btn-rounded" data-toggle="modal"  data-target="#myAICaseModal"  ng-click="setSeedCaseIds(pickList)">智能用例生成</button>
+            <a style="margin-left: 20px" href="" ng-click="toLastGenerateTask()">查看生成历史</a>
+        </div>
+        <div ng-if="type=='scene' && sceneTab == 'mulrun'" style="margin: -35px">
+            <div ng-switch="templateType">
+                <div ng-include="'views/v2/reg_test.html'"></div>
+            </div>
+        </div>
+
+         <div ng-if="type=='scene' && sceneTab == 'deploy'">
+            <div ng-switch="templateType">
+                <div ng-include="'views/v2/deploy2.html'"></div>
+            </div>
+        </div>
+
+
+
+        <div ng-if="type=='moduleConf' && confTab == 'pipeline'" style="margin: -35px">
+            <div ng-include="'views/v2/pipeline.html'"></div>
+        </div>
+        <div ng-if="type=='moduleConf' && confTab == 'datasource'" style="margin: -35px">
+            <div ng-include="'views/v2/datasource.html'"></div>
+        </div>
+        <div ng-if="type=='moduleConf' && confTab == 'proto'" style="margin: -35px">
+            <div ng-include="'views/v2/proto.html'"></div>
+        </div>
+        <div ng-if="type=='moduleConf' && confTab == 'permisson'" style="margin: -35px">
+            <div ng-include="'views/v2/permission.html'"></div>
+        </div>
+
+
+        <div ng-if="type=='scene' && sceneTab == 'caseList'">
+            <table class="table">
+                <tr>
+                    <th style="text-align: center;white-space:nowrap" class="listTh">选择</th>
+                    <th style="white-space:nowrap"  class="listTh">用例id</th>
+                    <th style="white-space:nowrap" class="listTh">业务场景</th>
+                    <th  class="listTh">用例名称</th>
+                    <!--<th  class="listTh">用例描述</th>-->
+                    <th style="white-space:nowrap" class="listTh">标签</th>
+                    <th  class="listTh">操作</th>
+                </tr>
+                <tr ng-repeat="x in caseList">
+
+
+                    <th style="text-align: center;"><input type="checkbox"   style="height: 30px;width:30px;zoom:70%" ng-checked="pickList.indexOf(x.id)>-1"  ng-click="pickCase(x.id)"></th>
+                    <td>{{ x.id }}</td>
+                    <td>{{ x.caseGroup }}</td>
+                    <td>{{ x.description }}</td>
+                    <!--<td>{{ x.longDescription }}</td>-->
+                    <td>{{ x.tag }}</td>
+                    <td  style="white-space:nowrap">
+                        <a href="" ng-click="toEdit(x.id, 'run')" ng-show=" scenarioId !=''">运行</a>
+                        <span style="color: lightgray;"> | </span>
+                        <a href="" ng-click="toEdit(x.id, 'edit')">编辑</a>
+                        <span style="color: lightgray;"> | </span>
+                        <a href="" ng-click="toEdit(x.id, 'clone')">克隆</a>
+                        <span style="color: lightgray;"> | </span>
+                        <a href="" ng-click="toEdit(x.id, 'expand')">膨胀</a>
+                        <span style="color: lightgray;"> | </span>
+                        <a href="" data-toggle="modal" data-target="#myModal" ng-click="setDelId(x.id)">删除</a>
+                    </td>
+                </tr>
+            </table>
+
+            <nav aria-label="Page navigation" class="clearfix" style="text-align: center">
+                <ul class="pagination pagination-sm pagination1 fr" style="margin: 0;">
+                    <li ng-class="{disabled:page==1}">
+                        <a href="javascript:void(0)" aria-label="Previous" ng-click="sub(currentPage['case']-1<1?1:currentPage['case']-1)"  ng-disabled="currentPage['case']==1">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li ng-if="currentPage['case'] >= pageNum && currentPage['case'] !== pageNum" ng-click="sub(1)" ng-class="{active:item==1}">
+                        <a href="javascript:void(0)">1</a>
+                    </li>
+                    <li ng-if="currentPage['case'] >= pageNum && lastPage !== pageNum">
+                        <a href="javascript:void(0)">...</a>
+                    </li>
+                    <!--                    <li ng-click="cursorto(i, 'case')" ng-class="{active:currentPage['case'] == i}" ng-repeat="i in casepages">-->
+                    <li ng-click="sub(i)" ng-class="{active:currentPage['case'] == i}" ng-repeat="i in casepages">
+                        <a href="javascript:void(0)">{{ i }}</a>
+                    </li>
+                    <li ng-if="lastPage > pageNum && firstPage <= lastPage - pageNum">
+                        <a href="javascript:void(0)">...</a>
+                    </li>
+                    <li ng-if="lastPage > pageNum && firstPage <= lastPage - pageNum" ng-click="sub(lastPage)" ng-class="{active:item==currentPage['case']}">
+                        <a href="javascript:void(0)">{{lastPage}}</a>
+                    </li>
+                    <li ng-class="{disabled:page==lastPage}">
+                        <a href="javascript:void(0)" aria-label="Next" ng-click="sub(currentPage['case']+1>lastPage?currentPage['case']:currentPage['case']+1)">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Modal -->
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">提示</h4>
+                        </div>
+                        <div class="modal-body">
+                            是否确认删除
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-info" data-dismiss="modal" ng-click="doDel()">确认</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Modal -->
+            <div class="modal fade" id="myAICaseModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" ng-show="showTaskModal">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">智能生成信息确认</h4>
+                        </div>
+                        <div class="modal-body">
+                            <span>选中种子用例： {{$parent.seedCaseId}}</span>
+                            <br>
+                            <span>当前环境： {{$parent.userSelfEnv.name}}</span>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <br>
+                            <br>
+                            <span>字段配置：</span>
+                            <textarea class="form-control" ng-model="defaultGeneConf" style="height:300px"></textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-info" data-dismiss="modal" ng-click="startAICaseGenerator()">开始任务</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+
+
+
+            <!-- Modal -->
+            <div class="modal fade" id="myModalStop" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabelStop">提示</h4>
+                        </div>
+                        <div class="modal-body">
+                            是否确认停止任务执行
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-info" data-dismiss="modal" ng-click="stopPipeTask()">确认</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="myModaltest" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabeltest">提示</h4>
+                        </div>
+                        <div class="modal-body">
+                            是否确认删除
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-info" data-dismiss="modal" ng-click="deletePipeTask()">确认</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div ng-if="type == 'scene' && sceneTab == 'result' && false">
+            <!--
+            <select class="form-control w-lg" ng-change="getResultList('',1,15,selectStatus)" ng-model="selectStatus">
+                <option value="">显示全部</option>
+                <option value="ERROR">ERROR</option>
+                <option value="RUNNING">RUNNING</option>
+                <option value="FAILURE">FAILURE</option>
+                <option value="SUCCESS">SUCCESS</option>
+                <option value="DEPLOYING">DEPLOYING</option>
+            </select>
+            <br>
+            <input class="form-control w-lg" ng-model="searchFilter.keyword" placeholder="根据id/环境版本/结果执行人进行搜索"><br>
+             -->
+            <table class="table" ng-init="toResult();">
+                <tr ng-show = "resultList.length">
+                    <th class="listTh">执行id</th>
+                    <th class="listTh">环境版本</th>
+                    <th class="listTh">执行人</th>
+                    <th class="listTh">执行进度</th>
+                    <th class="listTh">成功/失败/全部</th>
+                    <th class="listTh">开始时间</th>
+                    <th class="listTh">用例分支</th>
+
+                    <th class="listTh">操作</th>
+                </tr>
+                <tr ng-show = "!resultList.length">
+                    <td></td>
+                </tr>
+                <tr ng-repeat="x in resultList track by $index">
+                    <td>{{ x.id }}</td>
+                    <td ng-show="x.reportName!=null" >
+                        <span popover-placement='top' popover-trigger="mouseenter" popover="{{x.imageName}}" >{{ x.reportName }}</span>
+                    </td>
+                    <td style="color: red;" ng-show="x.reportName==null && x.status.indexOf('中')<0">环境状态为fail</td>
+                    <td style="color: red;" ng-show="x.reportName==null && x.status.indexOf('中')>=0">生成中，请稍待</td>
+                    <td>{{ x.user }}</td>
+                    <td style="text-align:left" >
+                        <uib-progressbar  ng-show="x.status=='RUNNING'" style="width: 100px;margin-top:0px;"  class="progress-striped active" value="x.processRate" type="{{x.progressType}}">{{x.processRate}}%</uib-progressbar>
+                        <uib-progressbar  ng-show="x.status!='RUNNING'" style="width: 100px;margin-top:0px;"  class="progress-striped active" value="100" type="{{x.progressType}}">{{x.status}}</uib-progressbar>
+                    </td>
+                    <td><span style="color: green; font-size: medium">{{ x.successNum }} </span><span style="color: lightgrey; font-size: medium">/</span><span style="color: red;font-size:medium">{{ x.failNum }}</span><span style="color: lightgrey; font-size: medium">/</span><span style="color: dimgrey;font-size:medium">{{ x.caseNum}}</span></td>
+                    <td>{{ x.gmtCreate | date:"yyyy-MM-dd HH:mm:ss" }}</td>
+                    <td>
+                        <label ng-show="x.branchName">{{ x.branchName }}</label>
+                        <label ng-show="!x.branchName">master</label>
+                    </td>
+
+                    <td>
+                        <a href="" data-toggle="modal" ng-click="toStopRegressionTask(x.taskId)" data-target="#delModal" >停止</a>
+                        <!--<button class="btn m-b-xs w-xs btn-info btn-rounded"  href="" data-toggle="modal" data-target="#delModal" data-spm-anchor-id="0.0.0.i13.64ac5a55lpP37z">使用</button>-->
+                        <span style="color: lightgray;"> | </span>
+                        <a href="" ng-click="funcTaskDetail(x.taskId,x.id)">执行日志</a>
+                        <span style="color: lightgray;"> | </span>
+                        <a href=""  ng-click="toResultDetail(x.id)">查看报告</a>
+                        <span ng-show="x.accuracyReportId"  style="color: lightgray;"> | </span>
+                        <a ng-show="x.accuracyReportId" href=""  ng-click="toAccuDetail(x.accuracyReportId)">精准报告</a>
+                        <span style="color: lightgray;"> | </span>
+                        <a href="" data-toggle="modal" ng-click="getEnvTableList(x.id)" data-target="#myMulReRunModal">重跑</a>
+
+                    </td>
+                </tr>
+            </table>
+            <nav aria-label="Page navigation" style="text-align: center">
+                <ul class="pagination">
+                    <li>
+                        <a ng-click="prevpage('result')" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li ng-repeat="i in resultPage" ng-class="{active: currentPage['result'] == i}"><a ng-click="cursorto(i, 'result')">{{ i }}</a></li>
+                    <li>
+                        <a ng-click="nextpage('result')" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Modal -->
+            <div class="modal fade" id="myMulReRunModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">重跑回归任务</h4>
+                        </div>
+                        <div class="modal-body">
+
+                            <div class="modal-body pull-left" style="margin-left: 10px;margin-top: -10px"><label>选择重跑环境：</label>
+                                <ui-select ng-model="selectenv.current" theme="bootstrap" style="float:right;margin-top: -12px;min-width:350px;">
+                                    <ui-select-match placeholder="选择并设置为当前环境，支持模糊查询">{{$select.selected.name||selfSetEnv.name}}</ui-select-match>
+                                    <ui-select-choices group-by="'host'" repeat="eg in envGroups | propsFilter: {name: $select.search}">
+                                        <div ng-bind-html="eg.name | highlight: $select.search"></div>
+                                        <small class="text-muted">
+                                            envId: <span ng-bind-html="''+eg.id | highlight: $select.search"></span>
+                                        </small>
+                                    </ui-select-choices>
+                                </ui-select>
+                            </div>
+                            <br>
+                            <br>
+
+                            <div class="col-lg-8 form-group-m-t">
+                                <label class="i-checks" style="margin-right: 10px"><input type="radio" name="deployEnv" ng-model="reRunType" value="0"><i></i>仅重跑失败用例</label>
+                                <label class="i-checks"><input type="radio" name="deployEnv" ng-model="reRunType" value="1"><i></i>重跑全部用例</label>
+                            </div>
+
+                        </div>
+                        <HR>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-info" data-dismiss="modal" ng-click="doReRunMulRun(reRunType,selectenv.current)">确认</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="delModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">发送强制终止指令成功!</h4>
+                        </div>
+                        <div class="modal-body">
+                            <br>
+                            <label >提示:发送强制终止指令后,耐心等待几分钟后生效..</label>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-info"  data-dismiss="modal"  >确认</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Modal -->
+            <div class="modal fade" id="statusProgress" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+                            <h3 class="modal-title" id="statusProgressTitle">实时信息查询</h3>
+                        </div>
+                        <div id="_modalDialog_body" class="modal-body">
+                            <!--  设置这个div的大小，超出部分显示滚动条 -->
+                             <div id="selectTree" class="ztree" style="height:500px;overflow:auto; "> 
+                            <h4 class="modal-title" id="modalLabel">运行进度:</h4>
+                            <HR>
+                            <div style="white-space:pre-line">{{statusProgress}}</div>
+                            <HR>
+                            <h4 class="modal-title" id="modalLabel">运行日志:</h4>
+                            <HR>
+                            <div style="white-space:pre-line">{{zkLog}}</div>
+                            <HR>
+                        </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>&ensp;
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div ng-if="type == 'scene' && sceneTab == 'resultdetail'">
+
+
+            <div class="panel panel-default">
+                <div class="panel-heading font-bold">
+                    功能回归报告:{{ resultDetailSummary.reportId }}
+                </div>
+                <div class="panel-body">
+                    <div class="col-xs-12 reportSum" >
+                        <div class="col-xs-6">执行人：{{ resultDetailSummary.user }} </div>
+                        <div class="col-xs-6">执行结果： {{ resultDetailSummary.status }} </div>
+                    </div>
+                    <div class="col-xs-12 reportSum" >
+                        <div class="col-xs-6">总用例数：{{ resultDetailSummary.totalNum }} </div>
+                        <div class="col-xs-6">成功用例数/失败用例数： <label style="color: green">{{resultDetailSummary.sucessNum}}</label>/<label style="color: red">{{ resultDetailSummary.failNum }}</label> </div>
+                    </div>
+                    <!--<div class="col-xs-12 reportSum" >-->
+                    <!--<div class="col-xs-6">开始时间：{{ resultDetailSummary.gmtCreate | date:"yyyy-MM-dd HH:mm:ss"  }} </div>-->
+                    <!--<div class="col-xs-6">结束时间： {{ resultDetailSummary.gmtModified | date:"yyyy-MM-dd HH:mm:ss" }} </div>-->
+                    <!--</div>-->
+                    <div class="col-xs-12 reportSum" >
+                        <div class="col-xs-6">花费时间：{{ resultDetailSummary.timeGap }} </div>
+                        <div class="col-xs-6">开始时间/结束时间：{{ resultDetailSummary.gmtCreate | date:"yyyy-MM-dd HH:mm:ss"  }}/{{ resultDetailSummary.gmtModified | date:"yyyy-MM-dd HH:mm:ss" }}</div>
+                        <!--<div class="col-xs-6">结束时间： {{ resultDetailSummary.gmtModified | date:"yyyy-MM-dd HH:mm:ss" }} </div>-->
+                    </div>
+                    <div class="col-xs-12 reportSum" ng-show="resultDetailSummary.imageName">
+                        <div class="col-xs-6">回归镜像：{{ resultDetailSummary.imageName }} </div>
+                    </div>
+
+                    <div class="col-xs-12 reportSum" >
+                        <div class="col-xs-6">报告分析：<a ui-sref="app.regreport({testReportId:resultDetailSummary.reportId,appid:appid,sceneid:sceneid})" target="_blank">详情</a></div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+
+                <div class="panel-body">
+                    <div class="col-xs-11">
+                        <div class="col-xs-5">
+                            <button class="btn btn-success btn-sm" uib-popover="请先选中排查用例" popover-placement='bottom'  popover-trigger="mouseenter" style="float:left;margin-left:-10px;"  data-toggle="modal" data-target="#manualTroubleShootBox" ng-click="toGetMultiManualFailAttribute('multi')">查看排查经验</button>
+                        </div>
+                        <div class="col-xs-6" >
+                            <form class="bs-example form-horizontal" style="float: right;">
+                                <div class="form-group pull-left">
+                                    <label class="col-lg-3 control-label font-bold">用例过滤: </label>
+                                    <div class="col-lg-6">
+                                        <select class="form-control w-lg" ng-change="detailListStatusFilter(selectDetailStatus)" ng-model="selectDetailStatus">
+                                            <option value="">显示全部</option>
+                                            <option value="ERROR">ERROR</option>
+                                            <option value="RUNNING">RUNNING</option>
+                                            <option value="SUCCESS">SUCCESS</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                    <br>
+                    <table class="table">
+                        <tr>
+                            <th class="listTh">批量选择</th>
+                            <th class="listTh">业务场景</th>
+                            <th class="listTh">用例id</th>
+                            <th class="listTh">用例名称</th>
+                            <!--<th class="listTh">标签</th>-->
+                            <th class="listTh">系统自查</th>
+                            <th class="listTh">人工经验</th>
+                            <th class="listTh">结果</th>
+                            <th class="listTh">操作</th>
+                        </tr>
+                        <tr ng-repeat="(i,x) in resultDetailList">
+                            <td>
+                                <label class="i-checks" >
+                                    <input type="checkbox"  ng-click="pickCase(x.testcaseId)">
+                                    <i></i>
+                                </label>
+                            </td>
+                            <td>{{ x.caseGroup }}</td>
+                            <td>{{ x.testcaseId }}</td>
+                            <td>{{ x.description}} </td>
+                            <!--<td>{{ x.tag }}</td>-->
+                            <td>{{ x.attribute }}</td>
+                            <td>{{ x.troubleShootManual }}</td>
+                            <td ng-style=" {color: (x.status == 'SUCCESS' ? 'green' : 'red') }">{{ x.status }}</td>
+                            <td>
+                                <a href="" ng-click="toEdit(x.testcaseId ,'edit',resultDetailSummary.reportId,x.appId,x.scenarioId)">查看详情</a>
+                                <span style="color: lightgray;"> | </span>
+                                <a href=""  data-toggle="modal" data-target="#troubleShootBox" ng-click="toGetFailAttribute(x.testcaseId)">系统自查</a>
+                                <span style="color: lightgray;"> | </span>
+                                <a href=""  data-toggle="modal" data-target="#manualTroubleShootBox" ng-click="toGetManualFailAttribute(x.testcaseId,'single')">排查经验</a>
+                                <span ng-show="hasAccu" style="color: lightgray;"> | </span>
+                                <a ng-show="hasAccu" href=""  data-toggle="modal" data-target="#caseAccuBox" ng-click="getCaseAccuracy(resultDetailSummary.reportId, x.testcaseId)">查看精准覆盖</a>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <nav aria-label="Page navigation"  style="text-align: center">
+                        <ul class="pagination">
+                            <li>
+                                <a ng-click="prevpage('detail')" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            <li ng-repeat="i in resultDetailPage" ng-class="{active: currentPage['detail'] == i}"><a ng-click="cursorto(i, 'detail')">{{ i }}</a></li>
+                            <li>
+                                <a ng-click="nextpage('detail')" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+
+
+                </div>
+
+
+
+                <!-- troubleShootBox Modal -->
+                <div class="modal fade" id="troubleShootBox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+                                <h3 style="color: midnightblue"  class="text-muted" align="center" class="modal-title" id="troubleShootTitle">失败归因分析</h3>
+                            </div>
+                            <div id="_modalDialog_body" class="modal-body">
+                                <!--  设置这个div的大小，超出部分显示滚动条 -->
+                                <div id="selectTree" class="ztree" style="height:500px;overflow:auto; "> 
+
+                                    <div class="modal-header">
+                                        <h4 class="modal-title" style="color: blue"  >一.结论:{{failAttributeUnit.attribute}}</h4>
+                                    </div>
+
+                                    <table  class="table table-striped">
+                                        <div class="modal-header">
+                                            <h4 style="color: midnightblue" class="modal-title" >二.基础检测项</h4>
+                                        </div>
+                                        <tr>
+                                            <th class="listTh">检测类型</th>
+                                            <th class="listTh">描述</th>
+                                            <th class="listTh">结论</th>
+                                        </tr>
+                                        <tr ng-repeat="(type,checkInfo) in failAttributeUnit.failAttribute">
+                                            <td>{{ type }}</td>
+                                            <td>{{ checkInfo.desc }}</td>
+                                            <td>
+                                                <label ng-if="checkInfo.status == 'SUCCESS' " style="color: green" class="col-md-6">{{checkInfo.status}}</label>
+                                                <label ng-if="checkInfo.status == 'ERROR'" style="color: red" class="col-md-6">{{checkInfo.status}}</label>
+                                                <label ng-if="checkInfo.status == '未配置检测'" style="color: blue" class="col-md-6">{{checkInfo.status}}</label>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                    <table  class="table table-striped">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title" style="color: midnightblue" >三.更多失败可能...</h4>
+                                        </div>
+                                        <tr>
+                                            <th class="listTh">序号</th>
+                                            <th class="listTh">描述</th>
+                                            <th class="listTh">结论</th>
+                                        </tr>
+                                        <tr ng-repeat="(index,checkInfo) in failAttributeUnit.moreAdvice">
+                                            <td>{{ index+1 }}</td>
+                                            <td>{{ checkInfo.desc }}</td>
+                                            <td>
+                                                <label style="color: blue" class="col-md-6">供参考</label>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+
+                                    <div class="modal-header">
+                                        <h4 class="modal-title" style="color: midnightblue" >四.详细检测报告:</h4>
+                                    </div>
+                                    <div ng-repeat="(type,checkList) in failAttributeUnit.report" class="tab-pane" >
+                                        <table  class="table table-striped">
+                                            <div class="modal-header">
+                                                <h5 style="color: midnightblue" class="modal-title" >{{type}}</h5>
+                                            </div>
+                                            <tr>
+                                                <th class="listTh">序号</th>
+                                                <th class="listTh">检测项</th>
+                                                <th class="listTh">结论</th>
+                                                <th class="listTh">操作</th>
+                                            </tr>
+                                            <tr ng-repeat="(index,checkInfo) in checkList">
+                                                <td>{{ index+1 }}</td>
+                                                <td>{{ checkInfo.checkItem }}</td>
+                                                <td>
+                                                    <label ng-if="checkInfo.status == 'SUCCESS' " style="color: green" class="col-md-6">{{checkInfo.status}}</label>
+                                                    <label ng-if="checkInfo.status == 'ERROR'" style="color: red" class="col-md-6">{{checkInfo.status}}</label>
+                                                    <label ng-if="checkInfo.status == 'WARN'" style="color: blue" class="col-md-6">{{checkInfo.status}}</label>
+                                                </td>
+                                                <td style="white-space:nowrap" ><a href="" ng-click="openTroubleShootBox(type, checkInfo.desc, checkInfo.detail)">查看详情</a></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>&ensp;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- manualTroubleShootBox Modal -->
+                <div data-dissmiss="modal"class="modal fade" id="manualTroubleShootBox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" >
+                    <div class="modal-dialog" role="document" style="width:1000px">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+                                <h3 style="color: midnightblue"  class="text-muted" align="center" class="modal-title" id="troubleShootTitle">历史排查经验</h3>
+                            </div>
+
+
+                            <div id="_modalDialog_body" class="modal-body">
+                                <button style="width:100px;" class="btn m-b-xs w-xs btn-info btn-rounded"  data-toggle="modal" data-target="#modifyTroubleShootBox" ng-click="resetTroubleShootBox()" data-spm-anchor-id="0.0.0.i3.4c205a55SMVeoJ">新增经验</button>
+                                <!--  设置这个div的大小，超出部分显示滚动条 -->
+                                <div id="selectTree" class="ztree" style="height:500px;overflow:auto; "> 
+
+                                    <table  class="table table-striped">
+                                        <tr>
+                                            <th class="listTh">序号</th>
+                                            <th class="listTh">失败原因</th>
+                                            <th class="listTh">排查详情</th>
+                                            <th class="listTh">影响用例数</th>
+                                            <th class="listTh">修改时间</th>
+                                            <th class="listTh">更多操作</th>
+                                        </tr>
+                                        <tr ng-repeat="(i,x) in troubleShootBoxList">
+                                            <td>{{ i+1 }}</td>
+                                            <td>{{ x.failAttribute }}</td>
+                                            <td>{{ x.content }}</td>
+                                            <td>{{ x.idcnt }}</td>
+                                            <td>{{ x.timeStr }}</td>
+                                            <td>
+                                                <!--<a href="" data-toggle="modal" data-target="#modifyTroubleShootBox" ng-click="selectTroubleShootBox(x)">修改</a>-->
+                                                <a href=""  ng-click="openTroubleShootModifyBox(x,'modify')">修改</a>
+                                                <span style="color: lightgray;"> | </span>
+                                                <a href="" ng-click="openTroubleShootModifyBox(x,'delete')">删除</a>
+                                                <span style="color: lightgray;"> | </span>
+                                                <a href="" ng-click="thumbsUp()">点赞</a>
+                                            </td>
+
+                                        </tr>
+                                    </table>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>&ensp;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div  data-dissmiss="modal"  class="modal fade" id="modifyTroubleShootBox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 style="color: midnightblue"  class="text-muted" align="center" class="modal-title" id="troubleShootTitle">新增/修改排查经验</h3>
+                            </div>
+
+                            <div id="_modalDialog_body" class="modal-body">
+
+                                <div class="col-sm-12">
+                                    <form class="">
+                                        <div class="form-group">
+                                            <label style="color: green">失败原因</label>
+                                            <input style="width:100%" ng-model="selectTroubleShootBox.failAttribute" type="text" class="form-control" aria-label="...">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-sm-12">
+                                    <form class="">
+                                        <div class="form-group">
+                                            <label  style="color: green">排查经验</label>
+                                            <input style="width:100%;height:70px" ng-model="selectTroubleShootBox.content" type="text" class="form-control" aria-label="...">
+
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>&ensp;
+                                    <button data-dismiss="modal" style="width:70px" class="btn m-b-xs w-xs btn-info btn-rounded"  ng-click="addManualFailAttribute(selectTroubleShootBox)" data-spm-anchor-id="0.0.0.i3.4c205a55SMVeoJ">提交</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="modal fade" id="caseAccuBox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+                                <h3 style="color: midnightblue"  class="text-muted" align="center" class="modal-title" id="caseAccuBoxTitle">查看精准覆盖</h3>
+                            </div>
+                            <div id="_modalDialog_body" class="modal-body">
+                                <!--  设置这个div的大小，超出部分显示滚动条 -->
+                                <div id="selectTree" class="ztree" style="height:500px;overflow:auto; "> 
+
+
+                                    <table  class="table table-striped">
+                                        <div class="modal-header">
+                                            <h4 style="color: midnightblue" class="modal-title" >用例覆盖代码列表</h4>
+                                        </div>
+                                        <label  style="color: green" class="col-md-6">{{caseAccu}}</label>
+                                    </table>
+
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>&ensp;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <div ng-if="type == 'scene' && sceneTab == 'result'">
+            <!-- new result tab by zm-->
+            <!--
+            <select class="form-control w-lg" ng-change="getResultList('',1,15,selectStatus)" ng-model="selectStatus">
+                <option value="">显示全部</option>
+                <option value="ERROR">ERROR</option>
+                <option value="RUNNING">RUNNING</option>
+                <option value="FAILURE">FAILURE</option>
+                <option value="SUCCESS">SUCCESS</option>
+                <option value="DEPLOYING">DEPLOYING</option>
+            </select>
+            <br>
+            <input class="form-control w-lg" ng-model="searchFilter.keyword" placeholder="根据id/环境版本/结果执行人进行搜索"><br>
+             -->
+            <table class="table" ng-init="toResult();">
+                <tr ng-show = "resultList.length">
+                    <th class="listTh">执行id</th>
+                    <th class="listTh" style="max-width: 250px">环境版本</th>
+                    <th class="listTh">执行人</th>
+                    <th class="listTh">执行进度</th>
+                    <th class="listTh">成功/失败/总数</th>
+
+                    <th class="listTh">用例分支</th>
+                    <th class="listTh">被测代码版本</th>
+                    <th class="listTh" ng-show="accuDefaultFlag">增量覆盖率</th>
+
+                    <th class="listTh">开始时间</th>
+                    <th class="listTh">操作</th>
+                </tr>
+                <tr ng-show = "!resultList.length">
+                    <td></td>
+                </tr>
+                <tr ng-repeat="x in resultList track by $index">
+                    <td>{{ x.id }}</td>
+                    <td style="max-width: 250px" ng-show="x.reportName!=null"  >
+                        <span popover-placement='top' popover-trigger="mouseenter" popover="{{x.imageName}}" >{{ x.reportName }}</span>
+                    </td>
+                    <td style="color: red;max-width: 250px" ng-show="x.reportName==null && x.status.indexOf('中')<0">环境状态为fail</td>
+                    <td style="color: red;max-width: 250px" ng-show="x.reportName==null && x.status.indexOf('中')>=0">生成中，请稍待</td>
+                    <td>{{ x.user }}</td>
+                    <td style="text-align:left" >
+                        <uib-progressbar  ng-show="x.status=='RUNNING'" style="width: 100px;margin-top:0px;"  class="progress-striped active" value="x.processRate" type="{{x.progressType}}">{{x.processRate}}%</uib-progressbar>
+                        <uib-progressbar  ng-show="x.status!='RUNNING'" style="width: 100px;margin-top:0px;"  class="progress-striped active" value="100" type="{{x.progressType}}">{{x.status}}</uib-progressbar>
+                    </td>
+                    <td><span style="color: green; font-size: medium">{{ x.successNum }} </span><span style="color: lightgrey; font-size: medium">/</span><span style="color: red;font-size:medium">{{ x.failNum }}</span><span style="color: lightgrey; font-size: medium">/</span><span style="color: dimgrey;font-size:medium">{{ x.caseNum}}</span></td>
+                    <td>
+                        <label ng-show="x.branchName">{{ x.branchName }}</label>
+                        <label ng-show="!x.branchName">加载中</label>
+                    </td>
+                    <td>
+                        <a  popover-placement='top' popover-trigger="mouseenter" popover="查看分支" ng-show="x.gitBranch && accuDefaultFlag" href=""  ng-click="toGitBranch(x.gitBranch)">{{ x.gitBranch }}</a>
+                        <span  ng-show="x.gitBranch && !accuDefaultFlag" >{{ x.gitBranch }}</span>
+                        <span  ng-show="!x.gitBranch" href=""  > -- </span>
+                        -
+                        <a  ng-show="x.gitCommit && accuDefaultFlag" popover-placement='top' popover-trigger="mouseenter" popover="查看commit" href=""  ng-click="toGitCommit(x.gitCommit)">{{ x.gitCommit }}</a>
+                        <span  ng-show="x.gitCommit && !accuDefaultFlag" >{{ x.gitCommit }}</span>
+                        <span  ng-show="!x.gitCommit" href=""  > -- </span>
+                    </td>
+
+                    <td ng-show="accuDefaultFlag">
+                        <a  ng-show="x.accuracyReportId" popover-placement='top' popover-trigger="mouseenter" popover="查看覆盖报告"  href=""  ng-click="toAccuDetail(x.accuracyReportId)">{{ x.ccCovRate }}</a>
+                        <span  ng-show="!x.accuracyReportId" style="color: lightgrey;font-weight: bold"  > {{ x.ccCovRate }} </span>
+                    </td>
+
+
+
+                    <td>{{ x.gmtCreate | date:"yyyy-MM-dd HH:mm:ss" }}</td>
+
+                    <td>
+                        <a href="" data-toggle="modal" ng-click="toStopRegressionTask(x.taskId)" data-target="#delModal" >停止</a>
+                        <!--<button class="btn m-b-xs w-xs btn-info btn-rounded"  href="" data-toggle="modal" data-target="#delModal" data-spm-anchor-id="0.0.0.i13.64ac5a55lpP37z">使用</button>-->
+                        <span style="color: lightgray;"> | </span>
+                        <a href="" ng-click="funcTaskDetail(x.taskId,x.id)">执行日志</a>
+                        <span style="color: lightgray;"> | </span>
+                        <a href=""  ng-click="toResultDetail(x.id)">查看报告</a>
+                        <span style="color: lightgray;"> | </span>
+                        <a href="" data-toggle="modal" ng-click="getEnvTableList(x.id)" data-target="#myMulReRunModal">重跑</a>
+
+                    </td>
+                </tr>
+            </table>
+            <nav aria-label="Page navigation" style="text-align: center">
+                <ul class="pagination">
+                    <li>
+                        <a ng-click="prevpage('result')" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li ng-repeat="i in resultPage" ng-class="{active: currentPage['result'] == i}"><a ng-click="cursorto(i, 'result')">{{ i }}</a></li>
+                    <li>
+                        <a ng-click="nextpage('result')" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+
+</div>
+
+
+        </div>
+<style>
+    .popover {
+        max-width: 600px;
+    }
+</style>

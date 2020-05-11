@@ -1,0 +1,59 @@
+<div class="well m-t bg-light lt" style="font-size: 14px">
+    <div class="row" ng-if="recentData.taskInfo.reportId">
+        <div class="col-xs-4">
+            <span style="font-size: 16px"><strong>基本信息</strong></span>
+            <p>运行人：{{recentData.taskInfo.executor}}</p>
+            <p>任务Id：{{recentData.taskInfo.taskId}}</p>
+            <p>运行时间：{{recentData.taskInfo.runTime}}</p>
+        </div>
+        <div class="col-xs-4">
+            <strong>&nbsp;</strong>
+            <p>任务状态：<span ng-show="recentData.taskInfo.status" class='status-btn label w-sm bg-{{recentData.taskInfo.status=="SUCCESS"?"success":("FAIL,TIMEOUT,EXCEPTION,ERROR,FAILURE".indexOf(recentData.taskInfo.status)!=-1)?"danger":(recentData.taskInfo.status=="RUNNING"||recentData.taskInfo.status=="DEPLOYING")?"warning":"dark"}}'>{{recentData.taskInfo.status}}</span></p>
+            <p>任务方式：{{recentData.taskInfo.runType}}</p>
+        </div>
+        <div class="col-xs-4">
+            <strong>&nbsp;</strong>
+            <p>测试报告：<a ui-sref="app.regreport({testReportId:recentData.taskInfo.reportId,appid:appid,sceneid:sceneid})" target="_blank">总体详情</a></p>
+            <p>配置快照：<a ng-click="openScriptModule(1)">查看快照</a></p>
+        </div>
+    </div>
+    <div class="row" ng-if="!recentData.taskInfo.reportId">
+        <div class="col-xs-10">
+            <span class="text-danger"><strong><i class="fa fa-warning"></i> 请查看"执行历史"了解任务执行进度</strong></span>
+        </div>
+    </div>
+</div>
+<div class="row" ng-repeat="en in recentData.envs">
+    <div class="col-sm-12">
+        <div class="panel panel-default">
+            <div class="panel-heading font-bold">
+                环境名称：{{en.envName}}
+            </div>
+            <div class="panel-body">
+                <table class="table table-striped">
+                    <tr>
+                        <th class="listTh">模块</th>
+                        <th class="listTh">运行时间</th>
+                        <th class="listTh">容器状态</th>
+                        <th class="listTh">容器描述</th>
+                        <th class="listTh">模块状态</th>
+                        <th class="listTh">模块描述</th>
+                        <th class="listTh">操作</th>
+                    </tr>
+                    <tr ng-repeat="x in en.modules track by $index">
+                        <td>{{x.moduleName}}</td>
+                        <td>{{x.duration|secondFormat}}</td>
+                        <td><span ng-show="x.status" class='status-btn label w-sm bg-{{x.status=="SUCCESS"?"success":("FAIL,TIMEOUT,EXCEPTION,ERROR,FAILURE".indexOf(x.status)!=-1)?"danger":(x.status=="RUNNING"||x.status=="DEPLOYING")?"warning":"dark"}}'>{{x.status}}</span></td>
+                        <td>{{x.comment}}</td>
+                        <td><span ng-show="x.deployStatus" class='status-btn label w-sm bg-{{x.deployStatus=="SUCCESS"?"success":("FAIL,TIMEOUT,EXCEPTION,ERROR,FAILURE".indexOf(x.deployStatus)!=-1)?"danger":(x.deployStatus=="RUNNING"||x.deployStatus=="DEPLOYING")?"warning":"dark"}}'>{{x.deployStatus}}</span></td>
+                        <td>{{x.deployComment}}</td>
+                        <td>
+                            <a ng-show="x.envId" href="" ng-click="loadTaskDetail(x)"><span class="label bg-danger"><i class="fa fa-laptop"></i> 模块详情</span></a>
+                            <a href="{{x.logUrl}}" target="_blank"><span class="label bg-success"><i class="fa fa-envelope-o"></i> 日志</span></a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

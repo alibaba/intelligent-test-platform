@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.alibaba.markovdemo.mapper.GotPipelineMapper">
+
+
+    <resultMap id="gotPipelineResult" type="gotPipeline">
+        <id column="id" property="id"/>
+        <result column="pipeline" property="pipeline"/>
+        <result column="extend" property="extend"/>
+        <result column="tag" property="tag"/>
+        <result column="scenario_id" property="scenarioId"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="gotPipeline" useGeneratedKeys="true" keyProperty="id">
+        replace INTO `got_pipeline` (
+        `tag`,
+        <trim suffixOverrides=",">
+            <if test="id != null">`id`,</if>
+            <if test="pipeline != null">`pipeline`,</if>
+            <if test="extend != null">`extend`,</if>
+            <if test="scenarioId != null">`scenario_id`</if>
+        </trim>
+        ) values(
+        <choose>
+            <when test="tag != null">
+                #{tag},
+            </when>
+            <otherwise>
+                'user_defined',
+            </otherwise>
+        </choose>
+        <trim suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="pipeline != null">#{pipeline},</if>
+            <if test="extend != null">#{extend},</if>
+            <if test="scenarioId != null">#{scenarioId}</if>
+        </trim>
+        )
+    </insert>
+
+
+    <delete id="deleteById" parameterType="Integer">
+        delete from `got_pipeline` where id = #{id}
+    </delete>
+
+
+    <select id="getPipeline" parameterType="Long" resultMap="gotPipelineResult">
+        select *
+        from `got_pipeline`
+        where
+        scenario_id = #{scenarioId}
+        order by id desc
+        limit 1
+    </select>
+
+
+</mapper>

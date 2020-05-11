@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- WARNING: This file is SQI exclusive, don't change! -->
+<mapper namespace="com.alibaba.markovdemo.mapper.GotCaseGenerateTaskMapper">
+
+    <resultMap id="GotCaseGenerateTask" type="gotCaseGenerateTask">
+        <id column="id" property="id"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="creator" property="creator"/>
+        <result column="seed_case_list" property="seedCaseList"/>
+        <result column="scenario_id" property="scenarioId"/>
+        <result column="env_info" property="envInfo"/>
+        <result column="feature_conf" property="featureConf"/>
+        <result column="task_name" property="taskName"/>
+        <result column="task_snap" property="taskSnap"/>
+        <result column="task_result" property="taskResult"/>
+        <result column="task_status" property="taskStatus"/>
+        <result column="gene_bank_snap" property="geneBankSnap"/>
+    </resultMap>
+
+
+    <insert id="insert" parameterType="gotCaseGenerateTask" useGeneratedKeys="true" keyProperty="id">
+        replace into `got_case_generate_task` (
+        `gmt_create`,
+        `gmt_modified`,
+        <trim suffixOverrides=",">
+            <if test="creator != null">`creator`,</if>
+            <if test="seedCaseList != null">`seed_case_list`,</if>
+            <if test="scenarioId != null">`scenario_id`,</if>
+            <if test="envInfo != null">`env_info`,</if>
+            <if test="featureConf != null">`feature_conf`,</if>
+            <if test="taskName != null">`task_name`,</if>
+            <if test="taskSnap != null">`task_snap`,</if>
+            <if test="taskResult != null">`task_result`,</if>
+            <if test="taskStatus != null">`task_status`,</if>
+            <if test="geneBankSnap != null">`gene_bank_snap`</if>
+        </trim>
+        ) values(
+        now(),
+        now(),
+        <trim suffixOverrides=",">
+            <if test="creator != null">#{creator},</if>
+            <if test="seedCaseList != null">#{seedCaseList},</if>
+            <if test="scenarioId != null">#{scenarioId},</if>
+            <if test="envInfo != null">#{envInfo},</if>
+            <if test="featureConf != null">#{featureConf},</if>
+            <if test="taskName != null">#{taskName},</if>
+            <if test="taskSnap != null">#{taskSnap},</if>
+            <if test="taskResult != null">#{taskResult},</if>
+            <if test="taskStatus != null">#{taskStatus},</if>
+            <if test="geneBankSnap != null">#{geneBankSnap}</if>
+        </trim>
+        )
+    </insert>
+
+
+    <update id="update" parameterType="gotCaseGenerateTask">
+        update `got_case_generate_task` set `gmt_modified` = now()
+        <if test="creator!=null">,`creator` = #{creator}</if>
+        <if test="seedCaseList!=null">,`seed_case_list` = #{seedCaseList}</if>
+        <if test="scenarioId!=null">,`scenario_id` = #{scenarioId}</if>
+        <if test="envInfo!=null">,`env_info` = #{envInfo}</if>
+        <if test="featureConf!=null">,`feature_conf` = #{featureConf}</if>
+        <if test="taskName!=null">,`task_name` = #{taskName}</if>
+        <if test="taskSnap!=null">,`task_snap` = #{taskSnap}</if>
+        <if test="taskResult!=null">,`task_result` = #{taskResult}</if>
+        <if test="taskStatus!=null">,`task_status` = #{taskStatus}</if>
+        <if test="geneBankSnap!=null">,`gene_bank_snap` = #{geneBankSnap}</if>
+        where id = #{id}
+    </update>
+
+
+    <select id="getByScenarioId" parameterType="gotCaseGenerateTask" resultMap="GotCaseGenerateTask">
+        select *
+        from `got_case_generate_task`
+        where scenario_id = #{scenarioId} ORDER by gmt_create desc limit 100
+    </select>
+
+    <select id="getLastGenerateTask" parameterType="gotCaseGenerateTask" resultMap="GotCaseGenerateTask">
+        select *
+        from `got_case_generate_task`
+        where scenario_id = #{scenarioId} ORDER by gmt_create desc limit 1
+    </select>
+
+    <select id="findById" parameterType="gotCaseGenerateTask" resultMap="GotCaseGenerateTask">
+        select *
+        from `got_case_generate_task`
+        where id = #{id}
+    </select>
+
+</mapper>

@@ -1,0 +1,154 @@
+<style>
+    .CodeMirror {border: 1px solid #e7ecee;}
+</style>
+<div ng-controller="datasourceController">
+
+    <div class="container mainBlock" ng-init="initTemplate()">
+
+        <div style="padding-bottom:10px">
+            <button type="submit" class="btn btn-sm btn-info"  data-toggle="modal" data-target="#templateEditBox"  ng-click="addTemplate()" type="button" >新增模板</button>
+        </div>
+
+
+        <div ng-repeat="(dataType,templateList) in templateListInfo" class="tab-pane" >
+            <table  class="table table-striped">
+                <div class="modal-header">
+                    <h3 class="modal-title"><code>{{dataType}}</code></h3>
+                </div>
+                <tr>
+                    <th class="listTh">序号</th>
+                    <th class="listTh">模板名</th>
+                    <th class="listTh">描述</th>
+                    <th class="listTh">操作</th>
+                </tr>
+                <tr ng-repeat="(index,unit) in templateList">
+                    <td>{{ index+1 }}</td>
+                    <td>{{ unit.templateName }}</td>
+                    <td>{{ unit.templateDesc }}</td>
+                    <td  style="white-space:nowrap">
+                        <!--<a href="" class="btn btn-sm btn-info"  data-toggle="modal" data-target="#templateEditBox"  ng-click="getTemplate(unit.id)">编辑</a>-->
+                        <a href=""  data-toggle="modal" data-target="#templateEditBox"  ng-click="getTemplate(unit.id)">编辑</a>
+                        <span style="color: lightgray;"> | </span>
+                        <!--<a href="" class="btn btn-sm btn-info"  data-toggle="modal" data-target="#deleteModal" ng-click="pickCurId(unit.id)">删除</a>-->
+                        <a href=""  data-toggle="modal" data-target="#deleteModal"  ng-click="pickCurId(unit.id)">删除</a>
+
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">提示</h4>
+                </div>
+                <div class="modal-body">
+                    是否确认删除?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-info" data-dismiss="modal" ng-click="deleteTemplate()">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="templateEditBox" modal="false" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="statusProgressTitle">模板配置</h3>
+                </div>
+                <div id="_modalDialog_body" class="modal-body">
+
+                    <div id="selectTree" class="ztree" style="height:500px;overflow:auto; "> 
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading font-bold">
+                                基本信息
+                            </div>
+                            <div class="panel-body">
+                                <div class="row">
+
+                                    <div class="col-sm-12" style="margin-left:-12px;">
+                                        <div class="col-sm-7" style="margin-top:10px">
+                                            <form class="">
+                                                <div class="form-group">
+                                                    <label>模板名称</label>
+                                                    <input style="width:100%" ng-model="oneTemplateInfo.templateName" type="text" class="form-control" aria-label="...">
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="col-sm-4" style="margin-top:10px;">
+                                            <form class="">
+                                                <div class="form-group">
+                                                    <label>数据类型</label>
+                                                    <select class="form-control" ng-change="selectDataType(dataTypeSelect)" ng-click="selectDataType(dataTypeSelect)" ng-model="dataTypeSelect" ng-options="opt for opt in dataTypeList"></select>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-12" style="margin-left:-12px;">
+                                        <div class="col-sm-12" style="margin-top:10px">
+                                            <form class="">
+                                                <div class="form-group">
+                                                    <label>描述</label>
+                                                    <input style="width:100%" ng-model="oneTemplateInfo.templateDesc" type="text" class="form-control" aria-label="...">
+                                                </div>
+                                            </form>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!--<h4 class="modal-title" id="modalLabel">配置项列表</h4>-->
+                        <a href="" >配置项列表</a>
+                        <!--<input class="btn btn-default" ng-click="addConifgItem()" type="button" style="margin-left: 10px;margin-top: -4px" value="新增配置项">-->
+                        <a data-toggle="class" class="btn btn-default btn-xs" ng-click="addConifgItem()">
+                            <i class="fa fa-plus text-muted text"></i>
+                            <i class="fa fa-star text-danger text-active"></i>
+                        </a>
+
+                        <table style="width:100%">
+                            <tr ng-repeat="(index,oneConfigInfo) in oneTemplateInfo.config">
+                                <HR>
+                                <td style="width:20%" class="caseTd">
+                                    配置项{{index+1}}
+                                </td>
+                                <td style="width:20%" class="caseTd">
+                                    <input type="text" class="form-control" placeholder="配置名"  data-placement="left"  ng-model="oneConfigInfo.configName">
+                                </td>
+                                <td style="width:50%" class="caseTd">
+                                    <input type="text"  data-placement="left" class="form-control" placeholder="双击可在编辑器中编辑" ng-model="oneConfigInfo.configValue" ng-dblclick="openModuleEdit(oneConfigInfo.configValue,index,1)">
+                                </td>
+                                <td style="white-space:nowrap" class="caseTd">
+                                    <a data-toggle="class" class="btn btn-default btn-xs" ng-click="rmCol(index)">
+                                        <i class="fa fa-minus text-muted text"></i>
+                                        <i class="fa fa-star text-danger text-active"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-sm btn-default" data-dismiss="modal">返回</button>&ensp;
+                    <button type="submit" class="btn btn-sm btn-info" data-dismiss="modal" ng-click="updateTemplate(oneTemplateInfo)">保存</button>&ensp;
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- WARNING: This file is SQI exclusive, don't change! -->
+
+<mapper namespace="com.alibaba.markovdemo.mapper.GotTestcaseSnapsMapper">
+
+    <resultMap id="GotTestcaseSnaps" type="gotTestcaseSnaps">
+        <id column="id" property="id"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="scenario_id" property="scenarioId"/>
+        <result column="app_id" property="appId"/>
+        <result column="name" property="name"/>
+        <result column="description" property="description"/>
+        <result column="long_description" property="longDescription"/>
+        <result column="content" property="content"/>
+        <result column="status" property="status"/>
+        <result column="testreport_id" property="testreportId"/>
+        <result column="testcase_id" property="testcaseId"/>
+        <result column="case_group" property="caseGroup"/>
+        <result column="tag" property="tag"/>
+        <result column="version" property="version"/>
+        <result column="run_time" property="runTime"/>
+        <result column="run_time_str" property="runTimeStr"/>
+        <result column="retry_num" property="retryNum"/>
+        <result column="constancy" property="constancy"/>
+        <result column="env_name" property="envName"/>
+        <result column="conflict_desc" property="conflictDesc"/>
+        <result column="is_parallel" property="isParallel"/>
+        <result column="trouble_shoot_box" property="troubleShootBox"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.alibaba.markovdemo.mapper.GotTestcaseSnapsMapper" useGeneratedKeys="true" keyProperty="id">
+        insert into `got_testcase_snaps` (
+        `gmt_create`,
+        `gmt_modified`,
+        <trim suffixOverrides=",">
+            <if test="scenarioId != null">`scenario_id`,</if>
+            <if test="appId != null">`app_id`,</if>
+            <if test="name != null">`name`,</if>
+            <if test="description != null">`description`,</if>
+            <if test="longDescription != null">`long_description`,</if>
+            <if test="content != null">`content`,</if>
+            <if test="status != null">`status`,</if>
+            <if test="testreportId != null">`testreport_id`,</if>
+            <if test="testcaseId != null">`testcase_id`,</if>
+            <if test="caseGroup != null">`case_group`,</if>
+            <if test="tag != null">`tag`,</if>
+            <if test="runTime != null">`run_time`,</if>
+            <if test="runTimeStr != null">`run_time_str`,</if>
+            <if test="retryNum != null">`retry_num`,</if>
+            <if test="constancy != null">`constancy`,</if>
+            <if test="envName != null">`env_name`,</if>
+            <if test="conflictDesc != null">`conflict_desc`,</if>
+            <if test="isParallel != null">`is_parallel`,</if>
+            <if test="troubleShootBox != null">`trouble_shoot_box`,</if>
+            <if test="version != null">`version`</if>
+        </trim>
+        ) values(
+        now(),
+        now(),
+        <trim suffixOverrides=",">
+            <if test="scenarioId != null">#{scenarioId},</if>
+            <if test="appId != null">#{appId},</if>
+            <if test="name != null">#{name},</if>
+            <if test="description != null">#{description},</if>
+            <if test="longDescription != null">#{longDescription},</if>
+            <if test="content != null">#{content},</if>
+            <if test="status != null">#{status},</if>
+            <if test="testreportId != null">#{testreportId},</if>
+            <if test="testcaseId != null">#{testcaseId},</if>
+            <if test="caseGroup != null">#{caseGroup},</if>
+            <if test="tag != null">#{tag},</if>
+            <if test="runTime != null">#{runTime},</if>
+            <if test="runTimeStr != null">#{runTimeStr},</if>
+            <if test="retryNum != null">#{retryNum},</if>
+            <if test="constancy != null">#{constancy},</if>
+            <if test="envName != null">#{envName},</if>
+            <if test="conflictDesc != null">#{conflictDesc},</if>
+            <if test="isParallel != null">#{isParallel},</if>
+            <if test="troubleShootBox != null">#{troubleShootBox},</if>
+            <if test="version != null">#{version}</if>
+        </trim>
+        )
+    </insert>
+
+    <update id="update" parameterType="com.alibaba.markovdemo.mapper.GotTestcaseSnapsMapper">
+        update `got_testcase_snaps` set `id` = #{id}, `gmt_modified` = now()
+        <if test="scenarioId!=null">,`scenario_id` = #{scenarioId}</if>
+        <if test="appId!=null">,`app_id` = #{appId}</if>
+        <if test="name!=null">,`name` = #{name}</if>
+        <if test="description!=null">,`description` = #{description}</if>
+        <if test="longDescription != null">,`long_description` = #{longDescription}</if>
+        <if test="content!=null">,`content` = #{content}</if>
+        <if test="status!=null">,`status` = #{status}</if>
+        <if test="testreportId!=null">,`testreport_id` = #{testreportId}</if>
+        <if test="testcaseId!=null">,`testcase_id` = #{testcaseId}</if>
+        <if test="caseGroup!=null">,`case_group` = #{caseGroup}</if>
+        <if test="tag!=null">,`tag` = #{tag}</if>
+        <if test="runTime!=null">,`run_time` = #{runTime}</if>
+        <if test="runTimeStr!=null">,`run_time_str` = #{runTimeStr}</if>
+        <if test="retryNum!=null">,`retry_num` = #{retryNum}</if>
+        <if test="constancy!=null">,`constancy` = #{constancy}</if>
+        <if test="envName!=null">,`env_name` = #{envName}</if>
+        <if test="conflictDesc!=null">,`conflict_desc` = #{conflictDesc}</if>
+        <if test="isParallel!=null">,`is_parallel` = #{isParallel}</if>
+        <if test="troubleShootBox!=null">,`trouble_shoot_box` = #{troubleShootBox}</if>
+        <if test="version!=null">,`version` = #{version}</if>
+        where id = #{id}
+    </update>
+
+
+    <select id="getReportTestcaseListPage" parameterType="Map" resultMap="GotTestcaseSnaps">
+        SELECT * from got_testcase_snaps
+        <include refid="whereCondition"/>
+        order by id desc
+        limit #{fromRow},#{pageSize}
+    </select>
+
+
+    <sql id="whereCondition">
+        <where>
+            testreport_id = #{testReportId}
+
+            <if test="status != null">
+                and status LIKE  CONCAT(CONCAT('%',#{status}),'%')
+            </if>
+
+        </where>
+    </sql>
+
+
+    <select id="getReportTestcaseList" parameterType="Long" resultMap="GotTestcaseSnaps">
+        SELECT * from got_testcase_snaps where testreport_id =#{testReportId}
+        order by id desc
+    </select>
+
+</mapper>
