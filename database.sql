@@ -1,4 +1,4 @@
-create database markov_demo
+create database markov_demo;
 
 use markov_demo;
 
@@ -27,11 +27,13 @@ CREATE TABLE `got_pipeline` (
   `scenario_id` bigint(20) unsigned DEFAULT NULL COMMENT '场景id',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='存储流程执行的pipeline配置文件';
+
 CREATE TABLE `got_scenario` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `name` varchar(100) DEFAULT NULL COMMENT 'name',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='测试场景表';
+
 CREATE TABLE `got_envs` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `gmt_create` datetime DEFAULT NULL COMMENT '创建时间',
@@ -42,14 +44,15 @@ CREATE TABLE `got_envs` (
   `env_detail` text COMMENT '环境详情',
   `scenario_id` bigint(20) unsigned DEFAULT NULL COMMENT '场景id',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6928 DEFAULT CHARSET=utf8 COMMENT='环境列表'
-;
+) ENGINE=InnoDB AUTO_INCREMENT=6928 DEFAULT CHARSET=utf8 COMMENT='环境列表';
+
 CREATE TABLE `pipeline_ui` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `scenario_id` bigint(20) unsigned DEFAULT NULL COMMENT '场景id',
   `content` text COMMENT 'pipeline_ui的jsonString\n',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='pipeline_ui表';
+
 CREATE TABLE `got_datasource` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键/场景id',
   `content` longtext COMMENT '数据源内容',
@@ -57,12 +60,14 @@ CREATE TABLE `got_datasource` (
   PRIMARY KEY (`id`),
   KEY `idx_scenario_id` (`scenario_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='测试数据源表';
+
 CREATE TABLE `got_menu` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `content` text COMMENT 'menu的jsonString\n',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='menu表';
-#插入测试数据
+
+
 insert into got_menu values(0, "{    \"buinfo\": {        \"buid\": 1,        \"appSecneMap\": {            \"1\": \"1\"        },        \"menu\": [{            \"businessId\": 1,            \"businessName\": \"markov-demo\",            \"appMenuList\": [{                \"appName\": \"测试模块\",                \"appId\": 1,                \"scenarioMenuList\": [{                    \"isMember\": true,                    \"scenarioId\": 1,                    \"scenarioName\": \"场景1\"                },{                    \"isMember\": true,                    \"scenarioId\": 2,                    \"scenarioName\": \"场景2\"                }]            }]        }, ],        \"buName\": \"markov-demo\"    }}");
 
 
@@ -165,6 +170,4 @@ CREATE TABLE `got_case_accuracy` (
   KEY `idx_exe_id` (`exe_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=16001 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='case精准数据覆盖数据记录表';
 
-
-INSERT INTO `got_testcase` (`gmt_create`,`gmt_modified`,`scenario_id`,`name`,`description`,`long_description`,`content`,`case_group`,`is_deleted`,`case_template`,`is_visible`) VALUES ('2020-04-28 19:12:55','2020-04-28 19:12:55',1,'case名','用例智能生成种子用例','种子用例','{"prepareData":[{"Tair":[{"dsName":"table.markovtair.test","data":[{"key":"testkey","value":"testvalue","property":""}]}]}],"caseRunStage":[{"group_name":"ERPC校验（第一组）","data":[{"input":"{\n  \"ad_id\": \"222\",\n  \"search_key\": \"key1\",\n  \"match_level\": 2,\n  \"user_type\": \"type1\",\n  \"top_num\": 10,\n  \"use_feature\": false,\n  \"other1\": \"1\",\n  \"other2\": \"0\"\n}","expect":"{\n  \"result\": \"1\" \n}","actual":"null"}]}]}','test',0,'c++',0);
-
+INSERT INTO `got_testcase` (`gmt_create`,`gmt_modified`,`scenario_id`,`name`,`description`,`long_description`,`content`,`case_group`,`is_deleted`,`case_template`,`is_visible`) VALUES ('2020-04-28 19:12:55','2020-04-28 19:12:55',1,'case名','用例智能生成-种子用例','种子用例','{\"prepareData\":[{\"Tair\":[{\"dsName\":\"table.markovtair.test\",\"data\":[{\"key\":\"testkey\",\"value\":\"testvalue\",\"property\":\"\"}]}]}],\"caseRunStage\":[{\"group_name\":\"ERPC校验（第一组）\",\"data\":[{\"input\":\"{\\n  \\\"ad_id\\\": \\\"222\\\",\\n  \\\"search_key\\\": \\\"key1\\\",\\n  \\\"match_level\\\": 2,\\n  \\\"user_type\\\": \\\"type1\\\",\\n  \\\"top_num\\\": 10,\\n  \\\"use_feature\\\": false,\\n  \\\"other1\\\": \\\"1\\\",\\n  \\\"other2\\\": \\\"0\\\"\\n}\",\"expect\":\"{\\n  \\\"result\\\": \\\"1\\\" \\n}\",\"actual\":\"null\"}]}]}','test',0,'c++',0);
