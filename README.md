@@ -118,8 +118,8 @@ source markov/database.sql
 <img src="https://github.com/alibaba/intelligent-test-platform/raw/master/src/main/resources/static/img/read-12.png"  width="70%" height="70%" ></img>
 
 ## `6、体验智能化feature`
-<img src="https://github.com/alibaba/intelligent-test-platform/raw/master/src/main/resources/static/img/read-12.png"  width="70%" height="70%" ></img>
-<img src="https://github.com/alibaba/intelligent-test-platform/raw/master/src/main/resources/static/img/read-12.png"  width="70%" height="70%" ></img>
+
+点击查看详情..
 
 # 2期开源计划
 

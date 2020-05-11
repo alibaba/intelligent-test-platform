@@ -52,6 +52,14 @@ angular.module('app.controllers.recommendController', ['pascalprecht.translate',
             })
         }
 
+
+        $scope.featuresExtract = function(){
+            ZhiziService.featuresExtract($scope.sceneid).then(function(res){
+                alert(res.data.data);
+            })
+
+        }
+
         $scope.recommend = function(){
             $scope.formData.caseDesc = $scope.caseDesc;
             ZhiziService.featuresMatch($scope.formData).then(function(res){

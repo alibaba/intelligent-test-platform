@@ -318,6 +318,16 @@ angular.module('app.services.ZhiziService', []).factory('ZhiziService',['$http',
         });
     };
 
+    api.featuresExtract = function(scenarioId){
+        var url = 'api/caseFactory/featuresExtract?scenarioId='+scenarioId;
+        return $http({
+            method: 'GET',
+            cache:false,
+            url: url
+        });
+    };
+
+
 //markov-demo
     api.featuresMatch = function(data){
         var url = 'api/caseFactory/featuresMatch';
