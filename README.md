@@ -3,6 +3,10 @@ Markov(阿里妈妈功能测试平台)是在测试转型大背景下自研的新
 
 <img src="https://github.com/alibaba/intelligent-test-platform/raw/master/src/main/resources/static/img/read-1.png" width="70%" height="70%"></img>
 
+<img src="http://chuantu.xyz/t6/733/1589251663x1033347913.png" width="70%" height="70%"></img>
+
+
+
 # 主要功能
 
 ## `1.pipeline管理`
