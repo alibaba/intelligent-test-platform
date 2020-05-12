@@ -12,6 +12,8 @@ Markov本期开源了部分智能化技术（智能用例生成、智能回归�
 
 <img src="https://wx3.sinaimg.cn/mw690/ac0a3d36gy1gephef3w78j20wo0k1129.jpg"></img>
 
+- demo展示
+
 <img width="800" src="https://wx3.sinaimg.cn/mw690/ac0a3d36gy1gephef20pmj210y0g543v.jpg"></img>
 
 <img width="800" src="https://wx1.sinaimg.cn/mw690/ac0a3d36gy1gephef4b74j214i0m2ah7.jpg"></img>
@@ -21,6 +23,8 @@ Markov本期开源了部分智能化技术（智能用例生成、智能回归�
 - Markov提供了用例智能膨胀、管理、Filter功能；通过智能抽取种子用例特征，用户能对各个特征进行组合设置(用户可自定义特征值组合，或选取系统根据历史数据训练好的特征值组合)，系统将所有特征进行叉乘组合后产生批量用例集，系统过滤不合法用例后将批量用例集推荐给用户自行选取，以上就完成了一次大批量生成用例的过程。用例膨胀通过结合特征抽取，特征组合，特征值叉乘，用例模板合并等方式，创新性解决了用户一次性生成批量用例以达到覆盖测试多场景的高效结果。
 
 <img src="https://wx2.sinaimg.cn/mw690/ac0a3d36gy1gephef9tsvj20ue0og13d.jpg"></img>
+
+- demo展示
 
 <img width="800" src="https://wx1.sinaimg.cn/mw690/ac0a3d36gy1gephefa29aj210k0eg43v.jpg"></img>
 
@@ -42,6 +46,8 @@ Markov本期开源了部分智能化技术（智能用例生成、智能回归�
 效率对比结论：实验数据同等效果的前提下，智能生成的效率对比传统枚举法的效率要超过100倍
 
 <img src="https://wx1.sinaimg.cn/mw690/ac0a3d36gy1gephf146slj20z90jyana.jpg"></img>
+
+- demo展示
 
 feature体验demo操作如下，项目中已插入实验数据和相关mock，可直接按如下流程操作。
 <img width="800" src="https://wx1.sinaimg.cn/mw690/ac0a3d36gy1gephf13adyj21lu0pc477.jpg"></img>
@@ -70,7 +76,10 @@ feature体验demo操作如下，项目中已插入实验数据和相关mock，�
 
 <img width="800" src="https://wx1.sinaimg.cn/mw690/ac0a3d36gy1gephf1gqn2j20z90bn7cq.jpg"></img>
 
+- demo展示
+
 <img width="800" src="https://wx4.sinaimg.cn/mw690/ac0a3d36gy1gephf1ewqfj211c0lw0xb.jpg"></img>
+
 
 <img width="800" src="https://wx2.sinaimg.cn/mw690/ac0a3d36gy1gephfcjjnqj211m0ivq9p.jpg"></img>
 
