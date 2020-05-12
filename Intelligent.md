@@ -2,7 +2,7 @@
 # 概述
 Markov本期开源了部分智能化技术（智能用例生成、智能回归、失败智能归因、用例推荐，用例膨胀），在功能测试全流程中，把测试方法论和智能化技术结合更进一步的提升测试效率。
 
-<img src="https://wx3.sinaimg.cn/mw690/ac0a3d36gy1gephfckb2gj21og0a27ca.jpg"></img>
+<img src="https://mmbiz.qpic.cn/mmbiz_png/DWQ5ap0dyHMvWOVCYt8M5463BURIjtVDyg27odILUO2lI0XEu9iaOZQgoZWBBahROibwib4SkHjKykbfFib10gIFmQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1"></img>
 
 # 智能化Feature
 
@@ -10,7 +10,7 @@ Markov本期开源了部分智能化技术（智能用例生成、智能回归�
 
 - 基于朴素bayes算法和特征抽取算法，Markov提供了用例智能推荐功能；用户仅需输入少量的用例描述信息（分词算法如FMM，结巴分词等进行特征抽取)，或者直接选取特征池中已有的用例特征，系统就能自动抽取业务特征集并从千级别的用例库中匹配出相似度TopN的用例，然后结合模板生成用例推荐给用户。该技术创新性的解决了在大量用例中难以快速查询目标用例的痛点，极大的降低了功能测试过程中写用例的门槛。
 
-<img src="https://wx3.sinaimg.cn/mw690/ac0a3d36gy1gephef3w78j20wo0k1129.jpg"></img>
+<img src="https://mmbiz.qpic.cn/mmbiz_png/DWQ5ap0dyHMvWOVCYt8M5463BURIjtVD6rTTGmoHhENj0G3GLLLpNIR7arQS7u1EJJrAViamcu5pqzRMHdQ594Q/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1"></img>
 
 - demo展示
 
@@ -22,7 +22,7 @@ Markov本期开源了部分智能化技术（智能用例生成、智能回归�
 
 - Markov提供了用例智能膨胀、管理、Filter功能；通过智能抽取种子用例特征，用户能对各个特征进行组合设置(用户可自定义特征值组合，或选取系统根据历史数据训练好的特征值组合)，系统将所有特征进行叉乘组合后产生批量用例集，系统过滤不合法用例后将批量用例集推荐给用户自行选取，以上就完成了一次大批量生成用例的过程。用例膨胀通过结合特征抽取，特征组合，特征值叉乘，用例模板合并等方式，创新性解决了用户一次性生成批量用例以达到覆盖测试多场景的高效结果。
 
-<img src="https://wx2.sinaimg.cn/mw690/ac0a3d36gy1gephef9tsvj20ue0og13d.jpg"></img>
+<img src="https://mmbiz.qpic.cn/mmbiz_png/DWQ5ap0dyHMvWOVCYt8M5463BURIjtVDOkJgDWYUib9WdCAUwOesjgb7YrUpVPcPucU9P2qicPkP7lj6du8trvtA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1"></img>
 
 - demo展示
 
@@ -45,7 +45,7 @@ Markov本期开源了部分智能化技术（智能用例生成、智能回归�
 实验数据中，逐一枚举法需要枚举40320种可能用例，而遗传算法平均只需要处理378个用例，最终都得到94%的极限增量覆盖率。
 效率对比结论：实验数据同等效果的前提下，智能生成的效率对比传统枚举法的效率要超过100倍
 
-<img src="https://wx1.sinaimg.cn/mw690/ac0a3d36gy1gephf146slj20z90jyana.jpg"></img>
+<img src="https://mmbiz.qpic.cn/mmbiz_png/DWQ5ap0dyHMvWOVCYt8M5463BURIjtVDLs5n8AX8O2iaTndeRe0NIBUKjqgLvQPzeReCfdk6XCzVYOL2GKbJM5g/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1"></img>
 
 - demo展示
 
@@ -72,9 +72,9 @@ feature体验demo操作如下，项目中已插入实验数据和相关mock，�
 在Markov实践中，动态编排算法相较于caseBycase的执行方式能有效提升回归效率约2-10倍，但在观察结果时，我们仍能发现用例编排后仍无可避免还有数据聚合冗余度，即终极优化的天花板就是数据聚合冗余度为0，后续仍有持续优化的空间。
 
 
-<img src="https://wx4.sinaimg.cn/mw690/ac0a3d36gy1gephf1jpeqj20z90bb106.jpg"></img>
+<img src="https://mmbiz.qpic.cn/mmbiz_png/DWQ5ap0dyHMvWOVCYt8M5463BURIjtVDB1uiakTnqGbkZQpcjnuGVCv9CVkZU16CoQnWEGlZdroU5gfTBQWL2Xw/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1"></img>
 
-<img width="800" src="https://wx1.sinaimg.cn/mw690/ac0a3d36gy1gephf1gqn2j20z90bn7cq.jpg"></img>
+<img width="800" src="https://mmbiz.qpic.cn/mmbiz_png/DWQ5ap0dyHMvWOVCYt8M5463BURIjtVDJ4Z176uQQ8d8lf6AKBniaqPiaH86x5uofQAiatniaQpMhkMm2Rq8vzcaiaA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1"></img>
 
 - demo展示
 
@@ -90,4 +90,4 @@ feature体验demo操作如下，项目中已插入实验数据和相关mock，�
 
 - markov采用了一种概率分析方案，对每个失败用例建立特征向量，包括用例特征、覆盖代码特征等，并用一些加权策略计算相似度，找出测试目的上相似度最高的用例。相似用例中覆盖最频繁的改动代码行，其缺陷嫌疑度也越高。这样计算出测试未通过代码的缺陷嫌疑度，并将嫌疑度高的代码推送给用户作为缺陷定位的参考。
 
-<img src="https://wx3.sinaimg.cn/mw690/ac0a3d36gy1gephfcix7jj20z70bdgs6.jpg"></img>
+<img src="https://mmbiz.qpic.cn/mmbiz_png/DWQ5ap0dyHMvWOVCYt8M5463BURIjtVDRqm5P5kgR2BPBV6Zm1vnIeLQbHlibwt1OqdRR4OD7GDSsQBQpajTSicg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1"></img>
