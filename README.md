@@ -1,10 +1,7 @@
 # 概述
 Markov(阿里妈妈功能测试平台)是在测试转型大背景下自研的新一代功能测试平台，相较于传统的功能测试框架具有着诸多的优点，比如可视化用例编写管理、分布式的沙盒环境和测试数据构建、测试流程pipeline管理。此外，基于该平台还衍生出了许多智能化测试技术，如基于朴素贝叶斯的用例推荐、参数组合膨胀过滤的用例推荐、基于用例编排算法的智能回归技术、基于用例画像的智能排查系统、精准智能测试等。我们可将Markov视为新一代的功能测试框架，相对于传统经典的测试框架(如pytest)+jenkins的模式，Markov模式对于使用者的门槛更低，能让不懂测试的开发和算法同学简单的进行自助测试，达到了让天下没有难做的"测试"的目标。
 
-<img src="https://github.com/alibaba/intelligent-test-platform/raw/master/src/main/resources/static/img/read-1.png" width="70%" height="70%"></img>
-
-<img src="http://chuantu.xyz/t6/733/1589251663x1033347913.png" width="70%" height="70%"></img>
-
+<img src="https://wx3.sinaimg.cn/mw690/ac0a3d36ly1gephe1i2g8j21dl0u0qv5.jpg" width="70%" height="70%"></img>
 
 
 # 主要功能
@@ -13,7 +10,7 @@ Markov(阿里妈妈功能测试平台)是在测试转型大背景下自研的新
 
 - pipeline即一份配置文件，与功能测试而言主要的两部分，第一个是测试环境部署相关的，主要是各种参数(比如ip，部署脚本，docker等参数)，第二个是case执行相关的参数（包括了该模块的该如何发送，校验，页面上该展示何种数据源等）。可以抽象理解成，pipeline仅为部署页和用例调试页设定了特定模块所需配置参数。此外，pipeline设计为通用的扩展形式，比如用户可自定义对比测试/压测/集成测试等。
 
-<img src="https://github.com/alibaba/intelligent-test-platform/raw/master/src/main/resources/static/img/read-2.png" width="30%" height="50%" ></img>
+<img src="https://wx2.sinaimg.cn/mw690/ac0a3d36ly1gephe1brfij20n80pnnjg.jpg" width="30%" height="50%" ></img>
 
 
 ## `2.用例管理`
@@ -48,7 +45,7 @@ https://github.com/alibaba/intelligent-test-platform
 
 IDE配置端口为8888
 
-<img src="https://github.com/alibaba/intelligent-test-platform/raw/master/src/main/resources/static/img/read-3.png" ></img>
+<img src="https://wx4.sinaimg.cn/mw690/ac0a3d36ly1gephe1g06wj21ux0u0kcv.jpg" ></img>
 
 
 `2、搭建本地mysql环境`
@@ -64,7 +61,7 @@ source markov/database.sql
 修改项目文件src/main/resources/application.properties，改为步骤2中设置的mysql用户名及密码
 
 
-<img src="https://github.com/alibaba/intelligent-test-platform/raw/master/src/main/resources/static/img/read-4.png" ></img>
+<img src="https://wx1.sinaimg.cn/mw690/ac0a3d36ly1gephe1uxltj221s0l21kx.jpg" ></img>
 
 
 `5.配置pipeline流程配置`
@@ -79,12 +76,12 @@ source markov/database.sql
 
 ## `1.pipeline管理DEMO`
 
-<img src="https://github.com/alibaba/intelligent-test-platform/raw/master/src/main/resources/static/img/read-5.png" width="70%" height="70%"></img>
+<img src="https://wx3.sinaimg.cn/mw690/ac0a3d36ly1gephe1ij0rj21n70u0qhc.jpg" width="70%" height="70%"></img>
 
 
 ## `2.用例管理DEMO`
 
-<img src="https://github.com/alibaba/intelligent-test-platform/raw/master/src/main/resources/static/img/read-6.png" ></img>
+<img src="https://wx3.sinaimg.cn/mw690/ac0a3d36ly1gephe1jka5j22260qmdt7.jpg" ></img>
 
 
 ## `3.测试环境管理DEMO`
@@ -92,18 +89,18 @@ source markov/database.sql
 - `测试环境管理页`
 
 
- <img src="https://github.com/alibaba/intelligent-test-platform/raw/master/src/main/resources/static/img/read-7.png" ></img>
+ <img src="https://wx3.sinaimg.cn/mw690/ac0a3d36ly1gephe1jxz0j224y0qi7lt.jpg" ></img>
 
 
  - `•测试环境部署页`
 
- <img src="https://github.com/alibaba/intelligent-test-platform/raw/master/src/main/resources/static/img/read-8.png" ></img>
+ <img src="https://wx3.sinaimg.cn/mw690/ac0a3d36ly1gephe1nci7j22080o8wst.jpg" ></img>
 
 
 ## `4.用例执行DEMO`
 
 
-<img src="https://github.com/alibaba/intelligent-test-platform/raw/master/src/main/resources/static/img/read-9.png"  width="70%" height="70%"></img>
+<img src="https://wx4.sinaimg.cn/mw690/ac0a3d36ly1gephe1qg2zj213j0u0qik.jpg"  width="70%" height="70%"></img>
 
 
 ## `5.回归测试DEMO`
@@ -111,15 +108,15 @@ source markov/database.sql
 - `回归测试任务编辑`
 
 
-<img src="https://github.com/alibaba/intelligent-test-platform/raw/master/src/main/resources/static/img/read-10.png"  width="70%" height="70%" ></img>
+<img src="https://wx3.sinaimg.cn/mw690/ac0a3d36gy1gephef7fdrj22390u0dx4.jpg"  width="70%" height="70%" ></img>
 
 - `回归任务进度`
 
-<img src="https://github.com/alibaba/intelligent-test-platform/raw/master/src/main/resources/static/img/read-11.png" ></img>
+<img src="https://wx4.sinaimg.cn/mw690/ac0a3d36gy1gephef5d6cj226g0pctmu.jpg" ></img>
 
 - `测试报告详情页`
 
-<img src="https://github.com/alibaba/intelligent-test-platform/raw/master/src/main/resources/static/img/read-12.png"  width="70%" height="70%" ></img>
+<img src="https://wx4.sinaimg.cn/mw690/ac0a3d36gy1gephefjwo2j21op0u0h5o.jpg"  width="70%" height="70%" ></img>
 
 ## `6、体验智能化feature`
 
