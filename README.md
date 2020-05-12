@@ -40,7 +40,7 @@ Markov(阿里妈妈功能测试平台)是在测试转型大背景下自研的新
 
 `1.拉取git代码库`
 
-http://gitlab.alibaba-inc.com/engine-test-platform/markov_open
+https://github.com/alibaba/intelligent-test-platform
 
 IDE配置端口为8888
 
