@@ -61,10 +61,15 @@ feature体验demo操作如下，项目中已插入实验数据和相关mock，�
 
 - 功能回归本质上其实是个调度问题，Markov运用动态用例编排算法技术实现极致的回归效率。将回归用例集进行初始排序，按照用户预定义的可全量数据类型及数据冲突检测方法将用例集预处理。整体大致会编排为全量数据准备桶/并行执行桶/高效串行桶/失败重试桶这四大阶段。
 
-回归提速的2个原则：
+<img src="https://mmbiz.qpic.cn/mmbiz_png/DWQ5ap0dyHMvWOVCYt8M5463BURIjtVDB1uiakTnqGbkZQpcjnuGVCv9CVkZU16CoQnWEGlZdroU5gfTBQWL2Xw/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1"></img>
+
+- 回归提速的2个原则：
+
 原则1:测试数据聚合冗余度r越小，整体回归效率越高。
 数据聚合冗余度r指的是在用例集中的测试数据聚合后的重复率，举个例子：
 100个用例都依赖了相同的测试数据data1，在caseByCase执行过程中要消耗100个t(data1)的时间单位，此时冗余度r为1。而如果通过某种调度方式对data1进行聚合处理，比如新调度过程在运行之前只需要抽取所有出data1统一准备，即新调度方式消耗1个t(data1)的时间单位即可，此时冗余度r为0.01，从而省下了99个t(data1)时间单位，因此整体回归效率变高。
+
+
 原则2:当用例集不依赖于任何测试数据时，则用例集可并行执行。
 举个例子, 典型不依赖测试数据的场景是线上冒烟场景，在线上域系统是基于生产数据的，即不再依赖任何测试数据，自然也不存在数据冲突等问题，因此线上冒烟场景能轻而易举做高并发执行冒烟检查返回。因此，在功能测试中，当用例集不依赖于测试数据时，则可直接做高并发执行。
 
@@ -72,7 +77,6 @@ feature体验demo操作如下，项目中已插入实验数据和相关mock，�
 在Markov实践中，动态编排算法相较于caseBycase的执行方式能有效提升回归效率约2-10倍，但在观察结果时，我们仍能发现用例编排后仍无可避免还有数据聚合冗余度，即终极优化的天花板就是数据聚合冗余度为0，后续仍有持续优化的空间。
 
 
-<img src="https://mmbiz.qpic.cn/mmbiz_png/DWQ5ap0dyHMvWOVCYt8M5463BURIjtVDB1uiakTnqGbkZQpcjnuGVCv9CVkZU16CoQnWEGlZdroU5gfTBQWL2Xw/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1"></img>
 
 <img width="800" src="https://mmbiz.qpic.cn/mmbiz_png/DWQ5ap0dyHMvWOVCYt8M5463BURIjtVDJ4Z176uQQ8d8lf6AKBniaqPiaH86x5uofQAiatniaQpMhkMm2Rq8vzcaiaA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1"></img>
 
