@@ -43,14 +43,14 @@ Markov(阿里妈妈功能测试平台)是在测试转型大背景下自研的新
 
 https://github.com/alibaba/intelligent-test-platform
 
-IDE配置端口为8888
+IDE配置端口为8888，java8
 
 <img src="https://wx4.sinaimg.cn/mw690/ac0a3d36ly1gephe1g06wj21ux0u0kcv.jpg" ></img>
 
 
 `2、搭建本地mysql环境`
 
-在本地安装mysql后启动（mysql版本要求8.0及以上），设置用户名和密码 (注：本地建议安装mysql版本是8.0.19)
+在本地安装mysql后启动（mysql版本要求8.0及以上），设置用户名和密码
 
 `3、创建数据表`
 
@@ -155,7 +155,8 @@ Markov Framework 未发布功能：
 
 # 联系我们
 Markov由阿里集团-新零售智能引擎事业群-广告产品技术事业部-技术质量-引擎&基础测试及平台团队荣誉出品，markov-opensource@list.alibaba-inc.com和github issue联系和反馈。
-
+钉钉沟通群：
+<img src="https://mmbiz.qpic.cn/mmbiz_png/DWQ5ap0dyHMvWOVCYt8M5463BURIjtVDzMRia7ibevHW5q2icvb835Uq2kcqvBrAJFN7dQicBpLibA64kicfice62PxPg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1 ></img>
 
 # License
 
