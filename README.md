@@ -1,4 +1,4 @@
-# Markov (intelligent-test-platform)
+# Markov (MOM Ali functional testing platform)
 
 ## Overview
 
