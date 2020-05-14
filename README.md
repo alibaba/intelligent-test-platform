@@ -156,7 +156,7 @@ Markov Framework 未发布功能：
 # 联系我们
 Markov由阿里集团-新零售智能引擎事业群-广告产品技术事业部-技术质量-引擎&基础测试及平台团队荣誉出品，markov-opensource@list.alibaba-inc.com和github issue联系和反馈。
 钉钉沟通群：
-<img src="https://mmbiz.qpic.cn/mmbiz_png/DWQ5ap0dyHMvWOVCYt8M5463BURIjtVDzMRia7ibevHW5q2icvb835Uq2kcqvBrAJFN7dQicBpLibA64kicfice62PxPg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" ></img>
+<img src="https://mmbiz.qpic.cn/mmbiz_png/DWQ5ap0dyHMvWOVCYt8M5463BURIjtVDzMRia7ibevHW5q2icvb835Uq2kcqvBrAJFN7dQicBpLibA64kicfice62PxPg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" width="40%" ></img>
 
 # License
 
