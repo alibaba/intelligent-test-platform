@@ -24,13 +24,13 @@ public class CompositeBaseStage extends BaseStage {
 
     static final String PARAMS = "params";
 
-    public HashMap<String, LinkedList<BaseStage>> RunningStageGroups = new HashMap<String, LinkedList<BaseStage>>();
+    public HashMap<String, LinkedList<BaseStage>> runningStageGroups = new HashMap<String, LinkedList<BaseStage>>();
 
     public HashMap<String, JSONArray> templates = new HashMap<>();
 
     public HashMap<String, JSONArray> expectTemplates = new HashMap<>();
 
-    public String StageInput;
+    public String stageInput;
 
     //该变量是CompositeBaseStage阶段即使存储最新的runData
     public RunData stageRunData = new RunData();
@@ -63,9 +63,9 @@ public class CompositeBaseStage extends BaseStage {
     public void setStageParams(Map<StageName, Object> stageParams) {
         this.stageParams = stageParams;
         //初始化caseRun的子阶段runData
-        if (this.RunningStageGroups.size() > 0) {
-            for (String groupName : this.RunningStageGroups.keySet()) {
-                for (BaseStage stage : this.RunningStageGroups.get(groupName)) {
+        if (this.runningStageGroups.size() > 0) {
+            for (String groupName : this.runningStageGroups.keySet()) {
+                for (BaseStage stage : this.runningStageGroups.get(groupName)) {
                     stage.setStageParams(stageParams);
                 }
             }
@@ -129,9 +129,9 @@ public class CompositeBaseStage extends BaseStage {
         data.setCalFieldsConfig(this.runData.getCalFieldsConfig());
 
         //初始化caseRun的子阶段runData
-        if (this.RunningStageGroups.size() > 0) {
-            for (String groupName : this.RunningStageGroups.keySet()) {
-                for (BaseStage stage : this.RunningStageGroups.get(groupName)) {
+        if (this.runningStageGroups.size() > 0) {
+            for (String groupName : this.runningStageGroups.keySet()) {
+                for (BaseStage stage : this.runningStageGroups.get(groupName)) {
                     stage.getRunData().setInput(data.getInput());
                     stage.getRunData().setExpect(data.getExpect());
                     stage.getRunData().getParams().put("index",index);
@@ -150,10 +150,10 @@ public class CompositeBaseStage extends BaseStage {
     public List<LogInfo> getLogCollection(){
 
         // 非简单类型stage， 有group分组的sub stage
-        if (this.RunningStageGroups.size() > 0) {
+        if (this.runningStageGroups.size() > 0) {
             //添加所有的log
-            for (String groupName : this.RunningStageGroups.keySet()) {
-                for (BaseStage stage : this.RunningStageGroups.get(groupName)) {
+            for (String groupName : this.runningStageGroups.keySet()) {
+                for (BaseStage stage : this.runningStageGroups.get(groupName)) {
                     logCollection.addAll(stage.getLogCollection());
                 }
             }
@@ -215,13 +215,13 @@ public class CompositeBaseStage extends BaseStage {
                 setRunData(runData, dataListIndex);
                 //执行run流程,这会带出所有的log和结果
                 //设置初始输入
-                StageInput = runData.getInput();
+                stageInput = runData.getInput();
                 //内部阶段输入
                 String innerInput = runData.getInput();
 
-                if (this.RunningStageGroups.containsKey(groupName)){
+                if (this.runningStageGroups.containsKey(groupName)){
                     // 依次执行send->get->check三个阶段
-                    for (BaseStage stage : this.RunningStageGroups.get(groupName)) {
+                    for (BaseStage stage : this.runningStageGroups.get(groupName)) {
                         //每个阶段的输出作为下个阶段的输入
                         stage.getRunData().setInput(innerInput);
                         //加这行的原因是,当某个阶段跳过时,默认输入输出是一样的
@@ -239,7 +239,7 @@ public class CompositeBaseStage extends BaseStage {
                             stageRunDataNew.setActual(stageRunData.getActual());
                             stageRunDataNew.setExpect(stageRunData.getExpect());
                             stageRunDataNew.setLog(stageRunData.getLog());
-                            stageRunDataNew.setInput(StageInput);
+                            stageRunDataNew.setInput(stageInput);
                             stageRunDataNew.setResult(stageRunData.getResult());
                             stageRunDataNew.setParams(stageRunData.getParams());
                             stageRunDataNew.setOutput(stageRunData.getOutput());
@@ -280,11 +280,11 @@ public class CompositeBaseStage extends BaseStage {
         RunData runData = new RunData();
         List<RunData> runDataList = null;
         // 非简单类型stage， 有group分组的sub stage
-        if (this.RunningStageGroups.size() > 0) {
+        if (this.runningStageGroups.size() > 0) {
             runDataList = new ArrayList<>();
-            for (String groupName : this.RunningStageGroups.keySet()) {
+            for (String groupName : this.runningStageGroups.keySet()) {
 
-                for (BaseStage stage : this.RunningStageGroups.get(groupName)) {
+                for (BaseStage stage : this.runningStageGroups.get(groupName)) {
                     //获取实际返回的结果
                     if (StageName.getResponseStage.equals(stage.getName())){
                         //拿到获取结果阶段的最终输出
@@ -332,7 +332,7 @@ public class CompositeBaseStage extends BaseStage {
                     BaseStage bs = RunningStageFactory.getRunningStage(stagename, stageJsonObj);
                     baseStageList.add(bs);
                 }
-                this.RunningStageGroups.put(groupName, baseStageList);
+                this.runningStageGroups.put(groupName, baseStageList);
 
                 //templates
                 JSONArray templateData = new JSONArray();
@@ -352,7 +352,7 @@ public class CompositeBaseStage extends BaseStage {
         //2.初始化before_exec和after_exec中的插件
         String[] execList = {BeforeExecKey,AfterExecKey};
         for(String execName : execList){
-            PluginList = new LinkedList<>();
+            pluginList = new LinkedList<>();
             if (stageJson.containsKey(execName) && stageJson.get(execName) instanceof JSONObject){
                 JSONObject stageExecJson = (JSONObject)stageJson.get(execName);
                 if (stageExecJson.containsKey("pluginList")) {
@@ -368,7 +368,7 @@ public class CompositeBaseStage extends BaseStage {
                     }
                 }
             }
-            this.PluginMap.put(execName, PluginList);
+            this.pluginMap.put(execName, pluginList);
         }
 
         //3.初始化待收集的logList
@@ -421,9 +421,9 @@ public class CompositeBaseStage extends BaseStage {
         List<Map<Object, Object>> compositeLayoutList = new ArrayList<>();
 
         //载入before阶段
-        LinkedList<JSONObject> PluginList = PluginMap.get(BeforeExecKey);
+        LinkedList<JSONObject> pluginList = pluginMap.get(BeforeExecKey);
         List<Map<Object, Object>> runLayoutList = new ArrayList<>();
-        compositeLayout.put("beforeStage",getPluginListLayout(PluginList));
+        compositeLayout.put("beforeStage",getPluginListLayout(pluginList));
         compositeLayoutList.add(compositeLayout);
 
         //载入exec阶段
@@ -448,7 +448,7 @@ public class CompositeBaseStage extends BaseStage {
 
         //载入after阶段
         compositeLayout = new LinkedHashMap<>();
-        compositeLayout.put("afterStage",getPluginListLayout(PluginMap.get(AfterExecKey)));
+        compositeLayout.put("afterStage",getPluginListLayout(pluginMap.get(AfterExecKey)));
         compositeLayoutList.add(compositeLayout);
 
         return compositeLayoutList;
@@ -481,12 +481,12 @@ public class CompositeBaseStage extends BaseStage {
     }
 
     public HashMap<String, LinkedList<BaseStage>> getRunningStageGroups() {
-        return RunningStageGroups;
+        return runningStageGroups;
     }
 
     public void setRunningStageGroups(
-        HashMap<String, LinkedList<BaseStage>> runningStageGroups) {
-        RunningStageGroups = runningStageGroups;
+        HashMap<String, LinkedList<BaseStage>> runStageGroups) {
+        runningStageGroups = runStageGroups;
     }
 
 

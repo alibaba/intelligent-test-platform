@@ -110,7 +110,6 @@ public class SingleController {
 
             //环境初始化
             //todo:to be fill.. 用户可根据自己测试服务进行测试环境初始化工作,比如基于容器镜像/rpm的部署方式
-//            System.out.print("加载环境为:"+testCase.getEnvName() + "\n");
             logger.info("加载环境为:"+testCase.getEnvName());
             //初始化pipeline
             PipelineImpl pipelineObj = new PipelineImpl();

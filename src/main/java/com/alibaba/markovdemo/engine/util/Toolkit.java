@@ -87,7 +87,7 @@ public class Toolkit {
                         date = Integer.parseInt(tmp[0]);
                         calendar.add(Calendar.HOUR_OF_DAY, date);
                     }
-                    if (seprator.equals("timeStamp")) {
+                    if ("timeStamp".equals(seprator)) {
                         timeStamp = String.valueOf(calendar.getTimeInMillis() / 1000);
                     } else {
                         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
@@ -230,7 +230,7 @@ public class Toolkit {
                     element = key + kvSeprator + fieldValue;
                     list.add(element);
                 }
-            } else if (getType(value).contains("java.lang.String") && !key.equals("ubs_action")) {
+            } else if (getType(value).contains("java.lang.String") && !"ubs_action".equals(key)) {
                 element = key + kvSeprator + pre + value + pre;
                 list.add(element);
             } else {
@@ -262,7 +262,7 @@ public class Toolkit {
                     element = key + kvSeprator + fieldValue;
                     list.add(element);
                 }
-            } else if (getType(value).contains("java.lang.String") && !key.equals("ubs_action")) {
+            } else if (getType(value).contains("java.lang.String") && !"ubs_action".equals(key)) {
                 element = key + kvSeprator + pre + value + pre;
                 list.add(element);
             } else {
@@ -518,25 +518,25 @@ public class Toolkit {
             calendar.setTime(date);
             SimpleDateFormat formatter;
             //校验格式
-            if (!curTime.equals("now")) {
+            if (!"now".equals(curTime)) {
                 String[] timeArr = curTime.split(" ");
                 Integer offset = Integer.valueOf(timeArr[0]);
                 String timeType = timeArr[1];
-                if (timeType.equals("day")) {
-                    calendar.add(calendar.DATE, offset);//把日期往前减少一天，若想把日期向后推一天则将负数改为正数
+                if ("day".equals(timeType)) {
+                    calendar.add(Calendar.DATE, offset);//把日期往前减少一天，若想把日期向后推一天则将负数改为正数
                 }
-                if (timeType.equals("hour")) {
-                    calendar.add(calendar.HOUR, offset);//把日期往前减少一小时，若想把日期向后推一天则将负数改为正数
+                if ("hour".equals(timeType)) {
+                    calendar.add(Calendar.HOUR, offset);//把日期往前减少一小时，若想把日期向后推一天则将负数改为正数
                 }
-                if (timeType.equals("minute")) {
-                    calendar.add(calendar.MINUTE, offset);//把日期往前减少一分钟，若想把日期向后推一天则将负数改为正数
+                if ("minute".equals(timeType)) {
+                    calendar.add(Calendar.MINUTE, offset);//把日期往前减少一分钟，若想把日期向后推一天则将负数改为正数
                 }
             }
 
             date = calendar.getTime();
 
             //时间戳
-            if (pattern.equals("timestamp") || pattern.equals("timeStamp")) {
+            if ("timestamp".equals(pattern) || "timeStamp".equals(pattern)) {
                 formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                 Date dateUnix = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").parse(formatter.format(date));
                 long unixTimestamp = dateUnix.getTime() / 1000;
@@ -560,13 +560,13 @@ public class Toolkit {
         //将两个json进行转换,进行比较
         try {
 
-            if (expect == null || expect.equals("")) {
+            if (expect == null || "".equals(expect)) {
                 expect = "{}";
             }
-            if (actual == null || actual.equals("")) {
+            if (actual == null || "".equals(actual)) {
                 actual = "{}";
             }
-            if (calFieldsConfig == null || calFieldsConfig.equals("")) {
+            if (calFieldsConfig == null || "".equals(calFieldsConfig)) {
                 calFieldsConfig = "{}";
             }
 
@@ -616,7 +616,7 @@ public class Toolkit {
             List<String> numCheckList = getNumCheckList(calFieldsConfig);
             List<String> nonExsitList = calNonExsitList(calFieldsConfig);
 
-            if ((expect.equals("{}") || actual.equals("{}")) && !expect.equals(actual)) {
+            if (("{}".equals(expect) || "{}".equals(actual)) && !expect.equals(actual)) {
                 if (!errorMap.containsKey(VALUE_CHECK)) {
                     errorMap.put(VALUE_CHECK, new ArrayList<>());
                 }
@@ -1227,9 +1227,9 @@ public class Toolkit {
 //        long hourGap = 3600*1000;
         long minGap = 60 * 1000;
         long secGap = 1000;
-        Long hour = 0l;
-        Long min = 0l;
-        Long second = 0l;
+        Long hour = 0L;
+        Long min = 0L;
+        Long second = 0L;
 
 
 //        //转化为小时

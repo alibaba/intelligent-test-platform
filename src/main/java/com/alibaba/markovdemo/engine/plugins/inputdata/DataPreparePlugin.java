@@ -68,10 +68,10 @@ public class DataPreparePlugin {
         if (content == null){
             return false;
         }
-        if (content.equals("")){
+        if ("".equals(content)){
             return false;
         }
-        if (content.equals("无")){
+        if ("无".equals(content)){
             return false;
         }
         return true;
@@ -132,7 +132,7 @@ public class DataPreparePlugin {
     }
 
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         System.out.println(df.format(new Date()));
 

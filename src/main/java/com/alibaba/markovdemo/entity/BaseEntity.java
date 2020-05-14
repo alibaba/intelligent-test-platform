@@ -16,6 +16,7 @@ public abstract class BaseEntity implements Serializable, Cloneable {
         return this.id;
     }
 
+    @Override
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }

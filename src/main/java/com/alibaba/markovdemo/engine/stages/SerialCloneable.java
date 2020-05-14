@@ -5,6 +5,7 @@ import java.io.*;
 
 public  class SerialCloneable implements Cloneable,Serializable
 {
+    @Override
     public Object clone()
     {
         try

@@ -35,17 +35,22 @@ public class Segmentation {
 					if (mapDic.containsKey(tem) || temLen - primarylen == 1) {
 						primarylen = temLen;
 						temLen = MaxLen;
-						if (primarylen == MaxLen)
+						if (primarylen == MaxLen){
 							target = target + tem;
-						else
+						}
+						else{
 							target = target + tem + "/";
-					} else
+						}
+					} else{
 						temLen--;
-				} else
+					}
+				} else{
 					temLen--;
+				}
 
-				if (primarylen == MaxLen)
+				if (primarylen == MaxLen){
 					break;
+				}
 			}
 		}catch (Exception e){
 			e.printStackTrace();
@@ -75,16 +80,20 @@ public class Segmentation {
 					temLen = primarylen;
 					primarylen = 0;
 					i++;
-				} else
+				} else {
 					primarylen++;
-			} else
+				}
+			} else {
 				primarylen++;
-			if (temLen == 0)
+			}
+			if (temLen == 0){
 				break;
+			}
 		}
 		
-		for(int j=i-1;j>=0;j--)
+		for(int j=i-1;j>=0;j--){
 			target+=targets[j];
+		}
 		return target;
 	}
 

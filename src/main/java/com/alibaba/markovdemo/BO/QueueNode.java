@@ -31,14 +31,14 @@ public class QueueNode extends SerialCloneable {
 
     public LinkedList<HashMap<String, LinkedList<DetailDataInfo>>> prepareData;
 
-    public List<String> DataKeyLis;
+    public List<String> dataKeyList;
 
-    public List<String> getDataKeyLis() {
-        return DataKeyLis;
+    public List<String> getDataKeyList() {
+        return dataKeyList;
     }
 
-    public void setDataKeyLis(List<String> dataKeyLis) {
-        DataKeyLis = dataKeyLis;
+    public void setDataKeyList(List<String> dataKeyList) {
+        this.dataKeyList = dataKeyList;
     }
 
     public String getDataType() {

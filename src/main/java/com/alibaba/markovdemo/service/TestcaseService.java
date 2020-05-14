@@ -65,7 +65,7 @@ public class TestcaseService {
         List<GotTestCase> gotTestCaseList = gotTestcaseMapper.getAllCaseByScenarioId(map);
         if (gotTestCaseList.size()>0){
             for (GotTestCase  gotTestCase : gotTestCaseList){
-                list.add(FormatTestCaseInput(gotTestCase));
+                list.add(formatTestCaseInput(gotTestCase));
             }
         }
         return list;
@@ -101,7 +101,7 @@ public class TestcaseService {
     }
 
 
-    public static TestCaseInput FormatTestCaseInput(GotTestCase gotTestcase){
+    public static TestCaseInput formatTestCaseInput(GotTestCase gotTestcase){
         TestCaseInput testCase = new TestCaseInput();
         testCase.setId(gotTestcase.getId());
         testCase.setScenarioId(gotTestcase.getScenarioId());
@@ -132,7 +132,7 @@ public class TestcaseService {
             return null;
         }
 
-        return FormatTestCaseInput(gotTestcase);
+        return formatTestCaseInput(gotTestcase);
 
     }
 

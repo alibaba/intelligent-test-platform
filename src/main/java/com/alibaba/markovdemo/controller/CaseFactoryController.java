@@ -65,10 +65,10 @@ public class CaseFactoryController {
      */
     @RequestMapping(value = "/featuresMatch", method = RequestMethod.POST)
     @ResponseBody
-    public AjaxResult FeaturesMatch(@RequestBody FeatureInfo featureInfo){
+    public AjaxResult featuresMatch(@RequestBody FeatureInfo featureInfo){
         try{
 
-            return AjaxResult.succResult(caseFactoryProcessor.FeaturesMatch(featureInfo));
+            return AjaxResult.succResult(caseFactoryProcessor.featuresMatch(featureInfo));
 
         }catch(Exception e){
             return AjaxResult.errorResult(e.getMessage());

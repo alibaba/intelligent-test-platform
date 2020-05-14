@@ -139,7 +139,7 @@ public class LogStage extends BaseStage {
     @Override
     public List<PluginLayout> buildLayout() {
         PluginLayout pluginLayout;
-        List<PluginLayout> PluginLayoutList = new ArrayList<>();
+        List<PluginLayout> pluginLayoutList = new ArrayList<>();
         Map<String,String> init = new HashMap<>();
         init.put("appStage","执行日志");
         init.put("PrepareData","数据准备阶段");
@@ -150,8 +150,8 @@ public class LogStage extends BaseStage {
             pluginLayout = new PluginLayout();
             pluginLayout.setPluginType(stagename);
             pluginLayout.setDisplayName(init.get(stagename));
-            PluginLayoutList.add(pluginLayout);
+            pluginLayoutList.add(pluginLayout);
         }
-        return PluginLayoutList;
+        return pluginLayoutList;
     }
 }

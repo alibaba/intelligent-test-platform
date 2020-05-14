@@ -44,10 +44,10 @@ public class BaseStage {
     //1:单次 2:回归
     public String runType = "1";
 
-    public LinkedList<JSONObject> PluginList = new LinkedList<>();
+    public LinkedList<JSONObject> pluginList = new LinkedList<>();
 
 
-    public Map<String, LinkedList<JSONObject>> PluginMap = new HashMap<>();
+    public Map<String, LinkedList<JSONObject>> pluginMap = new HashMap<>();
 
     //中间结果收集
     public List<LogInfo> logCollection = new ArrayList<>();
@@ -77,11 +77,11 @@ public class BaseStage {
     }
 
     public Map<String, LinkedList<JSONObject>> getPluginMap() {
-        return PluginMap;
+        return pluginMap;
     }
 
-    public void setPluginMap(Map<String, LinkedList<JSONObject>> pluginMap) {
-        PluginMap = pluginMap;
+    public void setPluginMap(Map<String, LinkedList<JSONObject>> map) {
+        pluginMap = map;
     }
     public JSONObject getStageJsonObj() {
         return stageJsonObj;
@@ -135,7 +135,7 @@ public class BaseStage {
     }
 
 
-    public void Init() {
+    public void init() {
         throw new NotImplementedException();
     }
 
@@ -238,15 +238,12 @@ public class BaseStage {
     public void afterExec() {
 
         LOGGER.debug(String.format("afterExec start"));
-        //System.out.println("afterExec开始");
         pluginExec(AfterExecKey);
     }
 
     //1.执行pluginList. 2.收集中间结果
     public void exec(){
         LOGGER.debug(String.format("exec start"));
-        //System.out.println("Exec开始");
-
         pluginExec(ExecKey);
     }
 
@@ -257,13 +254,13 @@ public class BaseStage {
      */
     public void pluginExec(String key){
 
-        LinkedList<JSONObject> PluginList = PluginMap.get(key);
+        LinkedList<JSONObject> plugins = pluginMap.get(key);
         IPlugin p;
-        if(key.equals("exec")){
+        if("exec".equals(key)){
             runDataList = new ArrayList<>();
         }
 
-        for (JSONObject pluginObj : PluginList) {
+        for (JSONObject pluginObj : plugins) {
 
             String pluginName = (String)pluginObj.get("plugin_name");
             LOGGER.info("[执行插件:" + pluginName + "]");
@@ -283,7 +280,7 @@ public class BaseStage {
             p.exec();
             LOGGER.debug(String.format("Plugin {0} executed exec method.", p.getName()));
             //搜集插件结果集
-            if(key.equals("exec")){
+            if("exec".equals(key)){
                 runDataList.add((RunData) runData.clone());
             }
             p.afterExec();
@@ -297,7 +294,7 @@ public class BaseStage {
         }
     }
 
-    public void Cleanup() {
+    public void cleanup() {
         throw new NotImplementedException();
     }
 
@@ -307,7 +304,7 @@ public class BaseStage {
      */
     public void addPlugin(JSONObject pluginObj) {
 
-        this.PluginList.add(pluginObj);
+        this.pluginList.add(pluginObj);
     }
 
     /**
@@ -324,7 +321,7 @@ public class BaseStage {
         //plugin_name => IPlugin
         pluginNameMap = new HashMap<>();
         for(String execName : execList){
-            PluginList = new LinkedList<>();
+            pluginList = new LinkedList<>();
             if (stageJsonObj.containsKey(execName) && stageJsonObj.get(execName) instanceof JSONObject){
                 stageJsonObj = (JSONObject)stageJsonObj.get(execName);
                 stageJsonObj.putAll(this.stageJsonObj);
@@ -340,7 +337,7 @@ public class BaseStage {
                     }
                 }
             }
-            this.PluginMap.put(execName, PluginList);
+            this.pluginMap.put(execName, pluginList);
         }
 
         return this;

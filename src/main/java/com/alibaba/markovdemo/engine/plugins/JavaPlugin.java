@@ -122,7 +122,9 @@ public class JavaPlugin implements IPlugin {
         try {
             m = clz.getMethod(funcName, RunData.class, RunParams.class);
             runData = (RunData) m.invoke(instance, this.runData, this.runParams);
-            if (!funcName.equals("com.alimama.zhizi.engine.data.inputdata.DataPreparePlugin") && !funcName.equals("com.alimama.zhizi.engine.data.inputdata.DataPrepareOnlinePlugin")) {
+            if (!"com.alimama.zhizi.engine.data.inputdata.DataPreparePlugin".equals(funcName) && !("com.alimama.zhizi"
+                + ".engine.data.inputdata.DataPrepareOnlinePlugin")
+                .equals(funcName)) {
             }
 
         } catch (Exception e) {

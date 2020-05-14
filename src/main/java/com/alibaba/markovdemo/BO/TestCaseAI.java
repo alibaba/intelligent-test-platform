@@ -178,7 +178,7 @@ public class TestCaseAI extends TestCaseInput {
 
                 infoList.add(info);
             }
-            caseRunInfo.setGroup_name(groupName);
+            caseRunInfo.setGroupName(groupName);
             caseRunInfo.setData(infoList);
             caseRunInfoList.add(caseRunInfo);
         }
@@ -244,7 +244,7 @@ public class TestCaseAI extends TestCaseInput {
             //如果只有一个ad验证,则也可并行
             flag = true;
             for (String checkType : map.keySet()){
-                if (!checkType.equals("ad") && map.get(checkType)==true){
+                if (!"ad".equals(checkType) && map.get(checkType)==true){
                     flag = false;
                 }
             }

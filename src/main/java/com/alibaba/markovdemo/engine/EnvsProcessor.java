@@ -31,13 +31,13 @@ public class EnvsProcessor {
 
     /**
      * 功能:获取指定ScenarioId下的测试环境list
-     * @param ScenarioId
+     * @param scenarioId
      * @return
      */
-    public List<JSONObject> findByScenarioId(Long ScenarioId){
+    public List<JSONObject> findByScenarioId(Long scenarioId){
 
         //获取ScenarioId绑定的pipeline配置
-        JSONObject pipelineObj = JSONObject.parseObject(pipelineService.getPipeline(ScenarioId).getPipeline());
+        JSONObject pipelineObj = JSONObject.parseObject(pipelineService.getPipeline(scenarioId).getPipeline());
         JSONObject deployObj = pipelineObj.getJSONObject(NEW_DEPLOY_STAGE);
         JSONArray hostList = deployObj.getJSONArray(HOST_List);
 
@@ -46,7 +46,7 @@ public class EnvsProcessor {
         Map<String,List<GotEnvs>> envMap = new HashMap<>();
         SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-        List<GotEnvs> gotEnvsList = envsService.findByScenarioId(ScenarioId);
+        List<GotEnvs> gotEnvsList = envsService.findByScenarioId(scenarioId);
 
         //pipeline可添加任意测试机器,与db中的测试环境进行map.
         for (GotEnvs gotEnvs : gotEnvsList){

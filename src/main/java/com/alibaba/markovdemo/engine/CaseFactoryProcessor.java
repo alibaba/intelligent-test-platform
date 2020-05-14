@@ -120,7 +120,7 @@ public class CaseFactoryProcessor {
         //数据源和query特征
         List<String> queryAndDataFeatures = getQueryAndDataFeatures(gotTestCase.getContent());
 
-        if (caseGroupFeatures!=null && !caseGroupFeatures.equals("")){
+        if (caseGroupFeatures!=null && !"".equals(caseGroupFeatures)){
             featureList.add(caseGroupFeatures);
         }
         featureList.addAll(descriptionFeatures);
@@ -162,7 +162,7 @@ public class CaseFactoryProcessor {
         HashMap hm = new HashMap();
         HashMap len = new HashMap();
         GenerateDictionary genDic = new GenerateDictionary();
-        genDic.GenHashDic(filename, hm, len);
+        genDic.genHashDic(filename, hm, len);
         seg = new Segmentation(hm, len);
     }
 
@@ -315,7 +315,7 @@ public class CaseFactoryProcessor {
      * @param featureInfo
      * @return
      */
-    public JSONObject FeaturesMatch(FeatureInfo featureInfo) throws IOException {
+    public JSONObject featuresMatch(FeatureInfo featureInfo) throws IOException {
 
         Date start = new Date();
         JSONObject res = new JSONObject();
@@ -351,7 +351,7 @@ public class CaseFactoryProcessor {
         for (Map.Entry<GotTestCase, Double> entry : list) {
             cnt++;
             if (cnt<=featureInfo.getTopN()){
-                sortList.add(TestcaseService.FormatTestCaseInput(entry.getKey()));
+                sortList.add(TestcaseService.formatTestCaseInput(entry.getKey()));
             }
         }
         Date end = new Date();
@@ -447,7 +447,6 @@ public class CaseFactoryProcessor {
             oneOutput = new ArrayList<>();
             //添加一次循环生成的膨胀组合
             for (int j = 0; j < n; j++) {
-//                System.out.print(inputList.get(j).get(combination.get(j))+", ");
                 oneOutput.add(inputList.get(j).get(combination.get(j)));
             }
             outputList.add(oneOutput);
@@ -491,7 +490,7 @@ public class CaseFactoryProcessor {
             List<String> teslaCal = new ArrayList<>();
 
             try{
-                if(expandValue.equals("") || expandValue == null){
+                if("".equals(expandValue) || expandValue == null){
                     continue;
                 }
                 String[] valList = expandValue.split(">,<");
@@ -569,11 +568,11 @@ public class CaseFactoryProcessor {
                 testcase.setId(null);
 
                 //如果是用例膨胀,直接保存入库
-                if(data.getMultiInfo().getType().equals("expand")){
+                if("expand".equals(data.getMultiInfo().getType())){
                     testcaseService.saveTestCase(testcase);
                 }
                 //如果是推荐用例,可做改造后在保存
-                if(data.getMultiInfo().getType().equals("recommend")){
+                if("recommend".equals(data.getMultiInfo().getType())){
                     //修改desc
                     String caseDesc = data.getMultiInfo().getCaseDesc();
                     i++;

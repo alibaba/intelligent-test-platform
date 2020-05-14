@@ -22,7 +22,9 @@ public class ImportCorpus {
 				fos.write(0x0D);
 		        flag = 1;
 		        }
-		       else flag = 0;
+		       else {
+				   flag = 0;
+			   }
 		    	}
 		    fis.close();
 	}

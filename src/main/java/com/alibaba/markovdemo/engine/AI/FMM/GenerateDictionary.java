@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 public class GenerateDictionary {
-    public void GenHashDic(String filename, HashMap hm, HashMap len)
+    public void genHashDic(String filename, HashMap hm, HashMap len)
             throws FileNotFoundException, IOException {
         String s=new String();
         BufferedReader in = new BufferedReader(

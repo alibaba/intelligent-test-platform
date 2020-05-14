@@ -25,7 +25,7 @@ import java.util.List;
  */
 @Controller
 @RequestMapping(value = "/api/envs")
-public class deployController {
+public class DeployEnvController {
     @Autowired
     private EnvsService envsService;
     @Autowired

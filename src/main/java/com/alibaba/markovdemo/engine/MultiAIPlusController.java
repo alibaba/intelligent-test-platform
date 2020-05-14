@@ -218,7 +218,7 @@ public class MultiAIPlusController {
 
 
         List<TestCaseInput> testcaseList = new ArrayList<>();
-        if(branch==null || branch.equals("")){
+        if(branch==null || "".equals(branch)){
             branch = "master";
         }
 
@@ -246,12 +246,12 @@ public class MultiAIPlusController {
 
         //用例集合
         List<TestCaseInput> testcaseList = new ArrayList<>();
-        List<MultiRunCaseInfo> MultiRunCaseInfoList = new ArrayList<>();
+        List<MultiRunCaseInfo> multiRunCaseInfoList = new ArrayList<>();
 
         //获取用例集. 0:cases,1:scenarios
         if (scenarioId != null) {
             //多场景用例
-            if (caseType != null && caseType.equals("1")) {
+            if (caseType != null && "1".equals(caseType)) {
                 Map<String,List<String>> scenidCaseGroup= new HashMap<>();
                 for (String scenId : caseGroup) {
                     String[] multiStr = scenId.split("__");
@@ -264,25 +264,25 @@ public class MultiAIPlusController {
                 }
 
                 for (String realScenId : scenidCaseGroup.keySet()){
-                    MultiRunCaseInfo MultiRunCaseInfo = new MultiRunCaseInfo();
-                    MultiRunCaseInfo.setAppId(appId);
-                    MultiRunCaseInfo.setScenarioId(scenarioId);
-                    MultiRunCaseInfo.setRealAppId(appId);
-                    MultiRunCaseInfo.setRealScenarioId(Long.valueOf(realScenId));
+                    MultiRunCaseInfo multiRunCaseInfo = new MultiRunCaseInfo();
+                    multiRunCaseInfo.setAppId(appId);
+                    multiRunCaseInfo.setScenarioId(scenarioId);
+                    multiRunCaseInfo.setRealAppId(appId);
+                    multiRunCaseInfo.setRealScenarioId(Long.valueOf(realScenId));
                     List<TestCaseInput> testCaseInputList =  getCaseListByGroup(Long.valueOf(realScenId), scenidCaseGroup.get(realScenId), caseBranch);
-                    MultiRunCaseInfo.setTestcaseList(testCaseInputList);
+                    multiRunCaseInfo.setTestcaseList(testCaseInputList);
                     caseNum += testCaseInputList.size();
-                    MultiRunCaseInfoList.add(MultiRunCaseInfo);
+                    multiRunCaseInfoList.add(multiRunCaseInfo);
                 }
 
             }
             //单场景下所有用例
-            else if (caseType.equals("0")) {
-                MultiRunCaseInfo MultiRunCaseInfo = new MultiRunCaseInfo();
-                MultiRunCaseInfo.setAppId(appId);
-                MultiRunCaseInfo.setScenarioId(scenarioId);
-                MultiRunCaseInfo.setRealAppId(appId);
-                MultiRunCaseInfo.setRealScenarioId(scenarioId);
+            else if ("0".equals(caseType)) {
+                MultiRunCaseInfo multiRunCaseInfo = new MultiRunCaseInfo();
+                multiRunCaseInfo.setAppId(appId);
+                multiRunCaseInfo.setScenarioId(scenarioId);
+                multiRunCaseInfo.setRealAppId(appId);
+                multiRunCaseInfo.setRealScenarioId(scenarioId);
                 if (caseGroup == null || caseGroup.size() == 0) {
                     if (caseIds != null ) {
                         //前端提交批量运行
@@ -291,23 +291,23 @@ public class MultiAIPlusController {
                             TestCaseInput caseObj = gotTestcaseDao.getTestCaseById(Long.parseLong(caseid));
                             testcaseList.add(caseObj);
                         }
-                        MultiRunCaseInfo.setTestcaseList(testcaseList);
+                        multiRunCaseInfo.setTestcaseList(testcaseList);
                     } else {
                         if(caseBranch == null){
                             caseBranch = "master";
                         }
                         testcaseList = gotTestcaseDao.getAllCaseByScenarioId(scenarioId);
 
-                        MultiRunCaseInfo.setTestcaseList(testcaseList);
+                        multiRunCaseInfo.setTestcaseList(testcaseList);
                     }
                 }
                 //选中的特定分组用例
                 else {
                     testcaseList = getCaseListByGroup(scenarioId, caseGroup, caseBranch);
-                    MultiRunCaseInfo.setTestcaseList(testcaseList);
+                    multiRunCaseInfo.setTestcaseList(testcaseList);
                 }
                 caseNum = testcaseList.size();
-                MultiRunCaseInfoList.add(MultiRunCaseInfo);
+                multiRunCaseInfoList.add(multiRunCaseInfo);
             }
 
         } else {
@@ -316,7 +316,7 @@ public class MultiAIPlusController {
 
         }
 
-        return MultiRunCaseInfoList;
+        return multiRunCaseInfoList;
     }
 
 
@@ -681,7 +681,7 @@ public class MultiAIPlusController {
             envNum =1;
             JSONObject pipelineObj = null;
             //获取回归用例集合
-            List<MultiRunCaseInfo> MultiRunCaseInfoList = getMultiRunCaseInfoList( envInfo);
+            List<MultiRunCaseInfo> multiRunCaseInfoList = getMultiRunCaseInfoList( envInfo);
             gotReports.setCaseNum(caseNum);
             saveReport(gotReports);
 
@@ -694,7 +694,7 @@ public class MultiAIPlusController {
             }
 
             //多场景回归阶段:每个场景进行依次回归
-            for (MultiRunCaseInfo multiRunCaseInfo : MultiRunCaseInfoList) {
+            for (MultiRunCaseInfo multiRunCaseInfo : multiRunCaseInfoList) {
 
                 //中断点
                 if (isTaskStop(gotReports)) {
@@ -722,7 +722,7 @@ public class MultiAIPlusController {
                 getMultiRunType(pipelineObj);
 
                 //回归模式:智能回归
-                if (!regressionType.equals("0")) {
+                if (!"0".equals(regressionType)) {
 
                     System.out.print("全量数据抽取中..\n");
                     //全量数据抽取,可一次性执行完成的测试数据才可放入全量数据准备桶中
@@ -928,7 +928,7 @@ public class MultiAIPlusController {
         String envName = envReport.getEnvName();
 
         //智能回归统计
-        if (regressionType.equals("1")){
+        if ("1".equals(regressionType)){
             //补充dump全量阶段
             envReport = adDumpAllDataToEnvBasicReport(envReport,dumpDataStaticMap,envBucketCostMap.get(envName));
             //补充dump分层阶段
@@ -1227,6 +1227,7 @@ public class MultiAIPlusController {
          * 函数功能:run入口
          * 用例树的建立 => 全量数据准备 => 分层数据准备 => 快速并行执行
          */
+        @Override
         public void run() {
 
             Date begin = new Date();
@@ -1245,8 +1246,6 @@ public class MultiAIPlusController {
                     buildQueue(testcaseList,"");
                     //STEP2:执行队列重排,将需要重启链路放置最后
                     runQueue = reSortQueue();
-//                    System.out.print("dumpData数据:\n" + gson.toJson(dumpData));
-//                    System.out.print("生成树:\n" + gson.toJson(runQueue));
 
                     //STEP3:全量数据准备,去随机,主要是key-value这类明确的
                     Date start = new Date();
@@ -1361,7 +1360,7 @@ public class MultiAIPlusController {
          */
         public LinkedList<HashMap<String, LinkedList<DetailDataInfo>>> getPrepareDataFormat(RecordInfo recordInfo, String dataType, String dsName) {
 
-            HashMap<String, LinkedList<DetailDataInfo>> DetailDataMap = new HashMap<>();
+            HashMap<String, LinkedList<DetailDataInfo>> detailDataMap = new HashMap<>();
             LinkedList<DetailDataInfo> detailDataList = new LinkedList<>();
             LinkedList<RecordInfo> recordInfoList = new LinkedList<>();
             recordInfoList.add(recordInfo);
@@ -1369,9 +1368,9 @@ public class MultiAIPlusController {
             detailDataInfo.setDsName(dsName);
             detailDataInfo.setData(recordInfoList);
             detailDataList.add(detailDataInfo);
-            DetailDataMap.put(dataType, detailDataList);
+            detailDataMap.put(dataType, detailDataList);
             LinkedList<HashMap<String, LinkedList<DetailDataInfo>>> groupRunData = new LinkedList<>();
-            groupRunData.add(DetailDataMap);
+            groupRunData.add(detailDataMap);
             return groupRunData;
         }
 
@@ -1385,7 +1384,7 @@ public class MultiAIPlusController {
         public HashMap<String, DataMatrixUnit> calDataMatrix(List<TestCaseAI> testcaseList) {
 
 
-            HashMap<String, DataMatrixUnit> DataMatrix = new HashMap<>();
+            HashMap<String, DataMatrixUnit> dataMatrix = new HashMap<>();
             final Base64.Encoder encoder = Base64.getEncoder();
             DataMatrixUnit dataMatrixUnit;
 
@@ -1416,25 +1415,25 @@ public class MultiAIPlusController {
                                 String dataKey = new String(encoder.encode(gson.toJson(dataKeyMap).getBytes()));
 
                                 //如果第一个
-                                if (!DataMatrix.containsKey(dataKey)) {
+                                if (!dataMatrix.containsKey(dataKey)) {
                                     dataMatrixUnit = new DataMatrixUnit();
                                     dataMatrixUnit.addCaseid(testCaseAI.getId(), dataKey);
                                 } else {
-                                    dataMatrixUnit = DataMatrix.get(dataKey);
+                                    dataMatrixUnit = dataMatrix.get(dataKey);
                                     dataMatrixUnit.addCaseid(testCaseAI.getId(), dataKey);
                                 }
                                 dataMatrixUnit.setRestartFlag(reStartFlag);
                                 dataMatrixUnit.setName(dsName);
                                 dataMatrixUnit.setPrepareData(getPrepareDataFormat(recordInfo, dataType, dsName));
 
-                                DataMatrix.put(dataKey, dataMatrixUnit);
+                                dataMatrix.put(dataKey, dataMatrixUnit);
                             }
                         }
                     }
                 }
             }
 
-            return DataMatrix;
+            return dataMatrix;
         }
 
 
@@ -1495,7 +1494,7 @@ public class MultiAIPlusController {
             queueNode.setCaseids(dataMatrixMaxUnit.getCaseids());
             queueNode.setPrepareData(dataMatrixMaxUnit.getPrepareData());
             queueNode.setCaseNum(dataMatrixMaxUnit.getCaseids().size());
-            queueNode.setDataKeyLis(dataMatrixMaxUnit.getDataKeyList());
+            queueNode.setDataKeyList(dataMatrixMaxUnit.getDataKeyList());
             queueNode.setDataType(DATA_PREPARE);
             return queueNode;
         }
@@ -1574,7 +1573,7 @@ public class MultiAIPlusController {
             for (TestCaseAI testCaseAI : testcaseList) {
 
                 if (queueNode.getCaseids().contains(testCaseAI.getId())) {
-                    testCaseAI = cutCaseData(testCaseAI, queueNode.getDataKeyLis());
+                    testCaseAI = cutCaseData(testCaseAI, queueNode.getDataKeyList());
                     testcaseLeftList.add(testCaseAI);
                 } else {
                     testcaseRightList.add(testCaseAI);
@@ -1603,7 +1602,6 @@ public class MultiAIPlusController {
             MatrixInfo matrixInfo = new MatrixInfo();
             //计算获取:数据<=>依赖用例的矩阵
             HashMap<String, DataMatrixUnit> matrix = calDataMatrix(testcaseList);
-//            System.out.print("matrix:\n"+gson.toJson(matrix));
             //全叶子节点,不需要剪枝
             if (matrix.size() == 0) {
                 matrixInfo.setMatrix(matrix);
@@ -1623,7 +1621,6 @@ public class MultiAIPlusController {
             if(queueNode.restartFlag){
                 leftTreeReStartFlag = "1";
             }
-//            System.out.print("推出queueNode:\n"+ gson.toJson(queueNode));
             //剪枝
             MatrixInfo caselist = cutTestcaseList(queueNode, testcaseList);
             matrixInfo.setMatrix(matrix);
@@ -1705,6 +1702,7 @@ public class MultiAIPlusController {
                 return getFailCaseAIList;
             }
 
+            @Override
             public void run() {
 
                 GotTestcaseSnaps gotTestcaseSnaps = new GotTestcaseSnaps();
@@ -2037,7 +2035,6 @@ public class MultiAIPlusController {
             Long dumpTreeTime = Long.valueOf(0);
             Long runTreeTime = Long.valueOf(0);
 
-//            System.out.print(gosn.toJson(runQueue));
             //队列执行,先进先出
             for (QueueNode unit : runQueue) {
                 //如果节点是数据准备类型,则进行合并,后续在一次执行
@@ -2329,6 +2326,7 @@ public class MultiAIPlusController {
 
         }
 
+        @Override
         public void run() {
             try {
                 runFailCaseList(serialCaseList, deployMap, pipelineObj, gotReports);
@@ -2671,6 +2669,7 @@ public class MultiAIPlusController {
             }
         }
 
+        @Override
         public void run() {
             try {
 
@@ -2773,7 +2772,6 @@ public class MultiAIPlusController {
 
         Map<String, List<TestCaseAI>> testcaseEnvGroup = new HashMap<>();
         //caseBycase的模式下,并行桶切分就暂时注释
-//        testcaseEnvGroup.put(PARALLEL, testCaseSplit(testcaseGroup.get(PARALLEL),parallelNum,i));
         testcaseEnvGroup.put(SERIAL, testCaseSplit(testcaseGroup.get(SERIAL),parallelNum,i));
         return testcaseEnvGroup;
     }

@@ -48,7 +48,7 @@ class MarkovDemoApplicationTests {
 		GenerateDictionary genDic = new GenerateDictionary();
 		Segmentation seg;
 
-		genDic.GenHashDic(filename, hm, len);
+		genDic.genHashDic(filename, hm, len);
 
 		InputStreamReader reader = new InputStreamReader(System.in);
 		BufferedReader br = new BufferedReader(reader);

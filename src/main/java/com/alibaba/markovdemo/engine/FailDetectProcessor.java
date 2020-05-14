@@ -55,7 +55,8 @@ public class FailDetectProcessor {
                     String fileAndLine = pieces[0].trim();
 
 
-                    if (content.trim().startsWith("//") || content.trim().startsWith("*") || content.trim().startsWith("/*") || content.trim().startsWith("*/") || content.trim().equals("{") || content.trim().equals("}")) {
+                    if (content.trim().startsWith("//") || content.trim().startsWith("*") || content.trim().startsWith("/*") || content.trim().startsWith("*/") || "{"
+                        .equals(content.trim()) || "}".equals(content.trim())) {
                         isignore = true;
                     }
 
@@ -161,7 +162,6 @@ public class FailDetectProcessor {
             JSONObject res = new JSONObject();
 
             res.put("detail",detailres);
-            //res.put("funDetail", funcDetailRes);
             res.put("diffLineNum",diffLineList.size());
             res.put("funcDiffLineNum",allLineNum - ignoreLineNum);
             res.put("diffCovRate",diffCCRateStr);

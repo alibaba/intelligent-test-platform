@@ -5,7 +5,8 @@ import java.util.Map;
 
 public class CaseRunInfo extends SerialCloneable {
 
-    public String group_name;
+    public String groupName;
+
     public LinkedList<RunningDataInfo> data;
 
     public Map<String,Boolean> selectCheckType;
@@ -37,13 +38,6 @@ public class CaseRunInfo extends SerialCloneable {
         this.selectCheckType = selectCheckType;
     }
 
-    public String getGroup_name() {
-        return group_name;
-    }
-
-    public void setGroup_name(String group_name) {
-        this.group_name = group_name;
-    }
 
     public LinkedList<RunningDataInfo> getData() {
         return data;
@@ -51,6 +45,13 @@ public class CaseRunInfo extends SerialCloneable {
 
     public void setData(LinkedList<RunningDataInfo> data) {
         this.data = data;
+    }
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 
 

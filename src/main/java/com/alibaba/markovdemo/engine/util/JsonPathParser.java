@@ -42,14 +42,7 @@ public class JsonPathParser {
     }
     private void setJsonPaths(String json) {
         this.pathList = new ArrayList<String>();
-//        JSONObject object = null;
-//        if (Toolkit.isJsonArray(json)){
-//            object = new JSONObject();
-//            object.put("",JSONArray.fromObject(json));
-//        }
-//        else{
-//            object = JSONObject.fromObject(json);
-//        }
+
         JSONObject object = JSONObject.fromObject(json);
         String jsonPath = "$";
         if(json != null) {
@@ -63,7 +56,7 @@ public class JsonPathParser {
         while(keysItr.hasNext()) {
             String key = keysItr.next();
             Object value = object.get(key);
-            if (parentPath.equals("$")){
+            if ("$".equals(parentPath)){
                 jsonPath = key;
             }
             else {

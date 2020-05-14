@@ -43,13 +43,6 @@ public class DataMatrixUnit {
         this.dataKeyList = dataKeyList;
     }
 
-//    public RunData getRunData() {
-//        return runData;
-//    }
-//    public void setRunData(RunData runData) {
-//        this.runData = runData;
-//    }
-
     public DataMatrixUnit(){
 
         caseids = new ArrayList<>();

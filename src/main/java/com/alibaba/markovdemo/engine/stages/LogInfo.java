@@ -49,14 +49,6 @@ public class LogInfo {
         this.pluginName = pluginName;
     }
 
-    //public int getDataListIndex() {
-    //    return dataListIndex;
-    //}
-    //
-    //public void setDataListIndex(int dataListIndex) {
-    //    this.dataListIndex = dataListIndex;
-    //}
-
     public String getLog() {
         return log;
     }

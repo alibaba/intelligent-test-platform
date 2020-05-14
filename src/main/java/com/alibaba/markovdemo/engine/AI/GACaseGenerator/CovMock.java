@@ -21,12 +21,12 @@ public class CovMock {
             Integer topNum = caseQuery.getInteger("top_num");
             Integer matchLevel = caseQuery.getInteger("match_level");
             String userType =caseQuery.getString("user_type");
-            Boolean use_feature = caseQuery.getBoolean("use_feature");
+            Boolean useFeature = caseQuery.getBoolean("use_feature");
 
             if(searchKey!=null){
-                if(searchKey.equals("key1")){
+                if("key1".equals(searchKey)){
                     codeCovs.add(sourceCodeFile+"@line1");
-                }else if(searchKey.equals("key2") || searchKey.equals("key3") || searchKey.equals("key4")){
+                }else if("key2".equals(searchKey) || "key3".equals(searchKey) || "key4".equals(searchKey)){
                     codeCovs.add(sourceCodeFile+"@line2");
                 }else{
                     codeCovs.add(sourceCodeFile+"@line48");
@@ -38,27 +38,27 @@ public class CovMock {
             }
 
             if(matchLevel!=0 && userType!=null){
-                if(matchLevel==1 && (userType.equals("type1") || userType.equals("type2")) && use_feature==false){
+                if(matchLevel==1 && ("type1".equals(userType) || "type2".equals(userType)) && useFeature==false){
                     codeCovs.add(sourceCodeFile+"@line4");
                     codeCovs.add(sourceCodeFile+"@line5");
                     codeCovs.add(sourceCodeFile+"@line6");
                     codeCovs.add(sourceCodeFile+"@line7");
                     codeCovs.add(sourceCodeFile+"@line8");
-                }else if(matchLevel==1 && userType.equals("type3") && use_feature==false){
+                }else if(matchLevel==1 && "type3".equals(userType) && useFeature==false){
                     codeCovs.add(sourceCodeFile+"@line9");
                     codeCovs.add(sourceCodeFile+"@line10");
                     codeCovs.add(sourceCodeFile+"@line11");
                     codeCovs.add(sourceCodeFile+"@line12");
                     codeCovs.add(sourceCodeFile+"@line13");
                     codeCovs.add(sourceCodeFile+"@line14");
-                }else if(matchLevel==1 && (userType.equals("type1") || userType.equals("type2")) && use_feature==true){
+                }else if(matchLevel==1 && ("type1".equals(userType) || "type2".equals(userType)) && useFeature==true){
                     codeCovs.add(sourceCodeFile+"@line15");
                     codeCovs.add(sourceCodeFile+"@line16");
                     codeCovs.add(sourceCodeFile+"@line17");
                     codeCovs.add(sourceCodeFile+"@line18");
                     codeCovs.add(sourceCodeFile+"@line19");
                     codeCovs.add(sourceCodeFile+"@line20");
-                }else if(matchLevel==1 && userType.equals("type3")  && use_feature==true){
+                }else if(matchLevel==1 && "type3".equals(userType) && useFeature==true){
                     codeCovs.add(sourceCodeFile+"@line21");
                     codeCovs.add(sourceCodeFile+"@line22");
                     codeCovs.add(sourceCodeFile+"@line23");
@@ -66,25 +66,25 @@ public class CovMock {
                     codeCovs.add(sourceCodeFile+"@line25");
                     codeCovs.add(sourceCodeFile+"@line26");
                     codeCovs.add(sourceCodeFile+"@line27");
-                }else if(matchLevel==2 && (userType.equals("type1") || userType.equals("type2")) && use_feature==false){
+                }else if(matchLevel==2 && ("type1".equals(userType) || "type2".equals(userType)) && useFeature==false){
                     codeCovs.add(sourceCodeFile+"@line28");
                     codeCovs.add(sourceCodeFile+"@line29");
                     codeCovs.add(sourceCodeFile+"@line30");
                     codeCovs.add(sourceCodeFile+"@line31");
-                }else if(matchLevel==2 && (userType.equals("type1") || userType.equals("type2")) && use_feature==true){
+                }else if(matchLevel==2 && ("type1".equals(userType) || "type2".equals(userType)) && useFeature==true){
                     codeCovs.add(sourceCodeFile+"@line32");
                     codeCovs.add(sourceCodeFile+"@line33");
                     codeCovs.add(sourceCodeFile+"@line34");
                     codeCovs.add(sourceCodeFile+"@line35");
                     codeCovs.add(sourceCodeFile+"@line36");
-                }else if(matchLevel==2 && userType.equals("type3")  && use_feature==true){
+                }else if(matchLevel==2 && "type3".equals(userType) && useFeature==true){
                     codeCovs.add(sourceCodeFile+"@line37");
                     codeCovs.add(sourceCodeFile+"@line38");
                     codeCovs.add(sourceCodeFile+"@line39");
                     codeCovs.add(sourceCodeFile+"@line40");
                     codeCovs.add(sourceCodeFile+"@line41");
                     codeCovs.add(sourceCodeFile+"@line42");
-                }else if(matchLevel==2 && userType.equals("type3")  && use_feature==false){
+                }else if(matchLevel==2 && "type3".equals(userType) && useFeature==false){
                     codeCovs.add(sourceCodeFile+"@line43");
                     codeCovs.add(sourceCodeFile+"@line44");
                     codeCovs.add(sourceCodeFile+"@line45");

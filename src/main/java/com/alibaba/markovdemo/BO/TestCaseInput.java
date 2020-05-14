@@ -224,7 +224,7 @@ public class TestCaseInput extends SerialCloneable {
                 JSONObject groupJson = groupJsonArray.getJSONObject(i);
 
                 String groupName = groupJson.getString("group_name");
-                caseRunInfo.setGroup_name(groupName);
+                caseRunInfo.setGroupName(groupName);
                 JSONArray resArray = responseJsonObj.getJSONArray(groupName);
 
                 LinkedList<RunningDataInfo> infoList = new LinkedList<RunningDataInfo>();
@@ -289,7 +289,7 @@ public class TestCaseInput extends SerialCloneable {
                 JSONObject groupJson = groupJsonArray.getJSONObject(i);
 
                 String groupName = groupJson.getString("group_name");
-                caseRunInfo.setGroup_name(groupName);
+                caseRunInfo.setGroupName(groupName);
 
                 caseRunInfo.setSelectCheckType((Map<String, Boolean>) groupJson.get("selectCheckType"));
 
@@ -309,7 +309,7 @@ public class TestCaseInput extends SerialCloneable {
                         info.expect = dataObj.getString("expect");
                     }
 
-                    if (caseTemplate.equals("java")){
+                    if ("java".equals(caseTemplate)){
                         if (dataObj.containsKey("actual")) {
                             info.actual = dataObj.getString("actual");
                         }
@@ -362,7 +362,7 @@ public class TestCaseInput extends SerialCloneable {
                 JSONObject groupJson = groupJsonArray.getJSONObject(i);
 
                 String groupName = groupJson.getString("group_name");
-                caseRunInfo.setGroup_name(groupName);
+                caseRunInfo.setGroupName(groupName);
 
                 LinkedList<RunningDataInfo> infoList = new LinkedList<RunningDataInfo>();
 
