@@ -444,7 +444,7 @@ public class GenerateProcessor {
 
             //在种子用例基础上，修改字段为用户配置的参数值，构建初始用例
             //for(String geneKey : extralGeneMap.keySet()){
-            for(String geneKey : geneBankMap.keySet()){
+            for(String geneKey : chromoSeq){
                 int keyIndex = chromoSeq.indexOf(geneKey);
                 for(Object geneValue : geneBankMap.get(geneKey)){
                     Object[] chromo = seedChromo.clone();
