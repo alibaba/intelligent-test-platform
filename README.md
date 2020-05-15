@@ -54,7 +54,7 @@ IDE配置端口为8888，java8
 
 `3、创建数据表`
 
-source markov/database.sql
+source [database.sql](https://github.com/alibaba/intelligent-test-platform/blob/master/database.sql)
 
 `4、修改项目的mysql配置`
 
