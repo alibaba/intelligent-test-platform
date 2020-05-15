@@ -66,7 +66,9 @@ source markov/database.sql
 
 `5.配置pipeline流程配置`
 
-启动服务后，点击 配置-pipeline，在pipeline编辑框中输入并保存demo中的pipeline内容(pipeline_demo)
+启动服务后，点击 配置-pipeline，在pipeline编辑框中输入并保存demo中的pipeline内容([pipeline_demo](https://github.com/alibaba/intelligent-test-platform/blob/master/pipeline_demo))
+
+
 
 `6.Demo试用吧！`
 
