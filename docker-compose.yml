@@ -1,0 +1,42 @@
+version: '3.6'
+
+services:
+  web:
+    build: .
+    command: sh -c "/wait && java -jar /usr/local/markov-demo-0.0.1-SNAPSHOT.jar"
+    environment:
+      - WAIT_HOSTS=container-mysql:3306
+      - WAIT_HOSTS_TIMEOUT=300
+      - WAIT_SLEEP_INTERVAL=30
+      - WAIT_HOST_CONNECT_TIMEOUT=30
+      - spring.datasource.url=jdbc:mysql://container-mysql:3306/markov_demo?useUnicode=true&characterEncoding=utf-8
+    depends_on:
+      - container-mysql
+    ports:
+      - '8080:8080'
+    expose:
+      - '8080'
+
+  container-mysql:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'markov_demo'
+      # So you don't have to use root, but you can if you like
+      MYSQL_USER: 'root'
+      # You can use whatever password you like
+      MYSQL_PASSWORD: '123'
+      # Password for root access
+      MYSQL_ROOT_PASSWORD: '123'
+    ports:
+      # <Port exposed> : < MySQL Port running inside container>
+      - '3306:3306'
+    expose:
+      # Opens port 3306 on the container
+      - '3306'
+      # Where our data will be persisted
+    volumes:
+      - my-db:/tmp/mysql
+# Names our volume
+volumes:
+  my-db: {}
