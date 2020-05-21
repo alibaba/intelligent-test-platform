@@ -32,36 +32,9 @@ class MarkovDemoApplicationTests {
 		return df2.format(date1);
 	}
 
-
 	@Test
 	void wordTest () throws IOException {
 
-		// FileInputStream fis = new FileInputStream("199801.txt");
-		// FileOutputStream fos = new FileOutputStream("dic.txt");
-		// ImportCorpus readF = new ImportCorpus(fis, fos);
-		// readF.readDic();
-		// System.out.println("µ¼Èë½áÊø");
-
-		String filename = "dic.txt";
-		HashMap hm = new HashMap();
-		HashMap len = new HashMap();
-		GenerateDictionary genDic = new GenerateDictionary();
-		Segmentation seg;
-
-		genDic.genHashDic(filename, hm, len);
-
-		InputStreamReader reader = new InputStreamReader(System.in);
-		BufferedReader br = new BufferedReader(reader);
-		String data = "";
-		data = br.readLine();
-
-		seg = new Segmentation(hm, len);
-
-		String FmmTarget = seg.Fmm(data);
-		String BmmTarget = seg.Bmm(data);
-
-		System.out.println("FmmTarget: " + FmmTarget);
-		System.out.println("BmmTarget: " + BmmTarget);
 	}
 
 }
