@@ -38,17 +38,11 @@
             <scope>runtime</scope>
         </dependency>
 
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>angularjs</artifactId>
-            <version>1.6.4</version>
-        </dependency>
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>angularjs</artifactId>
+			<version>1.6.4</version>
+		</dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -106,7 +100,12 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
+	</plugin>
+                        <plugin>
+                                <groupId>org.apache.maven.plugins</groupId>
+                                <artifactId>maven-surefire-plugin</artifactId>
+                                <version>2.19.1</version>
+             </plugin>		
         </plugins>
     </build>
 
