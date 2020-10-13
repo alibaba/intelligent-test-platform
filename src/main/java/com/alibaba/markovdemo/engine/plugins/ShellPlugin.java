@@ -1,10 +1,9 @@
 package com.alibaba.markovdemo.engine.plugins;
 
 import com.alibaba.fastjson.JSONObject;
-
 import com.alibaba.markovdemo.engine.stages.RunData;
 import com.alibaba.markovdemo.engine.stages.StageName;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.Map;
 
@@ -15,11 +14,12 @@ public class ShellPlugin implements IPlugin {
     private String shellScript;
 
     @Override
-    public IPlugin build(JSONObject obj ,JSONObject pipelineParamsObj) {
+    public IPlugin build(JSONObject obj, JSONObject pipelineParamsObj) {
 
         //TODO:build object
         return this;
     }
+
     @Override
     public String getName() {
         return this.name;
@@ -58,7 +58,7 @@ public class ShellPlugin implements IPlugin {
 
     @Override
     public void exec() {
-        throw new NotImplementedException();
+        throw new NotImplementedException("");
 
     }
 

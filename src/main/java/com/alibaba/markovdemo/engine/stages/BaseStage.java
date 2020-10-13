@@ -6,11 +6,11 @@ import com.alibaba.markovdemo.engine.plugins.IPlugin;
 import com.alibaba.markovdemo.engine.plugins.PluginFactory;
 import com.alibaba.markovdemo.engine.plugins.PluginLayout;
 import com.google.gson.Gson;
+import org.apache.commons.lang3.NotImplementedException;
 import org.codehaus.groovy.util.ListHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.*;
 
@@ -138,7 +138,7 @@ public class BaseStage {
 
 
     public void init() {
-        throw new NotImplementedException();
+        throw new NotImplementedException("");
     }
 
     public StageName getName() {
@@ -299,7 +299,7 @@ public class BaseStage {
     }
 
     public void cleanup() {
-        throw new NotImplementedException();
+        throw new NotImplementedException("");
     }
 
     /**
