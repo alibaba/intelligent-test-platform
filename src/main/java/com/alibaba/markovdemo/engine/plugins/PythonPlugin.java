@@ -1,10 +1,9 @@
 package com.alibaba.markovdemo.engine.plugins;
 
 import com.alibaba.fastjson.JSONObject;
-
 import com.alibaba.markovdemo.engine.stages.RunData;
 import com.alibaba.markovdemo.engine.stages.StageName;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.Map;
 
@@ -57,7 +56,7 @@ public class PythonPlugin implements IPlugin {
 
     @Override
     public void exec() {
-        throw new NotImplementedException();
+        throw new NotImplementedException("");
     }
 
     @Override

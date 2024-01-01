@@ -44,14 +44,14 @@ public class MultiAIPlusController {
     String caseIds;
     Map<String, FailCaseBucket> failCaseBuckets;
     Map<Long, String> conflictCaseId;
-    boolean regAccuracy=false;
+    boolean regAccuracy = false;
 
     //dump数据统计
     Map<String, RunDs> dumpDataStaticMap;
     //分层数据统计
-    Map<String,Map<String, RunDs>> envRunDataStaticMap ;
+    Map<String, Map<String, RunDs>> envRunDataStaticMap;
     //各阶段耗时
-    Map<String, Map<String,Long>> envBucketCostMap ;
+    Map<String, Map<String, Long>> envBucketCostMap;
     //回归分析报告
     Map<String, EnvBasicReport> envReportMap;
 
@@ -59,7 +59,7 @@ public class MultiAIPlusController {
     Map<String, String> dataTypeMap;
     //pipeline设置的数据类型,仅供统计使用
     Map<String, String> dataTypePipelineMap;
-    Map<String,Integer> envRunBucketMap ;
+    Map<String, Integer> envRunBucketMap;
     Map<String, GotTestcaseSnaps> gotTestcaseSnapMap;
     @Autowired
     TestcaseService gotTestcaseDao;
@@ -122,9 +122,10 @@ public class MultiAIPlusController {
     /**
      * 函数功能:功能回归初始化
      * 注意:此处为了方便demo展示就直接初始化,但在实战中需要改造,否则可能在多个回归任务并行时,全局参数会有相互覆盖的情况
+     *
      * @param multiAIInfo
      */
-    public void initMultiParams(MultiAIInfo multiAIInfo){
+    public void initMultiParams(MultiAIInfo multiAIInfo) {
         appId = multiAIInfo.getAppId();
         scenarioId = multiAIInfo.getScenarioId();
         //此处是为mock的环境名
@@ -142,7 +143,7 @@ public class MultiAIPlusController {
         getFailCaseAIList = new ArrayList<>();
         failCaseBuckets = new HashMap<>();
         gotTestcaseSnapList = new ArrayList<>();
-        dumpDataStaticMap =  new HashMap<>();
+        dumpDataStaticMap = new HashMap<>();
         envRunDataStaticMap = new HashMap<>();
         envBucketCostMap = new HashMap<>();
         envRunBucketMap = new HashMap<>();
@@ -162,6 +163,7 @@ public class MultiAIPlusController {
      * 函数功能:回归测试执行
      * 1.普通回归:caseBycase,
      * 2.智能回归:用例重新编排,高效执行
+     *
      * @param multiAIInfo
      */
     public Long runIntelligent(MultiAIInfo multiAIInfo) {
@@ -181,7 +183,7 @@ public class MultiAIPlusController {
         gotReports.setRunType(runType);
         gotReports.setReportName(Toolkit.implode(",", new ArrayList<>(envInfo.keySet())));
         gotReports.setStatus(ResultStatus.RUNNING.name());
-        if(regAccuracy){
+        if (regAccuracy) {
             gotReports.setIsVisible(1);
         }
         //测试报告入库,注:第一次save后,gotReports对象中就会拿到id
@@ -210,6 +212,7 @@ public class MultiAIPlusController {
 
     /**
      * 获取分组用例集
+     *
      * @param scenarioId
      * @param caseGroupList
      * @return
@@ -218,7 +221,7 @@ public class MultiAIPlusController {
 
 
         List<TestCaseInput> testcaseList = new ArrayList<>();
-        if(branch==null || "".equals(branch)){
+        if (branch == null || "".equals(branch)) {
             branch = "master";
         }
 
@@ -239,10 +242,11 @@ public class MultiAIPlusController {
 
     /**
      * 函数功能:获取回归用例集
+     *
      * @param envInfo
      * @return
      */
-    public List<MultiRunCaseInfo> getMultiRunCaseInfoList(Map<String,List<String>> envInfo) {
+    public List<MultiRunCaseInfo> getMultiRunCaseInfoList(Map<String, List<String>> envInfo) {
 
         //用例集合
         List<TestCaseInput> testcaseList = new ArrayList<>();
@@ -252,24 +256,24 @@ public class MultiAIPlusController {
         if (scenarioId != null) {
             //多场景用例
             if (caseType != null && "1".equals(caseType)) {
-                Map<String,List<String>> scenidCaseGroup= new HashMap<>();
+                Map<String, List<String>> scenidCaseGroup = new HashMap<>();
                 for (String scenId : caseGroup) {
                     String[] multiStr = scenId.split("__");
                     String realScenId = multiStr[0];
                     String caseGroup = multiStr[2];
-                    if (!scenidCaseGroup.containsKey(realScenId)){
-                        scenidCaseGroup.put(realScenId,new ArrayList<>());
+                    if (!scenidCaseGroup.containsKey(realScenId)) {
+                        scenidCaseGroup.put(realScenId, new ArrayList<>());
                     }
                     scenidCaseGroup.get(realScenId).add(caseGroup);
                 }
 
-                for (String realScenId : scenidCaseGroup.keySet()){
+                for (String realScenId : scenidCaseGroup.keySet()) {
                     MultiRunCaseInfo multiRunCaseInfo = new MultiRunCaseInfo();
                     multiRunCaseInfo.setAppId(appId);
                     multiRunCaseInfo.setScenarioId(scenarioId);
                     multiRunCaseInfo.setRealAppId(appId);
                     multiRunCaseInfo.setRealScenarioId(Long.valueOf(realScenId));
-                    List<TestCaseInput> testCaseInputList =  getCaseListByGroup(Long.valueOf(realScenId), scenidCaseGroup.get(realScenId), caseBranch);
+                    List<TestCaseInput> testCaseInputList = getCaseListByGroup(Long.valueOf(realScenId), scenidCaseGroup.get(realScenId), caseBranch);
                     multiRunCaseInfo.setTestcaseList(testCaseInputList);
                     caseNum += testCaseInputList.size();
                     multiRunCaseInfoList.add(multiRunCaseInfo);
@@ -284,7 +288,7 @@ public class MultiAIPlusController {
                 multiRunCaseInfo.setRealAppId(appId);
                 multiRunCaseInfo.setRealScenarioId(scenarioId);
                 if (caseGroup == null || caseGroup.size() == 0) {
-                    if (caseIds != null ) {
+                    if (caseIds != null) {
                         //前端提交批量运行
                         String[] cases = caseIds.split(",");
                         for (String caseid : cases) {
@@ -293,7 +297,7 @@ public class MultiAIPlusController {
                         }
                         multiRunCaseInfo.setTestcaseList(testcaseList);
                     } else {
-                        if(caseBranch == null){
+                        if (caseBranch == null) {
                             caseBranch = "master";
                         }
                         testcaseList = gotTestcaseDao.getAllCaseByScenarioId(scenarioId);
@@ -323,6 +327,7 @@ public class MultiAIPlusController {
     /**
      * 函数功能:载入测试环境配置
      * 说明:用户可根据自身测试系统的需求去完善
+     *
      * @param envInfo
      * @param pipelineObj
      */
@@ -336,24 +341,23 @@ public class MultiAIPlusController {
     /**
      * 函数功能:
      * 判断是走哪种回归模式.0:caseBycase,1:智能回归
+     *
      * @param pipelineObj
      */
     public void getMultiRunType(JSONObject pipelineObj) {
-        if (openSmartRegress){
-            regressionType= "1";
+        if (openSmartRegress) {
+            regressionType = "1";
+        } else {
+            regressionType = "0";
         }
-        else{
-            regressionType= "0";
-        }
-        try{
+        try {
 
             List<JSONObject> arr = (List<JSONObject>) pipelineObj.get("run-stage");
             JSONObject paramsObj = (JSONObject) arr.get(1).get("params");
-            if (paramsObj.containsKey("regressionType")){
+            if (paramsObj.containsKey("regressionType")) {
                 regressionType = (String) paramsObj.get("regressionType");
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
 
         }
 
@@ -363,10 +367,11 @@ public class MultiAIPlusController {
 
     /**
      * 函数功能:中断回归测试流程
+     *
      * @param gotReports
      * @return
      */
-    boolean isTaskStop(GotReports gotReports){
+    boolean isTaskStop(GotReports gotReports) {
 
         //todo:待添加..
         return false;
@@ -374,6 +379,7 @@ public class MultiAIPlusController {
 
     /**
      * 功能: 在用例中保留一条测试数据
+     *
      * @param testCaseAI
      * @param groupNum
      * @param dataType
@@ -392,8 +398,8 @@ public class MultiAIPlusController {
         //取的该组疏忽
         HashMap<String, LinkedList<DetailDataInfo>> eachPrepareData = new HashMap<>();
         try {
-            eachPrepareData = prepareData.get(prepareData.size()-1);
-        }catch(Exception e){
+            eachPrepareData = prepareData.get(prepareData.size() - 1);
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -475,6 +481,7 @@ public class MultiAIPlusController {
      * 1.整合数据准备,区分为全量数据 + 串行用例数据
      * 2.识别全部用例中的冲突数据,并进行打标
      * 3.执行全量数据准备
+     *
      * @param testcaseAIList
      * @param
      * @return
@@ -506,7 +513,7 @@ public class MultiAIPlusController {
                             //如果为非全量数据类型,则用例保留数据
                             addPrepareRecord(testCaseAI, groupNum, dataType, allDsList, null, ALL_DS);
                             continue;
-                        }else {
+                        } else {
                             if (allDsList.size() > 0) {
                                 //遍历每个数据源的数据list
                                 for (DetailDataInfo oneDsList : allDsList) {
@@ -538,47 +545,50 @@ public class MultiAIPlusController {
 
     /**
      * 统计报告:搜集数据源名字
+     *
      * @param ds
      * @return
      */
-    public String getTypeDs(String ds){
+    public String getTypeDs(String ds) {
 
         String[] dasource = ds.split(":");
-        if (dasource.length==3){
+        if (dasource.length == 3) {
             String dsName = dasource[0];
             String groupName = dasource[1];
-            return dsName + ":" +groupName;
-        }
-        else{
+            return dsName + ":" + groupName;
+        } else {
             return dasource[0];
         }
 
     }
+
     /**
      * 函数功能:对全量桶数据进行统计
      * 包含所有记录数目,冗余数据数目
      */
-    public void calDumpDataStatic(LinkedList<HashMap<String, LinkedList<DetailDataInfo>>> allDumpData){
+    public void calDumpDataStatic(LinkedList<HashMap<String, LinkedList<DetailDataInfo>>> allDumpData) {
 
-        for (HashMap<String, LinkedList<DetailDataInfo>> typeInfo: allDumpData){
+        for (HashMap<String, LinkedList<DetailDataInfo>> typeInfo : allDumpData) {
 
-            for (String type : typeInfo.keySet()){
+            for (String type : typeInfo.keySet()) {
                 LinkedList<DetailDataInfo> list = typeInfo.get(type);
-                for (DetailDataInfo detailDataInfo : list){
-                    String ds =detailDataInfo.getDsName();
+                for (DetailDataInfo detailDataInfo : list) {
+                    String ds = detailDataInfo.getDsName();
                     String typeDs = type + ":" + getTypeDs(ds);
-                    if (!dumpDataStaticMap.containsKey(typeDs)){
-                        dumpDataStaticMap.put(typeDs,new RunDs());
+                    if (!dumpDataStaticMap.containsKey(typeDs)) {
+                        dumpDataStaticMap.put(typeDs, new RunDs());
                     }
-                    dumpDataStaticMap.get(typeDs).setAllNum(dumpDataStaticMap.get(typeDs).getAllNum()+detailDataInfo.getData().size());
-                    dumpDataStaticMap.get(typeDs).setRepeatNum(dumpDataStaticMap.get(typeDs).getRepeatNum() +detailDataInfo.getData().size());
+                    dumpDataStaticMap.get(typeDs).setAllNum(dumpDataStaticMap.get(typeDs).getAllNum() + detailDataInfo.getData().size());
+                    dumpDataStaticMap.get(typeDs).setRepeatNum(dumpDataStaticMap.get(typeDs).getRepeatNum() + detailDataInfo.getData().size());
                 }
             }
         }
     }
+
     /**
      * 函数功能:将一条测试数据加入全量数据准备桶中
      * 如果数据存在全量桶冲突,则不在加入全量桶
+     *
      * @param recordInfo
      * @param dumpData
      * @param dsName
@@ -642,8 +652,10 @@ public class MultiAIPlusController {
 
         return conflictFlag;
     }
+
     /**
      * 函数功能:批量执行测试用例集主流程
+     *
      * @param appId
      * @param scenarioId
      * @param gotReports
@@ -655,7 +667,7 @@ public class MultiAIPlusController {
      * @return
      * @throws Exception
      */
-    public boolean batchRunInteligentTestCasesZK(final Long appId, final Long scenarioId, GotReports gotReports, Map<String, List<String>> envInfo, List<String> caseGroup,String caseBranch, String caseType, String caseIds) throws Exception {
+    public boolean batchRunInteligentTestCasesZK(final Long appId, final Long scenarioId, GotReports gotReports, Map<String, List<String>> envInfo, List<String> caseGroup, String caseBranch, String caseType, String caseIds) throws Exception {
 
         List<TestCaseAI> testcaseAllList = new ArrayList<>();
         try {
@@ -678,10 +690,10 @@ public class MultiAIPlusController {
             //环境信息
             envNum = envInfo.size();
             //todo:此处mock测试环境
-            envNum =1;
+            envNum = 1;
             JSONObject pipelineObj = null;
             //获取回归用例集合
-            List<MultiRunCaseInfo> multiRunCaseInfoList = getMultiRunCaseInfoList( envInfo);
+            List<MultiRunCaseInfo> multiRunCaseInfoList = getMultiRunCaseInfoList(envInfo);
             gotReports.setCaseNum(caseNum);
             saveReport(gotReports);
 
@@ -723,7 +735,6 @@ public class MultiAIPlusController {
 
                 //回归模式:智能回归
                 if (!"0".equals(regressionType)) {
-
                     System.out.print("全量数据抽取中..\n");
                     //全量数据抽取,可一次性执行完成的测试数据才可放入全量数据准备桶中
                     LinkedList<HashMap<String, LinkedList<DetailDataInfo>>> dumpData = getDumpData(testcaseAIList);
@@ -736,20 +747,20 @@ public class MultiAIPlusController {
                     CountDownLatch countDownLatch = new CountDownLatch(envNum);
                     List<MultiEnvTreeCaseThread> threadsList = new ArrayList<>();
                     //初始化每套测试环境统计数据
-                    if(!envRunBucketMap.containsKey(envName)){
+                    if (!envRunBucketMap.containsKey(envName)) {
                         envRunBucketMap.put(envName, 0);
                     }
-                    if(!envRunDataStaticMap.containsKey(envName)){
+                    if (!envRunDataStaticMap.containsKey(envName)) {
                         envRunDataStaticMap.put(envName, new HashMap<>());
                     }
-                    if(!envBucketCostMap.containsKey(envName)){
+                    if (!envBucketCostMap.containsKey(envName)) {
                         envBucketCostMap.put(envName, new HashMap<>());
                     }
 
                     //将测试数据集均匀分配给多个测试环境
                     Map<String, List<TestCaseAI>> testcaseEnvGroup = getTestcaseEnvGroup(testcaseGroup, envNum, i);
                     System.out.print("启动用例回归线程" + i);
-                    multiEnvTreeCaseThread = new MultiEnvTreeCaseThread(testcaseEnvGroup.get(SERIAL), pipelineObj, parallerNum, gotReports, countDownLatch, envName, dumpData,multiRunCaseInfo.getRealScenarioId());
+                    multiEnvTreeCaseThread = new MultiEnvTreeCaseThread(testcaseEnvGroup.get(SERIAL), pipelineObj, parallerNum, gotReports, countDownLatch, envName, dumpData, multiRunCaseInfo.getRealScenarioId());
                     multiEnvTreeCaseThread.setDaemon(true);
                     multiEnvTreeCaseThread.start();
                     threadsList.add(multiEnvTreeCaseThread);
@@ -767,9 +778,9 @@ public class MultiAIPlusController {
                     }
                 }
                 //回归模式:caseBycase的普通回归
-                else{
+                else {
                     Map<String, List<TestCaseAI>> testcaseGroup = new HashMap<>();
-                    for(TestCaseAI testCaseAI :testcaseAIList){
+                    for (TestCaseAI testCaseAI : testcaseAIList) {
                         testCaseAI.setPrepareData(testCaseAI.getPrepareDataSnap());
                     }
                     //全部用例都设置为串行分组
@@ -781,11 +792,11 @@ public class MultiAIPlusController {
                     List<MultiEnvSimpleCaseThread> threadsList = new ArrayList<>();
                     //todo:此处demo暂时mock一个测试环境
                     Map<String, String> envMap = new HashMap<>();
-                    envMap.put("env1","envName1");
+                    envMap.put("env1", "envName1");
                     envNum = envMap.size();
                     //多环境并发
                     for (String envName : envMap.keySet()) {
-                        if(!envRunBucketMap.containsKey(envName)){
+                        if (!envRunBucketMap.containsKey(envName)) {
                             envRunBucketMap.put(envName, 0);
                         }
                         //将用例集分发到多个环境上
@@ -847,9 +858,10 @@ public class MultiAIPlusController {
 
     /**
      * 函数功能:智能回归测试报告详情分析
+     *
      * @return
      */
-    public String setAnalysisReportPlus(){
+    public String setAnalysisReportPlus() {
 
         //1.ds维度,总调用,实际调用,冗余度,平均耗时,节省耗时,
         //2.执行维度,总串行数,实际串行数,总并行数,节省耗时
@@ -857,16 +869,16 @@ public class MultiAIPlusController {
 
         AIReportPlusInfo aiReportInfo = new AIReportPlusInfo();
         //获取整体报告统计数据
-        BasicReport allReport  = statisBasicReport(gotTestcaseSnapMap);
+        BasicReport allReport = statisBasicReport(gotTestcaseSnapMap);
         System.out.print("[整体报告统计数据]搜集完成!\n");
         //获取分环境报告数据
         List<EnvBasicReport> envReportList = statisEnvReportList(gotTestcaseSnapMap);
         System.out.print("[分环境报告数据]搜集完成!\n");
         //获取ds维度的图标信息
-        Map<String,ChartBasicInfo> treeDsChart = statisTreeChart(envRunDataStaticMap);
+        Map<String, ChartBasicInfo> treeDsChart = statisTreeChart(envRunDataStaticMap);
         System.out.print("[分层数据统计图标]搜集完成!\n");
         //获取全量ds维度的图标信息
-        Map<String,ChartBasicInfo> dumpDsChart = statisDumpAllChart(dumpDataStaticMap);
+        Map<String, ChartBasicInfo> dumpDsChart = statisDumpAllChart(dumpDataStaticMap);
         System.out.print("[全量数据统计图标]搜集完成!\n");
 
         aiReportInfo.setBasicReport(allReport);
@@ -874,7 +886,7 @@ public class MultiAIPlusController {
         aiReportInfo.setTreeDsChart(treeDsChart);
         aiReportInfo.setDumpDsChart(dumpDsChart);
 
-        System.out.print("统计数据:\n"+gson.toJson(aiReportInfo));
+        System.out.print("统计数据:\n" + gson.toJson(aiReportInfo));
 
         return gson.toJson(aiReportInfo);
     }
@@ -882,10 +894,11 @@ public class MultiAIPlusController {
 
     /**
      * 函数功能:获取分环境报告数据
+     *
      * @param gotTestcaseSnapMap
      * @return
      */
-    public List<EnvBasicReport>  statisEnvReportList(Map<String, GotTestcaseSnaps> gotTestcaseSnapMap){
+    public List<EnvBasicReport> statisEnvReportList(Map<String, GotTestcaseSnaps> gotTestcaseSnapMap) {
         List<EnvBasicReport> envReportList = new ArrayList<>();
         try {
             int sucessCaseNum;
@@ -911,7 +924,7 @@ public class MultiAIPlusController {
                 envReportList.add(envReport);
             }
 
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
 
@@ -921,23 +934,23 @@ public class MultiAIPlusController {
 
     /**
      * 补充各个环境阶段数据
+     *
      * @param envReport
      * @return
      */
-    public EnvBasicReport calMoreEnvStatic(EnvBasicReport envReport){
+    public EnvBasicReport calMoreEnvStatic(EnvBasicReport envReport) {
         String envName = envReport.getEnvName();
 
         //智能回归统计
-        if ("1".equals(regressionType)){
+        if ("1".equals(regressionType)) {
             //补充dump全量阶段
-            envReport = adDumpAllDataToEnvBasicReport(envReport,dumpDataStaticMap,envBucketCostMap.get(envName));
+            envReport = adDumpAllDataToEnvBasicReport(envReport, dumpDataStaticMap, envBucketCostMap.get(envName));
             //补充dump分层阶段
-            envReport = addTreeDataToEnvBasicReport(envReport,envRunDataStaticMap.get(envName),envBucketCostMap.get(envName));
+            envReport = addTreeDataToEnvBasicReport(envReport, envRunDataStaticMap.get(envName), envBucketCostMap.get(envName));
             //补充执行信息
-            envReport = addRunToEnvBasicReport(envReport,envRunBucketMap.get(envName),envBucketCostMap.get(envName));
-        }
-        else{
-            envReport = addRunToEnvBasicReport(envReport,envRunBucketMap.get(envName),envBucketCostMap.get(envName));
+            envReport = addRunToEnvBasicReport(envReport, envRunBucketMap.get(envName), envBucketCostMap.get(envName));
+        } else {
+            envReport = addRunToEnvBasicReport(envReport, envRunBucketMap.get(envName), envBucketCostMap.get(envName));
         }
 
         return envReport;
@@ -946,29 +959,30 @@ public class MultiAIPlusController {
     /**
      * 功能:补充快速执行统计信息
      * /快速用例运行桶(总串行数/实际串行数/总并行数/节省时间sec/提速效率/总时间)
+     *
      * @param envReport
      * @return
      */
-    public EnvBasicReport addRunToEnvBasicReport(EnvBasicReport envReport, Integer runSerialActualNum, Map<String,Long> bucketCostMap){
+    public EnvBasicReport addRunToEnvBasicReport(EnvBasicReport envReport, Integer runSerialActualNum, Map<String, Long> bucketCostMap) {
 
         //串行用例数
         Integer runSerialNum = envReport.getCaseNum();
         //实际串行用例数:runSerialActualNum
-        int poolNum = runSerialNum/runSerialActualNum;
+        int poolNum = runSerialNum / runSerialActualNum;
 
-        if(poolNum>10){
-            runSerialActualNum = runSerialNum/10;
+        if (poolNum > 10) {
+            runSerialActualNum = runSerialNum / 10;
         }
         //并行用例数
         Integer runParallelNum = runSerialNum - runSerialActualNum;
         //总时间
         Integer cost = Integer.valueOf(String.valueOf(bucketCostMap.get(QUERY_CHECK_BUCKET)));
         //提速效率
-        String speedUp=changePecentFormat(Long.valueOf(runSerialNum-runSerialActualNum),Long.valueOf(runSerialActualNum));
+        String speedUp = changePecentFormat(Long.valueOf(runSerialNum - runSerialActualNum), Long.valueOf(runSerialActualNum));
         //节省时间
-        Integer saveCost = cost/runSerialActualNum * runParallelNum;
+        Integer saveCost = cost / runSerialActualNum * runParallelNum;
 
-        envReport.setRunSerialNum( runSerialNum);
+        envReport.setRunSerialNum(runSerialNum);
         envReport.setRunSerialActualNum(runSerialActualNum);
         envReport.setRunParallelNum(runParallelNum);
         envReport.setRunSaveCost(Toolkit.changeCostFormat(Long.valueOf(saveCost)));
@@ -981,44 +995,46 @@ public class MultiAIPlusController {
 
     /**
      * 函数功能:分数格式转换
+     *
      * @param a
      * @param b
      * @return
      */
-    public String changePecentFormat(Long a,Long b){
+    public String changePecentFormat(Long a, Long b) {
 
 
-        if (b==0|| a==0){
+        if (b == 0 || a == 0) {
             return "0";
         }
 
-        float bb = (float)a/(float)b;
-        DecimalFormat decimalFormat=new DecimalFormat("0");//构造方法的字符格式这里如果小数不足2位,会以0补足.
-        return decimalFormat.format(bb*100) + "%";
+        float bb = (float) a / (float) b;
+        DecimalFormat decimalFormat = new DecimalFormat("0");//构造方法的字符格式这里如果小数不足2位,会以0补足.
+        return decimalFormat.format(bb * 100) + "%";
     }
 
 
     /**
      * 函数功能:补充分层数据统计信息
      * 分层数据准备桶(总条数/实际执行条数/冗余度/节省时间sec/提速效率/总时间)
+     *
      * @param envReport
      * @return
      */
-    public EnvBasicReport addTreeDataToEnvBasicReport(EnvBasicReport envReport, Map<String, RunDs> runDataStaticMap, Map<String,Long> bucketCostMap){
+    public EnvBasicReport addTreeDataToEnvBasicReport(EnvBasicReport envReport, Map<String, RunDs> runDataStaticMap, Map<String, Long> bucketCostMap) {
 
         //用例依赖总数据量
-        Integer allNum=0;
+        Integer allNum = 0;
         //重复次数
-        Integer repeatNum=0;
+        Integer repeatNum = 0;
         //执行数据条数
-        Integer actrualNum=0;
+        Integer actrualNum = 0;
         //总耗时
         Integer cost = Integer.valueOf(String.valueOf(bucketCostMap.get(DUMP_TREE_BUCKET)));
         //预估普通回归耗时
-        Integer predictCost=0;
+        Integer predictCost = 0;
 
 
-        for (String ds :  runDataStaticMap.keySet()){
+        for (String ds : runDataStaticMap.keySet()) {
             RunDs runDsInfo = runDataStaticMap.get(ds);
             actrualNum += runDsInfo.getRecordNum();
             allNum += runDsInfo.getAllNum();
@@ -1026,13 +1042,13 @@ public class MultiAIPlusController {
         }
         //重复条
         repeatNum = allNum - actrualNum;
-        Float redundenPecent =(float)repeatNum/allNum;
+        Float redundenPecent = (float) repeatNum / allNum;
         //冗余度
-        String redundency=changePecentFormat(Long.valueOf(repeatNum),Long.valueOf(allNum));//format 返回的是字符串
+        String redundency = changePecentFormat(Long.valueOf(repeatNum), Long.valueOf(allNum));//format 返回的是字符串
         //节省时间
-        Integer saveCost = (int)(cost*redundenPecent/(1-redundenPecent));
+        Integer saveCost = (int) (cost * redundenPecent / (1 - redundenPecent));
         //提速效率计算
-        String speedUp=changePecentFormat(Long.valueOf(saveCost),Long.valueOf(cost));
+        String speedUp = changePecentFormat(Long.valueOf(saveCost), Long.valueOf(cost));
         envReport.setDumpTreeRecordNum(allNum);
         envReport.setDumpTreeActualRecordNum(actrualNum);
         envReport.setDumpTreeSaveCost(Toolkit.changeCostFormat(Long.valueOf(saveCost)));
@@ -1046,22 +1062,23 @@ public class MultiAIPlusController {
 
     /**
      * 函数功能:补充全量数据
+     *
      * @param envReport
      * @param runDataStaticMap
      * @param bucketCostMap
      * @return
      */
-    public EnvBasicReport adDumpAllDataToEnvBasicReport(EnvBasicReport envReport, Map<String, RunDs> runDataStaticMap, Map<String,Long> bucketCostMap){
+    public EnvBasicReport adDumpAllDataToEnvBasicReport(EnvBasicReport envReport, Map<String, RunDs> runDataStaticMap, Map<String, Long> bucketCostMap) {
 
         //用例依赖总数据量
-        Integer allNum=0;
+        Integer allNum = 0;
         //执行数据条数
-        Integer actrualNum=0;
+        Integer actrualNum = 0;
         //总耗时
         Integer cost = Integer.valueOf(String.valueOf(bucketCostMap.get(DUMP_ALL_BUCKET)));
 
 
-        for (String ds :  runDataStaticMap.keySet()){
+        for (String ds : runDataStaticMap.keySet()) {
             RunDs runDsInfo = runDataStaticMap.get(ds);
             actrualNum += runDsInfo.getRecordNum();
             allNum += runDsInfo.getAllNum();
@@ -1072,26 +1089,27 @@ public class MultiAIPlusController {
 
         return envReport;
     }
+
     /**
      * 函数功能:获取分环境报告数据
+     *
      * @param
      * @return
      */
-    public Map<String,ChartBasicInfo>  statisTreeChart(Map<String,Map<String, RunDs>> envRunDataStaticMap){
+    public Map<String, ChartBasicInfo> statisTreeChart(Map<String, Map<String, RunDs>> envRunDataStaticMap) {
 
 
-        Map<String,ChartBasicInfo> chartBasicInfo = new HashMap<>();
-        for (String envName : envRunDataStaticMap.keySet()){
-            for(String ds : envRunDataStaticMap.get(envName).keySet()){
-                if (!chartBasicInfo.containsKey(ds)){
+        Map<String, ChartBasicInfo> chartBasicInfo = new HashMap<>();
+        for (String envName : envRunDataStaticMap.keySet()) {
+            for (String ds : envRunDataStaticMap.get(envName).keySet()) {
+                if (!chartBasicInfo.containsKey(ds)) {
                     chartBasicInfo.put(ds, new ChartBasicInfo());
                 }
                 RunDs runDsInfo = envRunDataStaticMap.get(envName).get(ds);
                 //智能回归
-                if (openSmartRegress){
+                if (openSmartRegress) {
                     chartBasicInfo.get(ds).setAllNum(chartBasicInfo.get(ds).getAllNum() + runDsInfo.getAllNum());
-                }
-                else {
+                } else {
                     chartBasicInfo.get(ds).setAllNum(chartBasicInfo.get(ds).getActualNum() + runDsInfo.getRecordNum());
                 }
                 chartBasicInfo.get(ds).setActualNum(chartBasicInfo.get(ds).getActualNum() + runDsInfo.getRecordNum());
@@ -1104,14 +1122,15 @@ public class MultiAIPlusController {
 
     /**
      * 函数功能:获取分环境报告数据
+     *
      * @param
      * @return
      */
-    public Map<String,ChartBasicInfo>  statisDumpAllChart(Map<String, RunDs> dumpDataStaticMap){
+    public Map<String, ChartBasicInfo> statisDumpAllChart(Map<String, RunDs> dumpDataStaticMap) {
 
-        Map<String,ChartBasicInfo> chartBasicInfo = new HashMap<>();
-        for(String ds :dumpDataStaticMap.keySet()){
-            if (!chartBasicInfo.containsKey(ds)){
+        Map<String, ChartBasicInfo> chartBasicInfo = new HashMap<>();
+        for (String ds : dumpDataStaticMap.keySet()) {
+            if (!chartBasicInfo.containsKey(ds)) {
                 chartBasicInfo.put(ds, new ChartBasicInfo());
             }
             RunDs runDsInfo = dumpDataStaticMap.get(ds);
@@ -1126,22 +1145,22 @@ public class MultiAIPlusController {
 
     /**
      * 函数功能:获取整体报告统计数据
+     *
      * @param gotTestcaseSnapMap
      * @return
      */
-    public BasicReport statisBasicReport(Map<String, GotTestcaseSnaps> gotTestcaseSnapMap){
+    public BasicReport statisBasicReport(Map<String, GotTestcaseSnaps> gotTestcaseSnapMap) {
 
         BasicReport allReport = new BasicReport();
         int caseNum = 0;
         //计算all
-        for (GotTestcaseSnaps gotTestcaseSnaps : gotTestcaseSnapMap.values()){
+        for (GotTestcaseSnaps gotTestcaseSnaps : gotTestcaseSnapMap.values()) {
             //计算总用例数
-            caseNum++ ;
+            caseNum++;
             //计算成功失败用例总数
-            if(gotTestcaseSnaps.getStatus().equals(ResultStatus.SUCCESS.name())){
+            if (gotTestcaseSnaps.getStatus().equals(ResultStatus.SUCCESS.name())) {
                 sucessCaseNum++;
-            }
-            else{
+            } else {
                 failCaseNum++;
             }
         }
@@ -1150,10 +1169,9 @@ public class MultiAIPlusController {
         allReport.setSucessCaseNum(sucessCaseNum);
         allReport.setEnvNum(envNum);
         allReport.setRunTime(Toolkit.changeCostFormat(Long.valueOf(runtimeGap)));
-        if(openSmartRegress){
+        if (openSmartRegress) {
             allReport.setRegressionType("智能回归");
-        }
-        else{
+        } else {
             allReport.setRegressionType("普通回归");
         }
 
@@ -1185,7 +1203,7 @@ public class MultiAIPlusController {
         public Long scenarioId;
 
 
-        public MultiEnvTreeCaseThread(List<TestCaseAI> testcaseList, JSONObject pipelineObj, int parallelNum, GotReports gotReports, CountDownLatch countDownLatch, String envName, LinkedList<HashMap<String, LinkedList<DetailDataInfo>>> dumpData,Long scenarioId) {
+        public MultiEnvTreeCaseThread(List<TestCaseAI> testcaseList, JSONObject pipelineObj, int parallelNum, GotReports gotReports, CountDownLatch countDownLatch, String envName, LinkedList<HashMap<String, LinkedList<DetailDataInfo>>> dumpData, Long scenarioId) {
             this.parallelNum = parallelNum;
             this.gotReports = gotReports;
             this.pipelineObj = pipelineObj;
@@ -1197,30 +1215,29 @@ public class MultiAIPlusController {
             this.resetDs = new HashMap<>();
             this.resetModuleInfo = new HashMap<>();
             this.gotTestcaseSnapMap = new HashMap<>();
-            this.getFailCaseAIList=new ArrayList<>();
+            this.getFailCaseAIList = new ArrayList<>();
             this.getFailCaseBuckets = new HashMap<>();
             this.gotReports = gotReports;
             this.pipelineObj = pipelineObj;
             this.scenarioId = scenarioId;
-            this.failCaseBucket= new FailCaseBucket();
+            this.failCaseBucket = new FailCaseBucket();
 
         }
 
-        public Map<String, FailCaseBucket> getFailCaseBuckets(){
+        public Map<String, FailCaseBucket> getFailCaseBuckets() {
 
             failCaseBucket.setPipelineObj(pipelineObj);
             failCaseBucket.setGotReports(gotReports);
             failCaseBucket.setTestCaseAIList(getFailCaseAIList);
-            getFailCaseBuckets.put(envName,failCaseBucket);
+            getFailCaseBuckets.put(envName, failCaseBucket);
 
             return getFailCaseBuckets;
         }
 
 
-        public Map<String, GotTestcaseSnaps> getTestcaseSnapMap(){
+        public Map<String, GotTestcaseSnaps> getTestcaseSnapMap() {
             return gotTestcaseSnapMap;
         }
-
 
 
         /**
@@ -1243,14 +1260,14 @@ public class MultiAIPlusController {
                     }
 
                     //STEP1:用例执行树的建立
-                    buildQueue(testcaseList,"");
+                    buildQueue(testcaseList, "");
                     //STEP2:执行队列重排,将需要重启链路放置最后
                     runQueue = reSortQueue();
 
                     //STEP3:全量数据准备,去随机,主要是key-value这类明确的
                     Date start = new Date();
                     //STEP4:全量数据准备
-                    dataPrepareRun(dumpData, envName, pipelineObj,DUMP_ALL_BUCKET);
+                    dataPrepareRun(dumpData, envName, pipelineObj, DUMP_ALL_BUCKET);
                     Date end = new Date();
                     envBucketCostMap.get(envName).put(DUMP_ALL_BUCKET, end.getTime() - start.getTime());
                     if (isTaskStop(gotReports)) {
@@ -1266,32 +1283,33 @@ public class MultiAIPlusController {
             }
 
             Date end = new Date();
-            if(!envReportMap.containsKey(envName)){
+            if (!envReportMap.containsKey(envName)) {
                 envReportMap.put(envName, new EnvBasicReport());
             }
 
-            envReportMap.get(envName).setRunTime(Toolkit.changeCostFormat(end.getTime()-begin.getTime()));
+            envReportMap.get(envName).setRunTime(Toolkit.changeCostFormat(end.getTime() - begin.getTime()));
             countDownLatch.countDown();
         }
 
         /**
          * 函数功能:将传入的数据集进行一次准备
+         *
          * @return
          * @throws Exception
          */
-        public JSONObject dataPrepareRun(LinkedList<HashMap<String, LinkedList<DetailDataInfo>>> dumpData, String envName, JSONObject pipelineObj,String type) {
+        public JSONObject dataPrepareRun(LinkedList<HashMap<String, LinkedList<DetailDataInfo>>> dumpData, String envName, JSONObject pipelineObj, String type) {
 
             //每个阶段需要透出的全局数据
             Map<StageName, Object> stageParams = new HashMap<>();
 
             try {
-                Map<String, RunDs> runDsMap ;
+                Map<String, RunDs> runDsMap;
                 //全量数据桶
-                if (type.equals(DUMP_ALL_BUCKET)){
+                if (type.equals(DUMP_ALL_BUCKET)) {
                     runDsMap = dumpDataStaticMap;
                 }
                 //分层数据桶
-                else{
+                else {
                     runDsMap = envRunDataStaticMap.get(envName);
                 }
                 //占位符替换
@@ -1325,13 +1343,13 @@ public class MultiAIPlusController {
                 //统计每条记录的消耗时间
                 for (RunData runData : runDataList) {
 
-                    if (runData.getRunDsMap().size()==0){
+                    if (runData.getRunDsMap().size() == 0) {
                         continue;
                     }
 
-                    for (String dsStr : runData.getRunDsMap().keySet()){
-                        if(!runDsMap.containsKey(dsStr)){
-                            runDsMap.put(dsStr,new RunDs());
+                    for (String dsStr : runData.getRunDsMap().keySet()) {
+                        if (!runDsMap.containsKey(dsStr)) {
+                            runDsMap.put(dsStr, new RunDs());
                         }
                         runDsMap.get(dsStr).setRecordNum(runDsMap.get(dsStr).getRecordNum() + runData.getRunDsMap().get(dsStr).getRecordNum());
                         runDsMap.get(dsStr).setCost(runDsMap.get(dsStr).getCost() + runData.getRunDsMap().get(dsStr).getCost());
@@ -1402,7 +1420,7 @@ public class MultiAIPlusController {
 
                             Boolean reStartFlag = false;
                             String dsName = detailDataInfo.getDsName();
-                            String ds =getTypeDs(dsName);
+                            String ds = getTypeDs(dsName);
 
 
                             //遍历每个具体数据data
@@ -1589,6 +1607,7 @@ public class MultiAIPlusController {
          * 函数功能:更新matrix并对列表进行剪枝处理
          * 1.每次能在传递进来的队列中算出:数据<=>依赖用例数目的矩阵.
          * 2.更新抽取data后的list.并划分左右子树.
+         *
          * @param testcaseList
          * @return
          */
@@ -1618,7 +1637,7 @@ public class MultiAIPlusController {
             //非叶子节点,需要剪枝,处理最大queueNode
             QueueNode queueNode = getMaxAndRebootQueueNode(matrix);
             //判断该节点是否有重启
-            if(queueNode.restartFlag){
+            if (queueNode.restartFlag) {
                 leftTreeReStartFlag = "1";
             }
             //剪枝
@@ -1638,9 +1657,10 @@ public class MultiAIPlusController {
         /**
          * 函数功能:递归创建深度优先执行树
          * 树的执行顺序由队列表示
+         *
          * @param testcaseList
          */
-        public void buildQueue(List<TestCaseAI> testcaseList,String restartPath) {
+        public void buildQueue(List<TestCaseAI> testcaseList, String restartPath) {
 
             if (testcaseList.size() == 0) {
                 return;
@@ -1660,15 +1680,14 @@ public class MultiAIPlusController {
             List<TestCaseAI> leftCastList = matrixInfo.getLeftCaseList();
             List<TestCaseAI> rightCastList = matrixInfo.getRightCaseList();
             QueueNode queueUnit = matrixInfo.getQueueUnit();
-            if(queueUnit.restartFlag){
+            if (queueUnit.restartFlag) {
                 queueUnit.setRestartPath(restartPath + "1");
-            }
-            else {
+            } else {
                 queueUnit.setRestartPath(restartPath + "0");
             }
             runQueue.offer(queueUnit);
-            buildQueue(leftCastList,restartPath+matrixInfo.getLeftTreeReStartFlag());
-            buildQueue(rightCastList,restartPath+matrixInfo.getRightTreeReStartFlag());
+            buildQueue(leftCastList, restartPath + matrixInfo.getLeftTreeReStartFlag());
+            buildQueue(rightCastList, restartPath + matrixInfo.getRightTreeReStartFlag());
         }
 
 
@@ -1694,11 +1713,11 @@ public class MultiAIPlusController {
                 this.getFailCaseAIList = new ArrayList<>();
             }
 
-            public Map<String, GotTestcaseSnaps> getTestcaseSnapMap(){
+            public Map<String, GotTestcaseSnaps> getTestcaseSnapMap() {
                 return gotTestcaseSnapMap;
             }
 
-            public List<TestCaseAI> getFailCaseAIList(){
+            public List<TestCaseAI> getFailCaseAIList() {
                 return getFailCaseAIList;
             }
 
@@ -1788,9 +1807,9 @@ public class MultiAIPlusController {
                     testResponeList.add(testRespone);
 
 
-                    if(regAccuracy){
+                    if (regAccuracy) {
                         //需要获取覆盖
-                        try{
+                        try {
                             GotCaseAccuracy accuracy = new GotCaseAccuracy();
                             accuracy.setCaseId(testCaseAI.getId());
                             accuracy.setCollectType("single");
@@ -1798,7 +1817,7 @@ public class MultiAIPlusController {
                             accuracy.setCovLine(getCaseAccuracy(testCaseAI));
 
                             caseAccuracyService.save(accuracy);
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             System.out.println(e.getMessage());
                         }
 
@@ -1812,7 +1831,7 @@ public class MultiAIPlusController {
                         try {
                             anlysis = JSONObject.parseObject(gotReports.getAnalysis());
                             basicReport = anlysis.getJSONObject("basicReport");
-                        }catch(Exception e){
+                        } catch (Exception e) {
                             anlysis = new JSONObject();
                             basicReport = new JSONObject();
                             basicReport.put("sucessCaseNum", 0);
@@ -1834,7 +1853,7 @@ public class MultiAIPlusController {
                         anlysis.put("basicReport", basicReport);
                         gotReports.setAnalysis(anlysis.toJSONString());
                         saveReport(gotReports);
-                    }catch(Exception e){
+                    } catch (Exception e) {
                         //异常则skip..
                     }
 
@@ -1844,19 +1863,19 @@ public class MultiAIPlusController {
                 }
 
                 //记录成功的用例,失败的用例重试后如果还失败才会记录
-                if (gotTestcaseSnaps.getStatus().equals(ResultStatus.SUCCESS.name())){
-                    System.out.print("恭喜用例运行通过..."+ ",时间" +df.format(new Date()) + "\n");
+                if (gotTestcaseSnaps.getStatus().equals(ResultStatus.SUCCESS.name())) {
+                    System.out.print("恭喜用例运行通过..." + ",时间" + df.format(new Date()) + "\n");
                     saveGotTestcaseSnaps(gotTestcaseSnaps);
                 }
 
                 //失败桶记录
-                if (gotTestcaseSnaps.getStatus().equals(ResultStatus.ERROR.name())){
+                if (gotTestcaseSnaps.getStatus().equals(ResultStatus.ERROR.name())) {
                     gotTestcaseSnaps.setStatus("ERROR[已在失败桶等待重试]");
                     getFailCaseAIList.add(testCaseAI);
                     saveGotTestcaseSnaps(gotTestcaseSnaps);
-                    System.out.print("===========用例运行失败,进入失败桶等待重试..."+ ",时间" +df.format(new Date())+"===========\n");
+                    System.out.print("===========用例运行失败,进入失败桶等待重试..." + ",时间" + df.format(new Date()) + "===========\n");
                 }
-                gotTestcaseSnapMap.put(String.valueOf(testCaseAI.getId()),gotTestcaseSnaps);
+                gotTestcaseSnapMap.put(String.valueOf(testCaseAI.getId()), gotTestcaseSnaps);
 
                 countDownLatch.countDown();
             }
@@ -1864,6 +1883,7 @@ public class MultiAIPlusController {
 
         /**
          * 函数功能:并发执行用例query和check
+         *
          * @param caseIds
          */
         public void multiQueryAndQuery(List<Long> caseIds, JSONObject dataPrepareRunRes) throws InterruptedException {
@@ -1879,27 +1899,27 @@ public class MultiAIPlusController {
                 if (caseIds.contains(testCaseAI.getId())) {
 
                     //并行执行
-                    if(testCaseAI.isParallel()){
+                    if (testCaseAI.isParallel()) {
                         runTestcaseListBucket.add(testCaseAI);
                     }
                     //串行执行
-                    else{
+                    else {
                         runTestcaseListSerialBucket.add(testCaseAI);
                     }
                 }
             }
 
-            if (runTestcaseListBucket.size() == 0 && runTestcaseListSerialBucket.size()==0) {
-                return ;
+            if (runTestcaseListBucket.size() == 0 && runTestcaseListSerialBucket.size() == 0) {
+                return;
             }
 
 
-            if(runTestcaseListSerialBucket.size()>0){
-                System.out.print("开始执行串行用例集:" + runTestcaseListSerialBucket.size()+"\n");
+            if (runTestcaseListSerialBucket.size() > 0) {
+                System.out.print("开始执行串行用例集:" + runTestcaseListSerialBucket.size() + "\n");
 
                 //串行执行
                 for (TestCaseAI testCaseAI : runTestcaseListSerialBucket) {
-                    envRunBucketMap.put(envName,envRunBucketMap.get(envName)+1);
+                    envRunBucketMap.put(envName, envRunBucketMap.get(envName) + 1);
                     CountDownLatch countDownLatch = new CountDownLatch(1);
                     MultiRunCaseThread multiRunCaseThread;
                     List<MultiRunCaseThread> threadsList = new ArrayList<>();
@@ -1910,15 +1930,15 @@ public class MultiAIPlusController {
                     //主进程阻塞,如果部署线程执行结束则往下
                     countDownLatch.await();
                     //搜集所有的执行报告
-                    for (MultiRunCaseThread thread: threadsList){
+                    for (MultiRunCaseThread thread : threadsList) {
                         gotTestcaseSnapMap.putAll(thread.getTestcaseSnapMap());
                         getFailCaseAIList.addAll(thread.getFailCaseAIList());
                     }
                 }
             }
-            if(runTestcaseListBucket.size()>0){
+            if (runTestcaseListBucket.size() > 0) {
 
-                envRunBucketMap.put(envName,envRunBucketMap.get(envName)+1);
+                envRunBucketMap.put(envName, envRunBucketMap.get(envName) + 1);
                 //并行执行
                 CountDownLatch countDownLatch = new CountDownLatch(runTestcaseListBucket.size());
                 MultiRunCaseThread multiRunCaseThread;
@@ -1935,7 +1955,7 @@ public class MultiAIPlusController {
                 //主进程阻塞,如果部署线程执行结束则往下
                 countDownLatch.await();
                 //搜集所有的执行报告
-                for (MultiRunCaseThread thread: threadsList){
+                for (MultiRunCaseThread thread : threadsList) {
                     gotTestcaseSnapMap.putAll(thread.getTestcaseSnapMap());
                     getFailCaseAIList.addAll(thread.getFailCaseAIList());
                 }
@@ -1946,25 +1966,26 @@ public class MultiAIPlusController {
 
         /**
          * 函数功能:统计数据准备的冗余度和总量
+         *
          * @param unit
          */
-        public void calStaticRunData(QueueNode unit){
+        public void calStaticRunData(QueueNode unit) {
 
             Map<String, RunDs> runDataStaticMap = envRunDataStaticMap.get(envName);
 
-            for(HashMap<String, LinkedList<DetailDataInfo>> typeInfo : unit.getPrepareData()){
+            for (HashMap<String, LinkedList<DetailDataInfo>> typeInfo : unit.getPrepareData()) {
 
-                for (String type : typeInfo.keySet()){
+                for (String type : typeInfo.keySet()) {
                     LinkedList<DetailDataInfo> list = typeInfo.get(type);
-                    for (DetailDataInfo detailDataInfo : list){
-                        String ds =detailDataInfo.getDsName();
+                    for (DetailDataInfo detailDataInfo : list) {
+                        String ds = detailDataInfo.getDsName();
                         String typeDs = type + ":" + getTypeDs(ds);
 
-                        if (!runDataStaticMap.containsKey(typeDs)){
-                            runDataStaticMap.put(typeDs,new RunDs());
+                        if (!runDataStaticMap.containsKey(typeDs)) {
+                            runDataStaticMap.put(typeDs, new RunDs());
                         }
-                        runDataStaticMap.get(typeDs).setAllNum(runDataStaticMap.get(typeDs).getAllNum()+unit.getCaseNum());
-                        runDataStaticMap.get(typeDs).setRepeatNum(runDataStaticMap.get(typeDs).getRepeatNum() + unit.getCaseNum()-1);
+                        runDataStaticMap.get(typeDs).setAllNum(runDataStaticMap.get(typeDs).getAllNum() + unit.getCaseNum());
+                        runDataStaticMap.get(typeDs).setRepeatNum(runDataStaticMap.get(typeDs).getRepeatNum() + unit.getCaseNum() - 1);
                     }
                 }
             }
@@ -1972,46 +1993,46 @@ public class MultiAIPlusController {
 
         /**
          * 函数功能:数据准备合并过程
+         *
          * @param dumpData
          * @param prepareData
          * @return
          */
-        public LinkedList<HashMap<String, LinkedList<DetailDataInfo>>> mergeRunData(LinkedList<HashMap<String, LinkedList<DetailDataInfo>>> dumpData, LinkedList<HashMap<String, LinkedList<DetailDataInfo>>>  prepareData){
+        public LinkedList<HashMap<String, LinkedList<DetailDataInfo>>> mergeRunData(LinkedList<HashMap<String, LinkedList<DetailDataInfo>>> dumpData, LinkedList<HashMap<String, LinkedList<DetailDataInfo>>> prepareData) {
 
 
             //dump集合为空
-            if (dumpData.size()==0){
+            if (dumpData.size() == 0) {
                 dumpData = prepareData;
-            }
-            else{
-                for (int groupNum=0; groupNum < prepareData.size(); groupNum++){
-                    HashMap<String, LinkedList<DetailDataInfo>> dumpDataMap= dumpData.get(groupNum);
-                    HashMap<String, LinkedList<DetailDataInfo>> dataMap= prepareData.get(groupNum);
+            } else {
+                for (int groupNum = 0; groupNum < prepareData.size(); groupNum++) {
+                    HashMap<String, LinkedList<DetailDataInfo>> dumpDataMap = dumpData.get(groupNum);
+                    HashMap<String, LinkedList<DetailDataInfo>> dataMap = prepareData.get(groupNum);
 
-                    for (String dataType: dataMap.keySet()){
+                    for (String dataType : dataMap.keySet()) {
                         LinkedList<DetailDataInfo> dataList = dataMap.get(dataType);
                         LinkedList<DetailDataInfo> dumpDataList = dumpDataMap.get(dataType);
                         //如果全新的datatype
-                        if (!dumpDataMap.containsKey(dataType)){
-                            dumpDataMap.put(dataType,dataMap.get(dataType));
+                        if (!dumpDataMap.containsKey(dataType)) {
+                            dumpDataMap.put(dataType, dataMap.get(dataType));
                         }
                         //如果已存在
-                        else{
-                            for (int listNum=0; listNum < dataList.size();  listNum++){
+                        else {
+                            for (int listNum = 0; listNum < dataList.size(); listNum++) {
                                 Boolean flag = true;
 
                                 DetailDataInfo detailDataInfo = dataList.get(listNum);
                                 //遍历dump
-                                for (int listDumpNum=0; listDumpNum < dumpDataList.size();  listDumpNum++){
+                                for (int listDumpNum = 0; listDumpNum < dumpDataList.size(); listDumpNum++) {
                                     DetailDataInfo dumpDetailDataInfo = dumpDataList.get(listDumpNum);
                                     //如果ds相等,则record直接合并
-                                    if (dumpDetailDataInfo.getDsName().equals(detailDataInfo.getDsName())){
+                                    if (dumpDetailDataInfo.getDsName().equals(detailDataInfo.getDsName())) {
                                         flag = false;
                                         dumpDetailDataInfo.getData().addAll(detailDataInfo.getData());
                                     }
                                 }
                                 //如果不存在ds
-                                if (flag){
+                                if (flag) {
                                     dumpDataList.add(detailDataInfo);
                                 }
                             }
@@ -2048,7 +2069,7 @@ public class MultiAIPlusController {
                 else {
                     //运行分层数据准备
                     Date start = new Date();
-                    JSONObject dataPrepareRunRes = dataPrepareRun(dumpLayerData, envName, pipelineObj,DUMP_TREE_BUCKET);
+                    JSONObject dataPrepareRunRes = dataPrepareRun(dumpLayerData, envName, pipelineObj, DUMP_TREE_BUCKET);
                     Date end = new Date();
                     dumpTreeTime += end.getTime() - start.getTime();
 
@@ -2063,7 +2084,7 @@ public class MultiAIPlusController {
                         runTreeTime += end.getTime() - start.getTime();
 
                     } catch (Exception e) {
-                        System.out.print("分层快速执行失败:原因:" + Toolkit.getErrorStackTrace(e)+"\n");
+                        System.out.print("分层快速执行失败:原因:" + Toolkit.getErrorStackTrace(e) + "\n");
                     }
 
                     //清空分层数据集
@@ -2077,12 +2098,13 @@ public class MultiAIPlusController {
 
         /**
          * 函数功能:clone队列
+         *
          * @param queue
          * @return
          */
-        public Queue<QueueNode> cloneQueue(Queue<QueueNode> queue){
+        public Queue<QueueNode> cloneQueue(Queue<QueueNode> queue) {
             Queue<QueueNode> cloneQueue = new LinkedList<>();
-            for (QueueNode queueNode: queue){
+            for (QueueNode queueNode : queue) {
                 cloneQueue.offer((QueueNode) queueNode.clone());
             }
             return cloneQueue;
@@ -2092,24 +2114,25 @@ public class MultiAIPlusController {
         /**
          * 函数功能:队列重排
          * 将执将需要重启的链路放置尾部
+         *
          * @return
          */
-        public Queue<QueueNode> reSortQueue(){
+        public Queue<QueueNode> reSortQueue() {
             Queue<QueueNode> eachQueue = new LinkedList<>();
             Queue<QueueNode> queueList1 = new LinkedList<>();
             Queue<QueueNode> queueList2 = new LinkedList<>();
 
             //扫描队列
-            for (QueueNode queueNode : runQueue){
+            for (QueueNode queueNode : runQueue) {
 
                 eachQueue.offer(queueNode);
 
-                if (queueNode.getDataType().equals(QUERY_CHECK) && queueNode.getRestartPath().contains("1")){
+                if (queueNode.getDataType().equals(QUERY_CHECK) && queueNode.getRestartPath().contains("1")) {
                     queueList1.addAll(cloneQueue(eachQueue));
                     eachQueue = new LinkedList<>();
                 }
 
-                if (queueNode.getDataType().equals(QUERY_CHECK) && !queueNode.getRestartPath().contains("1")){
+                if (queueNode.getDataType().equals(QUERY_CHECK) && !queueNode.getRestartPath().contains("1")) {
                     queueList2.addAll(cloneQueue(eachQueue));
                     eachQueue = new LinkedList<>();
                 }
@@ -2122,24 +2145,21 @@ public class MultiAIPlusController {
         }
 
 
-
-
-
-
     }
-    public String getCaseAccuracy(TestCaseAI testCaseAI){
+
+    public String getCaseAccuracy(TestCaseAI testCaseAI) {
         //需要用户基于实际使用的覆盖统计方案，获取每个用例执行后的覆盖代码行
         //demo中通过mock数据，获取用例覆盖代码
         String res = "";
         try {
-            JSONObject  caseQuery = JSONObject.parseObject(testCaseAI.getCaseRunStage().get(0).getData().get(0).input);
+            JSONObject caseQuery = JSONObject.parseObject(testCaseAI.getCaseRunStage().get(0).getData().get(0).input);
             List<String> covList = CovMock.getCaseCovMock(caseQuery);
 
-            for(String line : covList){
+            for (String line : covList) {
                 res += (line + "\n");
             }
             res = res.trim();
-        }catch(Exception e){
+        } catch (Exception e) {
             //
         }
         return res;
@@ -2171,29 +2191,29 @@ public class MultiAIPlusController {
         /**
          * 函数功能:失败用例重跑策略
          * 说明:用户可自定义,比如全部失败的用例只跑其中10%,小于某个阈值的用例集需要全部重跑
+         *
          * @param testCaseAIList
          * @return
          */
-        public List<TestCaseAI>  selectReRunCaseList (List<TestCaseAI>  testCaseAIList ){
+        public List<TestCaseAI> selectReRunCaseList(List<TestCaseAI> testCaseAIList) {
 
             int selectNum = 0;
             int limit = testCaseAIList.size();
 
 
             //策略:此处limit可限制重跑个数阈值
-            if(testCaseAIList.size() > limit){
+            if (testCaseAIList.size() > limit) {
                 selectNum = limit;
-            }
-            else{
+            } else {
                 selectNum = testCaseAIList.size();
             }
 
-            List<TestCaseAI>  selectCaseAIList = new ArrayList<>();
+            List<TestCaseAI> selectCaseAIList = new ArrayList<>();
 
-            for (int i=0;i< selectNum;i++){
+            for (int i = 0; i < selectNum; i++) {
                 selectCaseAIList.add(testCaseAIList.get(i));
             }
-            for(int i=selectNum;i< testCaseAIList.size();i++){
+            for (int i = selectNum; i < testCaseAIList.size(); i++) {
                 TestCaseAI testCaseAI = testCaseAIList.get(i);
                 GotTestcaseSnaps gotTestcaseSnaps = gotTestcaseSnapMap.get(String.valueOf(testCaseAI.getId()));
                 gotTestcaseSnaps.setStatus(ResultStatus.ERROR.name() + "[未重试]");
@@ -2207,6 +2227,7 @@ public class MultiAIPlusController {
 
         /**
          * 函数功能:重跑失败用例并进行最终状态设置
+         *
          * @param testCaseAIList
          * @param deployMap
          * @param pipelineObj
@@ -2214,7 +2235,7 @@ public class MultiAIPlusController {
          * @return
          * @throws IOException
          */
-        public List<TestCaseAI>  runFailCaseList(List<TestCaseAI> testCaseAIList, Map<String, String>deployMap, JSONObject pipelineObj, GotReports gotReports) throws IOException {
+        public List<TestCaseAI> runFailCaseList(List<TestCaseAI> testCaseAIList, Map<String, String> deployMap, JSONObject pipelineObj, GotReports gotReports) throws IOException {
 
             //每个阶段需要透出的全局数据
             Map<StageName, Object> stageParams = new HashMap<>();
@@ -2237,14 +2258,14 @@ public class MultiAIPlusController {
             //重跑失败桶用例集
             for (TestCaseAI testCaseAI : testCaseAIList) {
 
-                try{
+                try {
 
 
-                    System.out.print( "==========执行失败桶用例id:" + testCaseAI.getId() + ",时间" + df.format(new Date()) + "===========\n");
+                    System.out.print("==========执行失败桶用例id:" + testCaseAI.getId() + ",时间" + df.format(new Date()) + "===========\n");
                     appId = testCaseAI.getAppId();
                     scenarioId = testCaseAI.getScenarioId();
 
-                    System.out.print( "失败重试和智能排查阶段:执行用例,id:" + testCaseAI.getId());
+                    System.out.print("失败重试和智能排查阶段:执行用例,id:" + testCaseAI.getId());
                     //任务中断
                     if (isTaskStop(gotReports)) {
                         return testCaseAIList;
@@ -2315,14 +2336,13 @@ public class MultiAIPlusController {
                         gotTestcaseSnapMap.put(String.valueOf(testCaseAI.getId()), gotTestcaseSnaps);
 
                     }
-                }
-                catch (Exception e){
-                    System.out.print("[重试阶段]用例回归过程异常:"+ Toolkit.getErrorStackTrace(e));
+                } catch (Exception e) {
+                    System.out.print("[重试阶段]用例回归过程异常:" + Toolkit.getErrorStackTrace(e));
                 }
 
             }
 
-            return testCaseAIList ;
+            return testCaseAIList;
 
         }
 
@@ -2331,7 +2351,7 @@ public class MultiAIPlusController {
             try {
                 runFailCaseList(serialCaseList, deployMap, pipelineObj, gotReports);
             } catch (Exception e) {
-                System.out.print( "重试桶线程异常:" + Toolkit.getErrorStackTrace(e));
+                System.out.print("重试桶线程异常:" + Toolkit.getErrorStackTrace(e));
             }
             countDownLatch.countDown();
         }
@@ -2340,6 +2360,7 @@ public class MultiAIPlusController {
 
     /**
      * 函数功能:失败用例重跑
+     *
      * @param gotReports
      * @return
      */
@@ -2354,14 +2375,14 @@ public class MultiAIPlusController {
                 SingleEnvRunCaseThread singleEnvRunCaseThread;
                 List<SingleEnvRunCaseThread> threadsList = new ArrayList<>();
 
-                Map<String,String> deployMap= null;
+                Map<String, String> deployMap = null;
                 //重跑
                 for (String envName : failCaseBuckets.keySet()) {
                     FailCaseBucket failCaseBucket = failCaseBuckets.get(envName);
                     JSONObject pipelineObj = failCaseBucket.getPipelineObj();
                     List<TestCaseAI> testCaseAIList = failCaseBucket.getTestCaseAIList();
                     System.out.print(("执行失败用例集,用例数:" + testCaseAIList.size() + ",环境名为:" + envName));
-                    singleEnvRunCaseThread = new SingleEnvRunCaseThread(testCaseAIList,deployMap, pipelineObj, gotReports,countDownLatch, envName);
+                    singleEnvRunCaseThread = new SingleEnvRunCaseThread(testCaseAIList, deployMap, pipelineObj, gotReports, countDownLatch, envName);
                     singleEnvRunCaseThread.setDaemon(true);
                     singleEnvRunCaseThread.start();
                     threadsList.add(singleEnvRunCaseThread);
@@ -2381,6 +2402,7 @@ public class MultiAIPlusController {
 
     /**
      * 函数功能:保存测试报告
+     *
      * @param gotReports
      */
     public void saveReport(GotReports gotReports) {
@@ -2389,6 +2411,7 @@ public class MultiAIPlusController {
 
     /**
      * 函数功能:插入测试报告
+     *
      * @param gotReports
      */
     public void insertReport(GotReports gotReports) {
@@ -2397,6 +2420,7 @@ public class MultiAIPlusController {
 
     /**
      * 函数功能:保存测试用例快照
+     *
      * @param gotTestcaseSnaps
      * @return
      */
@@ -2407,6 +2431,7 @@ public class MultiAIPlusController {
 
     /**
      * 函数功能:占位符替换
+     *
      * @param testCase
      * @return
      */
@@ -2459,26 +2484,27 @@ public class MultiAIPlusController {
             this.envName = envName;
         }
 
-        public List<TestRespone> getResult(){
+        public List<TestRespone> getResult() {
             return testResponeList;
         }
 
 
         /**
          * 函数功能:
+         *
          * @return
          * @throws Exception
          */
-        public List<TestRespone> runCaseList(List<TestCaseAI>  serialCaseList , JSONObject pipelineObj, GotReports gotReports, String envName){
+        public List<TestRespone> runCaseList(List<TestCaseAI> serialCaseList, JSONObject pipelineObj, GotReports gotReports, String envName) {
 
-            try{
-                Map<StageName,Object> stageParams = new HashMap<>();
+            try {
+                Map<StageName, Object> stageParams = new HashMap<>();
                 List<StageName> stageNameList = new ArrayList<>();
                 stageNameList.add(StageName.prepareData);
                 stageNameList.add(StageName.caseRunStage);
                 List<TestRespone> testResponeList = new ArrayList<>();
 
-                if(serialCaseList.size() == 0){
+                if (serialCaseList.size() == 0) {
                     return testResponeList;
                 }
 
@@ -2488,12 +2514,12 @@ public class MultiAIPlusController {
                 Integer failNum = 0;
                 Integer successNum = 0;
                 //遍历执行用例集
-                for(TestCaseAI testCaseAI : serialCaseList){
+                for (TestCaseAI testCaseAI : serialCaseList) {
 
-                    envRunBucketMap.put(envName,envRunBucketMap.get(envName)+1);
-                    System.out.print("==========开始执行用例id:" + testCaseAI.getId() + ",时间" +df.format(new Date()) + "===========\n");
+                    envRunBucketMap.put(envName, envRunBucketMap.get(envName) + 1);
+                    System.out.print("==========开始执行用例id:" + testCaseAI.getId() + ",时间" + df.format(new Date()) + "===========\n");
                     //任务中断
-                    if (isTaskStop(gotReports)){
+                    if (isTaskStop(gotReports)) {
                         return null;
                     }
 
@@ -2537,7 +2563,7 @@ public class MultiAIPlusController {
                                 //填充返回结果
                                 testRespone = bs.setTestRespone(testRespone);
                             } while (i <= retryNum && !testRespone.getStatus().equals(ResultStatus.SUCCESS));
-                            gotTestcaseSnaps.setRetryNum(i-1);
+                            gotTestcaseSnaps.setRetryNum(i - 1);
 
                             //统计每次数据准备花费的消耗
                             try {
@@ -2561,7 +2587,7 @@ public class MultiAIPlusController {
                                         }
                                     }
                                 }
-                            }catch(Exception e){
+                            } catch (Exception e) {
                                 //
                             }
                         }
@@ -2595,16 +2621,16 @@ public class MultiAIPlusController {
                         testResponeList.add(testRespone);
 
                         //记录已执行用例数量，计算执行进度
-                        if(testRespone.getStatus().name().equals(SUCCESS)){
+                        if (testRespone.getStatus().name().equals(SUCCESS)) {
                             successNum++;
-                        }else{
+                        } else {
                             failNum++;
                         }
 
 
-                        if(regAccuracy){
+                        if (regAccuracy) {
                             //需要获取覆盖
-                            try{
+                            try {
                                 GotCaseAccuracy accuracy = new GotCaseAccuracy();
                                 accuracy.setCaseId(testCaseAI.getId());
                                 accuracy.setCollectType("single");
@@ -2612,7 +2638,7 @@ public class MultiAIPlusController {
                                 accuracy.setCovLine(getCaseAccuracy(testCaseAI));
 
                                 caseAccuracyService.save(accuracy);
-                            }catch (Exception e){
+                            } catch (Exception e) {
                                 System.out.println(e.getMessage());
                             }
 
@@ -2620,50 +2646,47 @@ public class MultiAIPlusController {
 
                         JSONObject anlysis = new JSONObject();
                         JSONObject basicReport = new JSONObject();
-                        basicReport.put("caseNum",gotReports.getCaseNum());
+                        basicReport.put("caseNum", gotReports.getCaseNum());
                         basicReport.put("sucessCaseNum", successNum);
                         basicReport.put("failCaseNum", failNum);
                         anlysis.put("basicReport", basicReport);
                         gotReports.setAnalysis(anlysis.toJSONString());
                         saveReport(gotReports);
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         logger.error("run case error: " + Toolkit.getErrorStackTrace(e));
                         gotTestcaseSnaps.setStatus(ResultStatus.ERROR.name());
 
                     }
 
                     //记录成功的用例,失败的用例重试后如果还失败才会记录
-                    if (gotTestcaseSnaps.getStatus().equals(ResultStatus.SUCCESS.name())){
-                        System.out.println( "恭喜用例运行通过..."+ ",时间" +df.format(new Date())+"\n" );
+                    if (gotTestcaseSnaps.getStatus().equals(ResultStatus.SUCCESS.name())) {
+                        System.out.println("恭喜用例运行通过..." + ",时间" + df.format(new Date()) + "\n");
                         saveGotTestcaseSnaps(gotTestcaseSnaps);
                     }
 
                     //失败桶记录
-                    if (gotTestcaseSnaps.getStatus().equals(ResultStatus.ERROR.name())){
+                    if (gotTestcaseSnaps.getStatus().equals(ResultStatus.ERROR.name())) {
                         gotTestcaseSnaps.setStatus("ERROR[已在失败桶等待重试]");
                         saveGotTestcaseSnaps(gotTestcaseSnaps);
-                        logger.info("===========用例运行失败,进入失败桶等待重试..."+ ",时间" +df.format(new Date())+"===========");
+                        logger.info("===========用例运行失败,进入失败桶等待重试..." + ",时间" + df.format(new Date()) + "===========");
 
-                        if (!failCaseBuckets.containsKey(envName)){
+                        if (!failCaseBuckets.containsKey(envName)) {
                             testCaseAI.setCaseSnapId(gotTestcaseSnaps.getId());
-                            failCaseBuckets.put(envName,new FailCaseBucket());
+                            failCaseBuckets.put(envName, new FailCaseBucket());
                             failCaseBuckets.get(envName).setPipelineObj(pipelineObj);
                             failCaseBuckets.get(envName).setGotReports(gotReports);
                             failCaseBuckets.get(envName).setTestCaseAIList(new ArrayList<>());
                             failCaseBuckets.get(envName).getTestCaseAIList().add(testCaseAI);
-                        }
-                        else {
+                        } else {
                             failCaseBuckets.get(envName).getTestCaseAIList().add(testCaseAI);
                         }
                     }
-                    gotTestcaseSnapMap.put(String.valueOf(testCaseAI.getId()),gotTestcaseSnaps);
+                    gotTestcaseSnapMap.put(String.valueOf(testCaseAI.getId()), gotTestcaseSnaps);
 
                 }
 
                 return testResponeList;
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 logger.error("运行过程出现异常,请检查!" + Toolkit.getErrorStackTrace(e));
                 return null;
             }
@@ -2676,18 +2699,18 @@ public class MultiAIPlusController {
                 testResponeList = runCaseList(serialCaseList, pipelineObj, gotReports, envName);
 
             } catch (Exception e) {
-                System.out.println("[普通回归]用例回归过程异常:"+ Toolkit.getErrorStackTrace(e));
+                System.out.println("[普通回归]用例回归过程异常:" + Toolkit.getErrorStackTrace(e));
             }
             countDownLatch.countDown();
         }
     }
 
 
-    public int getRetryNum(JSONObject pipelineBsJson){
+    public int getRetryNum(JSONObject pipelineBsJson) {
         int retryNum = 0;
-        if (pipelineBsJson != null && pipelineBsJson.containsKey(PARAMS)){
-            JSONObject paramsObj = (JSONObject)pipelineBsJson.get(PARAMS);
-            retryNum = paramsObj.containsKey("retryNum") ? (int)paramsObj.get("retryNum") : 0;
+        if (pipelineBsJson != null && pipelineBsJson.containsKey(PARAMS)) {
+            JSONObject paramsObj = (JSONObject) pipelineBsJson.get(PARAMS);
+            retryNum = paramsObj.containsKey("retryNum") ? (int) paramsObj.get("retryNum") : 0;
         }
         return retryNum;
     }
@@ -2695,66 +2718,67 @@ public class MultiAIPlusController {
 
     /**
      * 函数功能:将用例快照页信息进行聚合
+     *
      * @param testcase
      * @param testRespone
      * @return
      */
-    public String pack(TestCaseAI testcase, TestRespone testRespone){
+    public String pack(TestCaseAI testcase, TestRespone testRespone) {
         JSONObject content = new JSONObject();
 
         testRespone.setTestCaseId(testcase.getId());
-        content.put(StageName.prepareData.name(),testcase.getPrepareDataSnap());
-        content.put(StageName.caseRunStage.name(),testcase.getCaseRunStage());
+        content.put(StageName.prepareData.name(), testcase.getPrepareDataSnap());
+        content.put(StageName.caseRunStage.name(), testcase.getCaseRunStage());
 
         //去掉reponse中的log
-        try{
-            for(String groupName : testRespone.getRunStage().keySet()){
-                for(RunData runData : testRespone.getRunStage().get(groupName)){
+        try {
+            for (String groupName : testRespone.getRunStage().keySet()) {
+                for (RunData runData : testRespone.getRunStage().get(groupName)) {
                     runData.setLog("no log");
                 }
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
 
         }
 
-        content.put(StageName.response.name(),testRespone.getRunStage());
+        content.put(StageName.response.name(), testRespone.getRunStage());
         return gson.toJson(content);
     }
 
 
     /**
      * 函数功能:对用例列表进行分组
+     *
      * @param parallelCaseList
      * @param parallelNum
      * @param i
      * @return
      */
-    public List<TestCaseAI> testCaseSplit(List<TestCaseAI> parallelCaseList,int parallelNum, int i){
+    public List<TestCaseAI> testCaseSplit(List<TestCaseAI> parallelCaseList, int parallelNum, int i) {
 
         List<TestCaseAI> calCaseList = new ArrayList<>();
-        int divNum = parallelCaseList.size()/parallelNum;
+        int divNum = parallelCaseList.size() / parallelNum;
 
         //返回为空
-        if(parallelCaseList==null || parallelCaseList.size() == 0){
+        if (parallelCaseList == null || parallelCaseList.size() == 0) {
             return calCaseList;
         }
         //如果case数不大于并行数,每次只返回一个
-        else if(divNum == 0 ){
-            if( parallelCaseList.size() > i){
+        else if (divNum == 0) {
+            if (parallelCaseList.size() > i) {
                 calCaseList.add(parallelCaseList.get(i));
             }
         }
         //如果case数大于并行数,每次只返回一个
         else {
-            int modNum = parallelCaseList.size()%parallelNum;
+            int modNum = parallelCaseList.size() % parallelNum;
             int start = divNum * i;
             int end = parallelCaseList.size();
             //最后一组
-            if(i+1 < parallelNum){
+            if (i + 1 < parallelNum) {
                 end = start + divNum;
             }
-            for(int n = start ; n< end ; n++){
+            for (int n = start; n < end; n++) {
                 calCaseList.add(parallelCaseList.get(n));
             }
         }
@@ -2763,49 +2787,46 @@ public class MultiAIPlusController {
 
     /**
      * 函数功能:对用例集根据环境数进行串行和并行分组
+     *
      * @param testcaseGroup
      * @param parallelNum
      * @param i
      * @return
      */
-    public Map<String, List<TestCaseAI>>  getTestcaseEnvGroup(Map<String, List<TestCaseAI>>  testcaseGroup, int parallelNum,int i){
+    public Map<String, List<TestCaseAI>> getTestcaseEnvGroup(Map<String, List<TestCaseAI>> testcaseGroup, int parallelNum, int i) {
 
         Map<String, List<TestCaseAI>> testcaseEnvGroup = new HashMap<>();
         //caseBycase的模式下,并行桶切分就暂时注释
-        testcaseEnvGroup.put(SERIAL, testCaseSplit(testcaseGroup.get(SERIAL),parallelNum,i));
+        testcaseEnvGroup.put(SERIAL, testCaseSplit(testcaseGroup.get(SERIAL), parallelNum, i));
         return testcaseEnvGroup;
     }
 
 
-
     /**
      * 函数功能:将运行时间格式化
+     *
      * @param seconds 01:15:33
      * @return
      */
-    public String formatTime(long seconds){
+    public String formatTime(long seconds) {
 
         long temp;
-        StringBuffer sb=new StringBuffer();
-        temp = seconds/3600;
-        sb.append((temp<10)?"0"+temp+":":""+temp+":");
+        StringBuffer sb = new StringBuffer();
+        temp = seconds / 3600;
+        sb.append((temp < 10) ? "0" + temp + ":" : "" + temp + ":");
 
-        temp=seconds%3600/60;
-        sb.append((temp<10)?"0"+temp+":":""+temp+":");
+        temp = seconds % 3600 / 60;
+        sb.append((temp < 10) ? "0" + temp + ":" : "" + temp + ":");
 
-        temp=seconds%3600%60;
-        sb.append((temp<10)?"0"+temp:""+temp);
+        temp = seconds % 3600 % 60;
+        sb.append((temp < 10) ? "0" + temp : "" + temp);
 
         return sb.toString();
     }
 
 
-
-
-
     public static void main(String[] args)
             throws Exception {
-
 
 
     }

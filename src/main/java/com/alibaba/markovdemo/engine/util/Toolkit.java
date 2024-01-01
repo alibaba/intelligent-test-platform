@@ -6,12 +6,8 @@ import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-import java.io.*;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.net.InetAddress;
-import java.text.ParseException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -63,49 +59,6 @@ public class Toolkit {
     private static String MENU_DATA_MENU_ID = "menu_reflection";
     private static String MENU_DATA_MENU_ID_4BU = "menu_reflection_4_bu";
 
-    public static String strtotime(String str, String seprator) {
-
-        if (str.indexOf("timeStamp" +
-                "" +
-                "(") > 0 || str.indexOf("date(") > 0) {
-            List<String> strList = new ArrayList<String>();
-            Calendar calendar = Calendar.getInstance();
-            int date;
-            String[] timeList = str.split(seprator + "\\(");
-            for (String elem : timeList) {
-                String[] tmp = elem.split("\\)");
-                if (tmp.length == 2) {
-                    String timeStamp = "";
-                    if (tmp[0].contains(" days")) {
-                        tmp[0] = tmp[0].replace(" days", "");
-
-                        date = Integer.parseInt(tmp[0]);
-                        calendar.add(Calendar.DAY_OF_YEAR, date);
-                    }
-                    if (tmp[0].contains(" hours")) {
-                        tmp[0] = tmp[0].replace(" hours", "");
-                        date = Integer.parseInt(tmp[0]);
-                        calendar.add(Calendar.HOUR_OF_DAY, date);
-                    }
-                    if ("timeStamp".equals(seprator)) {
-                        timeStamp = String.valueOf(calendar.getTimeInMillis() / 1000);
-                    } else {
-                        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
-                        timeStamp = (format.format(calendar.getTime()));
-                    }
-
-                    strList.add(timeStamp);
-                    strList.add(tmp[1]);
-                }
-                if (tmp.length == 1) {
-                    strList.add(tmp[0]);
-                }
-            }
-            str = implode("", strList);
-        }
-        return str;
-    }
-
     /**
      * @param elementSeprator List元素的连接符
      * @param list            待连接的List
@@ -126,155 +79,6 @@ public class Toolkit {
         result += list.get(i);
         return result;
     }
-
-    public static String implode(String elementSeprator, Set<Long> set) {
-
-        List list = new ArrayList(set);
-        String result = "";
-        int i;
-
-        if (list.size() == 0) {
-            return result;
-        }
-
-        for (i = 0; i < list.size() - 1; i++) {
-            result += list.get(i) + elementSeprator;
-        }
-        result += list.get(i);
-        return result;
-    }
-
-
-    /**
-     * 函数功能
-     * 将String按照分隔符切分,写入map中
-     *
-     * @param str
-     * @param elementSeprator
-     * @param kvSeprator
-     * @return
-     */
-    public static Map<String, String> explode2Map(String str, String elementSeprator, String kvSeprator) {
-
-        Map<String, String> map = new HashMap<String, String>();
-        String[] arr = str.split(elementSeprator);
-        List<String> tmp;
-        String key = null;
-        String value = null;
-        for (int i = 0; i < arr.length; i++) {
-            tmp = new ArrayList<String>(Arrays.asList(arr[i].split(kvSeprator)));
-            if (tmp.size() == 2) {
-                key = tmp.get(0);
-                value = tmp.get(1);
-            } else if (tmp.size() > 2) {
-                key = tmp.get(0);
-                tmp.remove(0);
-                value = implode(kvSeprator, tmp);
-            }
-            map.put(key, value);
-        }
-        return map;
-    }
-
-
-
-    public static String explode2Json(String str, String elementSeprator, String kvSeprator) {
-
-        JSONObject map = new JSONObject();
-        String[] arr = str.split(elementSeprator);
-        List<String> tmp;
-        String key = null;
-        String value = null;
-        for (int i = 0; i < arr.length; i++) {
-            tmp = new ArrayList<String>(Arrays.asList(arr[i].split(kvSeprator)));
-            if (tmp.size() == 2) {
-                key = tmp.get(0);
-                value = tmp.get(1);
-            } else if (tmp.size() > 2) {
-                key = tmp.get(0);
-                tmp.remove(0);
-                value = implode(kvSeprator, tmp);
-                //System.out.println(key + ":" + value);
-            } else if (tmp.size() == 1) {
-                key = tmp.get(0);
-                value = "";
-            } else {
-                continue;
-            }
-            key = key.trim();
-            value = value.trim();
-            map.put(key, value);
-        }
-        return map.toString();
-    }
-
-    public static String getType(Object o) {
-        return o.getClass().toString();
-    }
-
-    /**
-     * 函数功能,进行map的连接
-     */
-    public static String implodeMapObject(String kvSeprator, String elementSeprator, JSONObject mapObject) {
-
-        //拼接成msg
-        List<String> list = new ArrayList<String>();
-        Object value;
-        String element;
-        String pre = "'";
-
-        for (String key : mapObject.keySet()) {
-            value = mapObject.get(key);
-            if (getType(value).contains("com.alibaba.fastjson.JSONArray")) {
-                for (Object fieldValue : (JSONArray) value) {
-                    element = key + kvSeprator + fieldValue;
-                    list.add(element);
-                }
-            } else if (getType(value).contains("java.lang.String") && !"ubs_action".equals(key)) {
-                element = key + kvSeprator + pre + value + pre;
-                list.add(element);
-            } else {
-                element = key + kvSeprator + value;
-                list.add(element);
-            }
-
-        }
-
-        return implode(elementSeprator, list);
-    }
-
-    /**
-     * 函数功能,进行map的连接
-     */
-    public static String implodeMap(String kvSeprator, String elementSeprator, JSONObject mapObject) {
-
-        //拼接成msg
-        List<String> list = new ArrayList<String>();
-        Object value;
-        String element;
-        String pre = "";
-
-        for (String key : mapObject.keySet()) {
-            value = mapObject.get(key);
-            if (getType(value).contains("com.alibaba.fastjson.JSONArray")) {
-                System.out.println(value);
-                for (Object fieldValue : (JSONArray) value) {
-                    element = key + kvSeprator + fieldValue;
-                    list.add(element);
-                }
-            } else if (getType(value).contains("java.lang.String") && !"ubs_action".equals(key)) {
-                element = key + kvSeprator + pre + value + pre;
-                list.add(element);
-            } else {
-                element = key + kvSeprator + value;
-                list.add(element);
-            }
-
-        }
-
-        return implode(elementSeprator, list);
-    }
-
 
     public static String getPre(String content) {
 
@@ -399,8 +203,6 @@ public class Toolkit {
 
         return content;
     }
-
-
 
 
     public static String genXmlProperty(String content) {
@@ -553,228 +355,6 @@ public class Toolkit {
         }
     }
 
-
-    public static String commonJsonCompare(String expect, String actual, String calFieldsConfig) {
-
-        String result = "";
-        //将两个json进行转换,进行比较
-        try {
-
-            if (expect == null || "".equals(expect)) {
-                expect = "{}";
-            }
-            if (actual == null || "".equals(actual)) {
-                actual = "{}";
-            }
-            if (calFieldsConfig == null || "".equals(calFieldsConfig)) {
-                calFieldsConfig = "{}";
-            }
-
-
-            String reExpect = expect;
-            String reActual = actual;
-            Field valueFieldOfString = String.class.getDeclaredField("value");
-            valueFieldOfString.setAccessible(true);
-
-            if (isJsonArray(actual)) {
-                JSONObject obj = new JSONObject();
-                obj.put("JSONArray", JSONArray.parse(actual));
-                actual = obj.toString();
-            }
-            if (isJsonArray(expect)) {
-                JSONObject obj = new JSONObject();
-                obj.put("JSONArray", JSONArray.parse(expect));
-                expect = obj.toString();
-            }
-
-            //系统预处理=> 系统提供公共的处理,比如设置 忽略字段 or 字段有序无序 or 正则匹配
-            JSONObject allObj = systemPreCal(expect, actual, calFieldsConfig);
-
-            JSONObject resObj = (JSONObject) allObj.get(RES);
-            HashMap<String, List<String>> calMapPre = (HashMap<String, List<String>>) allObj.get(CAL);
-
-            expect = (String) resObj.get(EXPECT);
-            actual = (String) resObj.get(ACTUAL);
-            //反射机制,将实际和期望修改后的值带出去
-            valueFieldOfString.set(reExpect, expect.toCharArray());
-            valueFieldOfString.set(reActual, actual.toCharArray());
-
-            HashMap<String, List<String>> errorMap = new HashMap<>();
-            HashMap<String, List<String>> calMap = new HashMap<>();
-            calMap.putAll(calMapPre);
-
-            JsonPathParser expectParser = new JsonPathParser(expect);
-            JsonPathParser actualParser = new JsonPathParser(actual);
-            JSONObject expectObj = JSONObject.parseObject(expectParser.getPathJsonStr());
-            JSONObject actualObj = JSONObject.parseObject(actualParser.getPathJsonStr());
-            String expectValue;
-            String actualValue;
-
-
-            List<String> pregMatchList = calPregMatchList(calFieldsConfig);
-            Map<String, String> callFuncMap = getFuncList(calFieldsConfig);
-            List<String> numCheckList = getNumCheckList(calFieldsConfig);
-            List<String> nonExsitList = calNonExsitList(calFieldsConfig);
-
-            if (("{}".equals(expect) || "{}".equals(actual)) && !expect.equals(actual)) {
-                if (!errorMap.containsKey(VALUE_CHECK)) {
-                    errorMap.put(VALUE_CHECK, new ArrayList<>());
-                }
-                errorMap.get(VALUE_CHECK).add("1.实际和期望不相等!");
-            }
-
-            //校验应该不存在的key
-            for (String actualKey : actualObj.keySet()) {
-                if (isNonExsitCheck(actualKey, nonExsitList)) {
-                    //if exsit
-                    actualValue = String.valueOf(actualObj.get(actualKey));
-                    if (!errorMap.containsKey(NON_EXSIT_CHECK)) {
-                        errorMap.put(NON_EXSIT_CHECK, new ArrayList<>());
-                    }
-                    if (!calMap.containsKey(NON_EXSIT_CAL)) {
-                        calMap.put(NON_EXSIT_CAL, new ArrayList<>());
-                    }
-
-                    errorMap.get(NON_EXSIT_CHECK).add(".字段名:" + actualKey + ",期望: 不出现" + " VS 实际:" + actualValue);
-                    calMap.get(NON_EXSIT_CAL).add(".字段名:" + actualKey);
-                }
-            }
-
-            for (String expectKey : expectObj.keySet()) {
-
-                //存在相同key,进行对比
-                if (actualObj.containsKey(expectKey)) {
-                    expectValue = String.valueOf(expectObj.get(expectKey));
-                    actualValue = String.valueOf(actualObj.get(expectKey));
-                    //如果不相等
-                    if (!expectValue.equals(actualValue)) {
-                        //判断是否正则匹配
-                        if (isPregMatch(expectKey, pregMatchList)) {
-                            //执行正则
-                            Pattern pattern = Pattern.compile(expectValue);
-                            Matcher matcher = pattern.matcher(actualValue);
-                            // 查找字符串中是否有匹配正则表达式的字符/字符串
-                            if (!matcher.find()) {
-                                if (!errorMap.containsKey(PREG_MATCH_CHECK)) {
-                                    errorMap.put(PREG_MATCH_CHECK, new ArrayList<>());
-                                }
-                                if (!calMap.containsKey(PREG_MATCH_CAL)) {
-                                    calMap.put(PREG_MATCH_CAL, new ArrayList<>());
-                                }
-
-                                errorMap.get(PREG_MATCH_CHECK).add(".字段名:" + expectKey + ",期望:" + expectValue + " VS 实际:" + actualValue);
-                                calMap.get(PREG_MATCH_CAL).add(".字段名:" + expectKey);
-                            }
-
-                        }//判断是否动态调用处理函数
-                        else if (isCallFunc(expectKey, callFuncMap)) {
-                            String expectCalKey = removeIndexFieldName(expectKey);
-                            String funcName = callFuncMap.get(expectCalKey);
-
-                            String[] funcNameList = funcName.split("\\[");
-                            String funcDesc = "";
-                            String func = FUNC_CAL;
-                            if (funcNameList.length == 2) {
-                                funcName = funcNameList[0];
-                                funcDesc = funcNameList[1];
-                                func += funcDesc;
-                            }
-
-                            Class<?> threadClazz = Class.forName("com.alimama.zhizi.engine.util.Toolkit");
-                            Method method = threadClazz.getMethod(funcName, String.class, String.class);
-                            boolean res = (boolean) method.invoke(null, expectValue, actualValue);
-
-                            if (!calMap.containsKey(func)) {
-                                calMap.put(func, new ArrayList<>());
-                            }
-
-                            if (!res) {
-                                if (!errorMap.containsKey(FUNC_CHECK)) {
-                                    errorMap.put(FUNC_CHECK, new ArrayList<>());
-                                }
-                                errorMap.get(FUNC_CHECK).add(".字段名:" + expectKey + ",特殊处理函数:" + funcName + ",期望:" + expectValue + " VS 实际:" + actualValue);
-                                calMap.get(func).add(".字段名:" + expectKey);
-                            }
-
-                        } else {
-                            if (!errorMap.containsKey(VALUE_CHECK)) {
-                                errorMap.put(VALUE_CHECK, new ArrayList<>());
-                            }
-                            errorMap.get(VALUE_CHECK).add(".字段名:" + expectKey + ",期望:" + expectValue + " VS 实际:" + actualValue);
-                        }
-                    }
-
-                }
-                //key不存在
-                else {
-                    if (!errorMap.containsKey(KEY_NO_EXIST_CHECK)) {
-                        errorMap.put(KEY_NO_EXIST_CHECK, new ArrayList<>());
-                    }
-                    errorMap.get(KEY_NO_EXIST_CHECK).add("字段名:" + expectKey);
-                }
-            }
-
-            if (errorMap.size() == 0) {
-                result = "校验通过!";
-
-                if (calMap.size() > 0) {
-                    result += "[存在特殊处理字段] 详情如下:\n";
-                    for (String calType : calMap.keySet()) {
-
-                        String calStr = "======" + calType + "======\n";
-
-                        List<String> calList = calMap.get(calType);
-
-                        for (int i = 1; i <= calList.size(); i++) {
-                            calStr += i + "." + calList.get(i - 1) + "\n";
-                        }
-                        result += calStr;
-                    }
-                }
-            } else {
-//                resList.sort(Comparator.reverseOrder());
-//                result = "校验失败,失败详情如下:\n";
-//                result += Toolkit.implode("\n",resList);
-                result = "[校验失败] 失败详情如下:\n";
-                //失败原因
-                for (String errorType : errorMap.keySet()) {
-
-                    String errorStr = "======" + errorType + "======\n";
-
-                    List<String> errorList = errorMap.get(errorType);
-
-                    for (int i = 1; i <= errorList.size(); i++) {
-                        errorStr += i + errorList.get(i - 1) + "\n";
-                    }
-                    result += errorStr;
-                }
-
-                //处理
-                if (calMap.size() > 0) {
-                    result += "[存在特殊处理字段] 详情如下:\n";
-
-                    for (String calType : calMap.keySet()) {
-
-                        String calStr = "======" + calType + "======\n";
-
-                        List<String> calList = calMap.get(calType);
-
-                        for (int i = 1; i <= calList.size(); i++) {
-                            calStr += i + "." + calList.get(i - 1) + "\n";
-                        }
-                        result += calStr;
-                    }
-                }
-            }
-
-        } catch (Exception e) {
-            result = "校验失败,对比异常原因:" + e.getMessage();
-        }
-
-        return result;
-    }
-
-
     public static Boolean isJsonObjcet(String in) {
         if (in == null || in.isEmpty()) {
             return false;
@@ -800,6 +380,7 @@ public class Toolkit {
             return false;
         }
     }
+
     /**
      * 判断是否是需要正则匹配字段
      *
@@ -819,7 +400,6 @@ public class Toolkit {
         return false;
 
     }
-
 
 
     /**
@@ -1094,6 +674,7 @@ public class Toolkit {
         return allObj;
 
     }
+
     public static void recursionCalJson(List<String> fieldNameList, JSONObject obj, String type) {
 
 
@@ -1145,6 +726,7 @@ public class Toolkit {
 
         }
     }
+
     public static void calJsonLeaf(JSONObject obj, String layer, String type) {
 
         if (type.equals(REMOVE_TYPE)) {
@@ -1195,6 +777,7 @@ public class Toolkit {
         }
 
     }
+
     public static List<String> cloneList(List<String> souceList) {
 
         List<String> desList = new ArrayList<>();
@@ -1265,8 +848,6 @@ public class Toolkit {
 
         return time;
     }
-
-
 
 }
 

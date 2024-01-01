@@ -1,17 +1,16 @@
 package com.alibaba.markovdemo.engine.stages;
 
 import com.alibaba.fastjson.JSONObject;
-
 import com.alibaba.markovdemo.BO.TestRespone;
 import com.alibaba.markovdemo.engine.plugins.IPlugin;
 import com.alibaba.markovdemo.engine.plugins.PluginFactory;
 import com.alibaba.markovdemo.engine.plugins.PluginLayout;
 import com.google.gson.Gson;
+import org.apache.commons.lang3.NotImplementedException;
+import org.codehaus.groovy.util.ListHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-import org.codehaus.groovy.util.ListHashMap;
 
 import java.util.*;
 
@@ -30,11 +29,11 @@ public class BaseStage {
     static final String PLUGIN_NAME_KEY = "plugin_name";
     static final String DISPLAY_NAME_KEY = "display_name";
 
-    Map<String,List<RunData>> stageRunDataMap = new HashMap<>();
+    Map<String, List<RunData>> stageRunDataMap = new HashMap<>();
     //输入对象
     Object inputObj;
     //stage参数
-    Map<StageName,Object> stageParams;
+    Map<StageName, Object> stageParams;
     //plugin_name => IPlugin
     Map<String, IPlugin> pluginNameMap = new HashMap<>();
 
@@ -83,6 +82,7 @@ public class BaseStage {
     public void setPluginMap(Map<String, LinkedList<JSONObject>> map) {
         pluginMap = map;
     }
+
     public JSONObject getStageJsonObj() {
         return stageJsonObj;
     }
@@ -102,6 +102,7 @@ public class BaseStage {
     public void setRunType(String runType) {
         this.runType = runType;
     }
+
     public List<RunData> getRunDataList() {
         return runDataList;
     }
@@ -111,21 +112,22 @@ public class BaseStage {
     }
 
     public void setStageParams(
-        Map<StageName, Object> stageParams) {
+            Map<StageName, Object> stageParams) {
         this.stageParams = stageParams;
     }
 
-    public LogInfo findByPluginName(String pluginName){
+    public LogInfo findByPluginName(String pluginName) {
 
         if (logCollection.size() > 0) {
-            for(LogInfo search : logCollection){
-                if (search.getPluginName().equals(pluginName)){
+            for (LogInfo search : logCollection) {
+                if (search.getPluginName().equals(pluginName)) {
                     return search;
                 }
             }
         }
         return null;
     }
+
     public String getGroupName() {
         return groupName;
     }
@@ -136,7 +138,7 @@ public class BaseStage {
 
 
     public void init() {
-        throw new NotImplementedException();
+        throw new NotImplementedException("");
     }
 
     public StageName getName() {
@@ -146,7 +148,6 @@ public class BaseStage {
     public void setName(StageName name) {
         this.name = name;
     }
-
 
 
     public void setRunData() {
@@ -159,7 +160,7 @@ public class BaseStage {
         runData.setTestcaseId(testcaseId);
     }
 
-    public void setRunDataCheckConf(String calFieldsConfig){
+    public void setRunDataCheckConf(String calFieldsConfig) {
         this.runData.setCalFieldsConfig(calFieldsConfig);
     }
 
@@ -179,12 +180,12 @@ public class BaseStage {
         this.logCollection = logCollection;
     }
 
-    public void setPrepareData(String data){
+    public void setPrepareData(String data) {
         runData.setInput(data);
     }
 
 
-    public TestRespone setTestRespone(TestRespone testRespone){
+    public TestRespone setTestRespone(TestRespone testRespone) {
 
         return testRespone;
     }
@@ -192,11 +193,12 @@ public class BaseStage {
 
     /**
      * 函数功能:整合展示日志,对于check阶段,需要加入input/output/expect/result/log.其他阶段只有input/output/log
+     *
      * @param data
      * @param stageName
      * @return
      */
-    public String logFormat(RunData data, StageName stageName){
+    public String logFormat(RunData data, StageName stageName) {
 
         String showLog = "";
 
@@ -205,21 +207,22 @@ public class BaseStage {
         showLog += "======================[OUTPUT]======================\n";
 
         showLog += "======================[LOG]======================\n";
-        showLog +=  data.getLog() + "\n";
+        showLog += data.getLog() + "\n";
 
         return showLog;
     }
 
-    public void setIputData(Object inputObj){
+    public void setIputData(Object inputObj) {
         this.inputObj = inputObj;
     }
 
     /**
      * 函数功能:收集中间结果Log,将本阶段所有log进行收集
+     *
      * @param data
      * @param pluginName
      */
-    public void startLogCollect(RunData data, String pluginName){
+    public void startLogCollect(RunData data, String pluginName) {
         LogInfo logInfo = new LogInfo();
         logInfo.setStageName(name);
         logInfo.setGroupName(groupName);
@@ -242,7 +245,7 @@ public class BaseStage {
     }
 
     //1.执行pluginList. 2.收集中间结果
-    public void exec(){
+    public void exec() {
         LOGGER.debug(String.format("exec start"));
         pluginExec(ExecKey);
     }
@@ -250,19 +253,20 @@ public class BaseStage {
 
     /**
      * 函数功能:单个plugin插件执行
+     *
      * @param key
      */
-    public void pluginExec(String key){
+    public void pluginExec(String key) {
 
         LinkedList<JSONObject> plugins = pluginMap.get(key);
         IPlugin p;
-        if("exec".equals(key)){
+        if ("exec".equals(key)) {
             runDataList = new ArrayList<>();
         }
 
         for (JSONObject pluginObj : plugins) {
 
-            String pluginName = (String)pluginObj.get("plugin_name");
+            String pluginName = (String) pluginObj.get("plugin_name");
             LOGGER.info("[执行插件:" + pluginName + "]");
 
             p = pluginNameMap.get(pluginName);
@@ -280,14 +284,14 @@ public class BaseStage {
             p.exec();
             LOGGER.debug(String.format("Plugin {0} executed exec method.", p.getName()));
             //搜集插件结果集
-            if("exec".equals(key)){
+            if ("exec".equals(key)) {
                 runDataList.add((RunData) runData.clone());
             }
             p.afterExec();
             LOGGER.debug(String.format("Plugin {0} executed afterExec method.", p.getName()));
 
             //收集插件list的中间结果
-            startLogCollect(runData,p.getName());
+            startLogCollect(runData, p.getName());
 
             //进行一次output设置为input
             runData.setInput(p.getRunData().getOutput());
@@ -295,11 +299,12 @@ public class BaseStage {
     }
 
     public void cleanup() {
-        throw new NotImplementedException();
+        throw new NotImplementedException("");
     }
 
     /**
      * 函数功能:插件添加
+     *
      * @param pluginObj
      */
     public void addPlugin(JSONObject pluginObj) {
@@ -309,6 +314,7 @@ public class BaseStage {
 
     /**
      * 函数功能:插件初始化
+     *
      * @param stageName
      * @param stageJsonObj
      * @return
@@ -317,21 +323,21 @@ public class BaseStage {
 
         this.name = stageName;
         this.stageJsonObj = stageJsonObj;
-        String[] execList = {BeforeExecKey,ExecKey,AfterExecKey};
+        String[] execList = {BeforeExecKey, ExecKey, AfterExecKey};
         //plugin_name => IPlugin
         pluginNameMap = new HashMap<>();
-        for(String execName : execList){
+        for (String execName : execList) {
             pluginList = new LinkedList<>();
-            if (stageJsonObj.containsKey(execName) && stageJsonObj.get(execName) instanceof JSONObject){
-                stageJsonObj = (JSONObject)stageJsonObj.get(execName);
+            if (stageJsonObj.containsKey(execName) && stageJsonObj.get(execName) instanceof JSONObject) {
+                stageJsonObj = (JSONObject) stageJsonObj.get(execName);
                 stageJsonObj.putAll(this.stageJsonObj);
                 if (stageJsonObj.containsKey("pluginList")) {
                     for (Object obj : stageJsonObj.getJSONArray("pluginList")) {
                         JSONObject jsObj = (JSONObject) obj;
-                        String pluginName = (String)jsObj.get("plugin_name");
-                        if (!pluginNameMap.containsKey(pluginName)){
-                            IPlugin plugin = PluginFactory.getPlugin(jsObj ,stageJsonObj);
-                            pluginNameMap.put(pluginName,plugin);
+                        String pluginName = (String) jsObj.get("plugin_name");
+                        if (!pluginNameMap.containsKey(pluginName)) {
+                            IPlugin plugin = PluginFactory.getPlugin(jsObj, stageJsonObj);
+                            pluginNameMap.put(pluginName, plugin);
                         }
                         this.addPlugin(jsObj);
                     }
@@ -345,24 +351,25 @@ public class BaseStage {
 
     /**
      * 函数功能:build出pipeline阶段中的布局对象,主要是插件信息,在prepareData/send/get/check阶段使用到
+     *
      * @return
      */
-    public List<PluginLayout> buildLayout(){
+    public List<PluginLayout> buildLayout() {
 
         List<PluginLayout> pluginLayoutList = new ArrayList<>();
-        String[] execList = {BeforeExecKey,ExecKey,AfterExecKey};
-        for (String execKey : execList){
-            if (this.stageJsonObj.containsKey(execKey) && stageJsonObj.get(execKey) instanceof JSONObject){
+        String[] execList = {BeforeExecKey, ExecKey, AfterExecKey};
+        for (String execKey : execList) {
+            if (this.stageJsonObj.containsKey(execKey) && stageJsonObj.get(execKey) instanceof JSONObject) {
 
-                JSONObject execJson = (JSONObject)stageJsonObj.get(execKey);
+                JSONObject execJson = (JSONObject) stageJsonObj.get(execKey);
 
                 if (execJson.containsKey("pluginList")) {
                     for (Object obj : execJson.getJSONArray("pluginList")) {
                         PluginLayout pluginLayout = new PluginLayout();
-                        JSONObject jobj = (JSONObject)obj;
-                        pluginLayout.setPluginName(jobj.containsKey(PLUGIN_NAME_KEY)? (String)jobj.get(PLUGIN_NAME_KEY) :"");
-                        pluginLayout.setDisplayName(jobj.containsKey(DISPLAY_NAME_KEY)? (String)jobj.get(DISPLAY_NAME_KEY) :"");
-                        pluginLayout.setPluginType(jobj.containsKey(PLUGIN_TYPE_KEY)? (String)jobj.get(PLUGIN_TYPE_KEY) :"");
+                        JSONObject jobj = (JSONObject) obj;
+                        pluginLayout.setPluginName(jobj.containsKey(PLUGIN_NAME_KEY) ? (String) jobj.get(PLUGIN_NAME_KEY) : "");
+                        pluginLayout.setDisplayName(jobj.containsKey(DISPLAY_NAME_KEY) ? (String) jobj.get(DISPLAY_NAME_KEY) : "");
+                        pluginLayout.setPluginType(jobj.containsKey(PLUGIN_TYPE_KEY) ? (String) jobj.get(PLUGIN_TYPE_KEY) : "");
                         pluginLayoutList.add(pluginLayout);
                     }
                 }
@@ -376,32 +383,32 @@ public class BaseStage {
         return runData;
     }
 
-    
+
     /**
      * 插件功能:/整合当前阶段所有的log,以map的格式返回,传递给testRespone
+     *
      * @param logCollection
      * @return
      */
-    public HashMap<StageName,ListHashMap<String, String>> mergeResponeLog(List<LogInfo> logCollection){
+    public HashMap<StageName, ListHashMap<String, String>> mergeResponeLog(List<LogInfo> logCollection) {
 
         StageName stageName;
         String pluginName;
         String log;
-        HashMap<StageName,ListHashMap<String, String>> allLogCollection = new HashMap<>();
+        HashMap<StageName, ListHashMap<String, String>> allLogCollection = new HashMap<>();
         ListHashMap<String, String> logList;
         String key;
 
-        if (logCollection.size() > 0){
+        if (logCollection.size() > 0) {
 
-            for (LogInfo logInfo : logCollection){
+            for (LogInfo logInfo : logCollection) {
 
                 stageName = logInfo.getStageName();
 
-                if (!allLogCollection.containsKey(stageName)){
+                if (!allLogCollection.containsKey(stageName)) {
                     logList = new ListHashMap<>();
-                    allLogCollection.put(stageName,logList );
-                }
-                else {
+                    allLogCollection.put(stageName, logList);
+                } else {
                     logList = allLogCollection.get(stageName);
                 }
 
@@ -409,7 +416,7 @@ public class BaseStage {
 
                 key = pluginName;
                 log = logInfo.getLog();
-                logList.put(key,log);
+                logList.put(key, log);
 
             }
         }
