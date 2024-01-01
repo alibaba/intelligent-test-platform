@@ -2,13 +2,10 @@ package com.alibaba.markovdemo.engine.stages;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-
 import com.alibaba.markovdemo.BO.RunDs;
-import org.apache.commons.collections.map.HashedMap;
 
 import java.util.HashMap;
 import java.util.Map;
-
 
 public class RunData extends SerialCloneable {
 
@@ -59,7 +56,6 @@ public class RunData extends SerialCloneable {
 
     //执行数据间的复杂参数传递
     JSONObject params = new JSONObject();
-
 
     public String getActual() {
         return actual;
@@ -117,8 +113,7 @@ public class RunData extends SerialCloneable {
     public void setResult(int result) {
         this.result = result;
     }
-    
-    
+
 
     public byte[] getbInput() {
         return bInput;

@@ -14,7 +14,7 @@ public class AjaxResult {
     public AjaxResult() {
     }
 
-    public AjaxResult(boolean isOk ) {
+    public AjaxResult(boolean isOk) {
         this.isSuccess = isOk;
     }
 
